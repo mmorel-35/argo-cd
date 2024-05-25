@@ -1357,27 +1357,27 @@ func TestFilterAppResources(t *testing.T) {
 		expectedResult    []*v1alpha1.SyncOperationResource
 	}{
 		// --resource apps:ReplicaSet:replicaSet-name1 --resource *:Service:*
-		{testName: "Include ReplicaSet replicaSet-name1 resouce and all service resources",
+		{testName: "Include ReplicaSet replicaSet-name1 resource and all service resources",
 			selectedResources: []*v1alpha1.SyncOperationResource{&includeAllServiceResources, &includeReplicaSet1Resource},
 			expectedResult:    []*v1alpha1.SyncOperationResource{&replicaSet1, &service1, &service2},
 		},
 		// --resource apps:ReplicaSet:replicaSet-name1 --resource !*:Service:*
-		{testName: "Include ReplicaSet replicaSet-name1 resouce and exclude all service resources",
+		{testName: "Include ReplicaSet replicaSet-name1 resource and exclude all service resources",
 			selectedResources: []*v1alpha1.SyncOperationResource{&excludeAllServiceResources, &includeReplicaSet1Resource},
 			expectedResult:    []*v1alpha1.SyncOperationResource{&replicaSet1, &replicaSet2, &job, &deployment},
 		},
 		// --resource !apps:ReplicaSet:replicaSet-name2 --resource !*:Service:*
-		{testName: "Exclude ReplicaSet replicaSet-name2 resouce and all service resources",
+		{testName: "Exclude ReplicaSet replicaSet-name2 resource and all service resources",
 			selectedResources: []*v1alpha1.SyncOperationResource{&excludeReplicaSet2Resource, &excludeAllServiceResources},
 			expectedResult:    []*v1alpha1.SyncOperationResource{&replicaSet1, &replicaSet2, &job, &service1, &service2, &deployment},
 		},
 		// --resource !apps:ReplicaSet:replicaSet-name2
-		{testName: "Exclude ReplicaSet replicaSet-name2 resouce",
+		{testName: "Exclude ReplicaSet replicaSet-name2 resource",
 			selectedResources: []*v1alpha1.SyncOperationResource{&excludeReplicaSet2Resource},
 			expectedResult:    []*v1alpha1.SyncOperationResource{&replicaSet1, &job, &service1, &service2, &deployment},
 		},
 		// --resource apps:ReplicaSet:replicaSet-name1
-		{testName: "Include ReplicaSet replicaSet-name1 resouce",
+		{testName: "Include ReplicaSet replicaSet-name1 resource",
 			selectedResources: []*v1alpha1.SyncOperationResource{&includeReplicaSet1Resource},
 			expectedResult:    []*v1alpha1.SyncOperationResource{&replicaSet1},
 		},
