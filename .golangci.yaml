@@ -16,6 +16,7 @@ linters-settings:
       - error-is-as
       - error-nil
       - expected-actual
+      - float-compare
       - go-require
       - len
       - nil-compare
