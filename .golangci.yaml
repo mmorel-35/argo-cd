@@ -7,5 +7,12 @@ linters:
   enable:
     - gofmt
     - testifylint
+linters-settings:
+  testifylint:
+    enable-all: true
+    disable:
+      - compares
+      - empty
+      - error-nil
 run:
   timeout: 50m
