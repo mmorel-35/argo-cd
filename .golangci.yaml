@@ -14,5 +14,9 @@ linters-settings:
       - compares
       - empty
       - error-nil
+      - expected-actual
+      - go-require
+      - len
+      - require-error
 run:
   timeout: 50m
