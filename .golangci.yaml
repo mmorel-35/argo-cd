@@ -13,10 +13,12 @@ linters-settings:
     disable:
       - compares
       - empty
+      - error-is-as
       - error-nil
       - expected-actual
       - go-require
       - len
+      - nil-compare
       - require-error
 run:
   timeout: 50m
