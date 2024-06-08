@@ -4,7 +4,10 @@ issues:
   exlude-rules:
     - linters:
         - errorlint
-      path: "(applicationset|cmd|cmpserver|controller|reposerver|server|util)/"
+      path: "applicationset/"
+    - linters:
+        - errorlint
+      path: "cmd/"
   max-issues-per-linter: 0
   max-same-issues: 0
 linters:
