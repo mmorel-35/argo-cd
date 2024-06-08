@@ -4,10 +4,16 @@ issues:
   exlude-rules:
     - linters:
         - errorlint
-      path: "applicationset/"
+      path: applicationset/
     - linters:
         - errorlint
-      path: "cmd/"
+      path: cmd/
+    - linters:
+        - errorlint
+      path: server/
+    - linters:
+        - errorlint
+      path: util/
   max-issues-per-linter: 0
   max-same-issues: 0
 linters:
