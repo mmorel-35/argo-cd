@@ -1,8 +1,8 @@
 issues:
   exclude:
     - SA5011
-  exlude-rules:
-    - path: util
+  exclude-rules:
+    - path: util/
       linters:
         - errorlint
   max-issues-per-linter: 0
