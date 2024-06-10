@@ -315,7 +315,7 @@ func TestGenerateManifests_K8SAPIResetCache(t *testing.T) {
 	res, err = service.GenerateManifest(context.Background(), &q)
 	assert.NoError(t, err)
 	assert.NotEqual(t, cachedFakeResponse, res)
-	assert.True(t, len(res.Manifests) > 1)
+	assert.Greater(t, len(res.Manifests), 1)
 }
 
 func TestGenerateManifests_EmptyCache(t *testing.T) {
@@ -334,7 +334,7 @@ func TestGenerateManifests_EmptyCache(t *testing.T) {
 
 	res, err := service.GenerateManifest(context.Background(), &q)
 	assert.NoError(t, err)
-	assert.True(t, len(res.Manifests) > 0)
+	assert.Positive(t, len(res.Manifests))
 	mockCache.mockCache.AssertCacheCalledTimes(t, &repositorymocks.CacheCallCounts{
 		ExternalSets:    2,
 		ExternalGets:    2,
@@ -815,9 +815,9 @@ func TestManifestGenErrorCacheByNumRequests(t *testing.T) {
 
 				// Verify invariant: res != nil xor err != nil
 				if err != nil {
-					assert.True(t, res == nil, "both err and res are non-nil res: %v   err: %v", res, err)
+					assert.Nil(t, res, "both err and res are non-nil res: %v   err: %v", res, err)
 				} else {
-					assert.True(t, res != nil, "both err and res are nil")
+					assert.NotNil(t, res, "both err and res are nil")
 				}
 
 				cachedManifestResponse := getRecentCachedEntry(service, manifestRequest)
@@ -832,13 +832,13 @@ func TestManifestGenErrorCacheByNumRequests(t *testing.T) {
 					// nolint:staticcheck
 					assert.Nil(t, cachedManifestResponse.ManifestResponse)
 					// nolint:staticcheck
-					assert.True(t, cachedManifestResponse.FirstFailureTimestamp != 0)
+					assert.NotEqual(t, 0, cachedManifestResponse.FirstFailureTimestamp)
 
 					// Internal cache consec failures value should increase with invocations, cached response should stay the same,
 					// nolint:staticcheck
-					assert.True(t, cachedManifestResponse.NumberOfConsecutiveFailures == adjustedInvocation+1)
+					assert.Equal(t, cachedManifestResponse.NumberOfConsecutiveFailures, adjustedInvocation+1)
 					// nolint:staticcheck
-					assert.True(t, cachedManifestResponse.NumberOfCachedResponsesReturned == 0)
+					assert.Equal(t, 0, cachedManifestResponse.NumberOfCachedResponsesReturned)
 
 				} else {
 					// GenerateManifest SHOULD return cached errors for the next X responses, where X is the
@@ -848,13 +848,13 @@ func TestManifestGenErrorCacheByNumRequests(t *testing.T) {
 					// nolint:staticcheck
 					assert.Nil(t, cachedManifestResponse.ManifestResponse)
 					// nolint:staticcheck
-					assert.True(t, cachedManifestResponse.FirstFailureTimestamp != 0)
+					assert.NotEqual(t, 0, cachedManifestResponse.FirstFailureTimestamp)
 
 					// Internal cache values should update correctly based on number of return cache entries, consecutive failures should stay the same
 					// nolint:staticcheck
-					assert.True(t, cachedManifestResponse.NumberOfConsecutiveFailures == service.initConstants.PauseGenerationAfterFailedGenerationAttempts)
+					assert.Equal(t, cachedManifestResponse.NumberOfConsecutiveFailures, service.initConstants.PauseGenerationAfterFailedGenerationAttempts)
 					// nolint:staticcheck
-					assert.True(t, cachedManifestResponse.NumberOfCachedResponsesReturned == (adjustedInvocation-service.initConstants.PauseGenerationAfterFailedGenerationAttempts+1))
+					assert.Equal(t, cachedManifestResponse.NumberOfCachedResponsesReturned, (adjustedInvocation - service.initConstants.PauseGenerationAfterFailedGenerationAttempts + 1))
 				}
 			}
 		})
@@ -913,8 +913,8 @@ func TestManifestGenErrorCacheFileContentsChange(t *testing.T) {
 		fmt.Println("    res: ", res)
 
 		if step < 2 {
-			assert.True(t, (err != nil) == errorExpected, "error return value and error expected did not match")
-			assert.True(t, (res != nil) == !errorExpected, "GenerateManifest return value and expected value did not match")
+			assert.Equal(t, errorExpected, (err != nil), "error return value and error expected did not match")
+			assert.Equal(t, (res != nil), !errorExpected, "GenerateManifest return value and expected value did not match")
 		}
 
 		if step == 2 {

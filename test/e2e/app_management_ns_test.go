@@ -603,7 +603,7 @@ func TestNamespacedManipulateApplicationResources(t *testing.T) {
 					break
 				}
 			}
-			assert.True(t, index > -1)
+			assert.Greater(t, index, -1)
 
 			deployment := resources[index]
 
@@ -1431,7 +1431,7 @@ func TestNamespacedSelfManagedApps(t *testing.T) {
 				lastReconciledAt = reconciledAt
 			}
 
-			assert.True(t, reconciledCount < 3, "Application was reconciled too many times")
+			assert.Less(t, reconciledCount, 3, "Application was reconciled too many times")
 		})
 }
 
