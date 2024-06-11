@@ -439,7 +439,7 @@ func generateDefaultShardMappingCM(namespace, hostname string, replicas, shard i
 
 	data, err := json.Marshal(shardMappingData)
 	if err != nil {
-		return nil, fmt.Errorf("error generating default ConfigMap: %s", err)
+		return nil, fmt.Errorf("error generating default ConfigMap: %w", err)
 	}
 	shardingCM.Data[ShardControllerMappingKey] = string(data)
 
@@ -465,7 +465,7 @@ func GetClusterSharding(kubeClient kubernetes.Interface, settingsMgr *settings.S
 		appControllerDeployment, err := kubeClient.AppsV1().Deployments(settingsMgr.GetNamespace()).Get(context.Background(), applicationControllerName, metav1.GetOptions{})
 		// if app controller deployment is not found when dynamic cluster distribution is enabled error out
 		if err != nil {
-			return nil, fmt.Errorf("(dynamic cluster distribution) failed to get app controller deployment: %v", err)
+			return nil, fmt.Errorf("(dynamic cluster distribution) failed to get app controller deployment: %w", err)
 		}
 
 		if appControllerDeployment != nil && appControllerDeployment.Spec.Replicas != nil {
@@ -487,7 +487,7 @@ func GetClusterSharding(kubeClient kubernetes.Interface, settingsMgr *settings.S
 			for i := 0; i <= common.AppControllerHeartbeatUpdateRetryCount; i++ {
 				shardNumber, err = GetOrUpdateShardFromConfigMap(kubeClient, settingsMgr, replicasCount, shardNumber)
 				if err != nil && !kubeerrors.IsConflict(err) {
-					err = fmt.Errorf("unable to get shard due to error updating the sharding config map: %s", err)
+					err = fmt.Errorf("unable to get shard due to error updating the sharding config map: %w", err)
 					break
 				}
 				log.Warnf("conflict when getting shard from shard mapping configMap. Retrying (%d/3)", i)
