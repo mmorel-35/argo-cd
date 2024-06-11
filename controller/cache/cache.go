@@ -409,7 +409,8 @@ func isTransientNetworkErr(err error) bool {
 	}
 
 	errorString := err.Error()
-	if exitErr, ok := err.(*exec.ExitError); ok {
+	var exitErr *exec.ExitError
+	if errors.As(err, &exitErr) {
 		errorString = fmt.Sprintf("%s %s", errorString, exitErr.Stderr)
 	}
 	if strings.Contains(errorString, "net/http: TLS handshake timeout") ||
