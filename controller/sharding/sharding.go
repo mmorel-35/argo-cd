@@ -313,7 +313,7 @@ func GetOrUpdateShardFromConfigMap(kubeClient kubernetes.Interface, settingsMgr 
 
 	if err != nil {
 		if !kubeerrors.IsNotFound(err) {
-			return -1, fmt.Errorf("error getting sharding config map: %s", err)
+			return -1, fmt.Errorf("error getting sharding config map: %w", err)
 		}
 		log.Infof("shard mapping configmap %s not found. Creating default shard mapping configmap.", common.ArgoCDAppControllerShardConfigMapName)
 
@@ -323,10 +323,10 @@ func GetOrUpdateShardFromConfigMap(kubeClient kubernetes.Interface, settingsMgr 
 		}
 		shardMappingCM, err = generateDefaultShardMappingCM(settingsMgr.GetNamespace(), hostname, replicas, shard)
 		if err != nil {
-			return -1, fmt.Errorf("error generating default shard mapping configmap %s", err)
+			return -1, fmt.Errorf("error generating default shard mapping configmap %w", err)
 		}
 		if _, err = kubeClient.CoreV1().ConfigMaps(settingsMgr.GetNamespace()).Create(context.Background(), shardMappingCM, metav1.CreateOptions{}); err != nil {
-			return -1, fmt.Errorf("error creating shard mapping configmap %s", err)
+			return -1, fmt.Errorf("error creating shard mapping configmap %w", err)
 		}
 		// return 0 as the controller is assigned to shard 0 while generating default shard mapping ConfigMap
 		return shard, nil
@@ -336,13 +336,13 @@ func GetOrUpdateShardFromConfigMap(kubeClient kubernetes.Interface, settingsMgr 
 		var shardMappingData []shardApplicationControllerMapping
 		err := json.Unmarshal([]byte(data), &shardMappingData)
 		if err != nil {
-			return -1, fmt.Errorf("error unmarshalling shard config map data: %s", err)
+			return -1, fmt.Errorf("error unmarshalling shard config map data: %w", err)
 		}
 
 		shard, shardMappingData := getOrUpdateShardNumberForController(shardMappingData, hostname, replicas, shard)
 		updatedShardMappingData, err := json.Marshal(shardMappingData)
 		if err != nil {
-			return -1, fmt.Errorf("error marshalling data of shard mapping ConfigMap: %s", err)
+			return -1, fmt.Errorf("error marshalling data of shard mapping ConfigMap: %w", err)
 		}
 		shardMappingCM.Data[ShardControllerMappingKey] = string(updatedShardMappingData)
 
