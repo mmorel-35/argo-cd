@@ -183,7 +183,7 @@ func (g *PullRequestGenerator) selectServiceProvider(ctx context.Context, genera
 		providerConfig := generatorConfig.AzureDevOps
 		token, err := g.getSecretRef(ctx, providerConfig.TokenRef, applicationSetInfo.Namespace)
 		if err != nil {
-			return nil, fmt.Errorf("error fetching Secret token: %v", err)
+			return nil, fmt.Errorf("error fetching Secret token: %w", err)
 		}
 		return pullrequest.NewAzureDevOpsService(ctx, token, providerConfig.API, providerConfig.Organization, providerConfig.Project, providerConfig.Repo, providerConfig.Labels)
 	}
@@ -195,7 +195,7 @@ func (g *PullRequestGenerator) github(ctx context.Context, cfg *argoprojiov1alph
 	if cfg.AppSecretName != "" {
 		auth, err := g.auth.GitHubApps.GetAuthSecret(ctx, cfg.AppSecretName)
 		if err != nil {
-			return nil, fmt.Errorf("error getting GitHub App secret: %v", err)
+			return nil, fmt.Errorf("error getting GitHub App secret: %w", err)
 		}
 		return pullrequest.NewGithubAppService(*auth, cfg.API, cfg.Owner, cfg.Repo, cfg.Labels)
 	}
@@ -203,7 +203,7 @@ func (g *PullRequestGenerator) github(ctx context.Context, cfg *argoprojiov1alph
 	// always default to token, even if not set (public access)
 	token, err := g.getSecretRef(ctx, cfg.TokenRef, applicationSetInfo.Namespace)
 	if err != nil {
-		return nil, fmt.Errorf("error fetching Secret token: %v", err)
+		return nil, fmt.Errorf("error fetching Secret token: %w", err)
 	}
 	return pullrequest.NewGithubService(ctx, token, cfg.API, cfg.Owner, cfg.Repo, cfg.Labels)
 }
