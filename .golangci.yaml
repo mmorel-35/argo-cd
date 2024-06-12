@@ -5,6 +5,10 @@ issues:
     - path: "(applicationset|cmpserver|reposerver|server)/"
       linters:
         - errorlint
+    - path: "(applicationset|util)/"
+      text: "require-error:"
+      linters:
+        - testifylint
   max-issues-per-linter: 0
   max-same-issues: 0
 linters:
