@@ -205,7 +205,7 @@ func TestPullRequestGithubGenerateParams(t *testing.T) {
 
 		got, gotErr := gen.GenerateParams(&generatorConfig, &c.applicationSet)
 		if c.expectedErr != nil {
-			assert.Equal(t, c.expectedErr.Err(), gotErr.Err())
+			assert.Equal(t, c.expectedErr.Error(), gotErr.Error())
 		} else {
 			assert.NoError(t, gotErr)
 		}
