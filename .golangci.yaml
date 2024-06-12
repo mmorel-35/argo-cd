@@ -9,6 +9,10 @@ issues:
       text: "require-error:"
       linters:
         - testifylint
+    - path: "util/(argo|cache)/"
+      text: "require-error:"
+      linters:
+        - testifylint
   max-issues-per-linter: 0
   max-same-issues: 0
 linters:
