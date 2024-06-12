@@ -481,7 +481,7 @@ func TestGenerateAppState_XSS(t *testing.T) {
 		}
 
 		returnURL, err := app.verifyAppState(req, httptest.NewRecorder(), state)
-		assert.NoError(t, err, InvalidRedirectURLError)
+		assert.NoError(t, err)
 		assert.Equal(t, expectedReturnURL, returnURL)
 	})
 }
