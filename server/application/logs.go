@@ -2,6 +2,7 @@ package application
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"strings"
 	"sync"
