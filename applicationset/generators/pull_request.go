@@ -223,7 +223,7 @@ func (g *PullRequestGenerator) getSecretRef(ctx context.Context, ref *argoprojio
 		},
 		secret)
 	if err != nil {
-		return "", fmt.Errorf("error fetching secret %s/%s: %v", namespace, ref.SecretName, err)
+		return "", fmt.Errorf("error fetching secret %s/%s: %w", namespace, ref.SecretName, err)
 	}
 	tokenBytes, ok := secret.Data[ref.Key]
 	if !ok {
