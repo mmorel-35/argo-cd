@@ -203,7 +203,7 @@ func TestAllowedSCMProvider(t *testing.T) {
 	cases := []struct {
 		name           string
 		providerConfig *argoprojiov1alpha1.SCMProviderGenerator
-		expectedError  error
+		expectedError  *ErrDisallowedSCMProvider
 	}{
 		{
 			name: "Error Github",
