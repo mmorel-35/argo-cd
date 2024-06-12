@@ -159,13 +159,13 @@ func TestParseAppInstanceValueColon(t *testing.T) {
 func TestParseAppInstanceValueWrongFormat1(t *testing.T) {
 	resourceTracking := NewResourceTracking()
 	_, err := resourceTracking.ParseAppInstanceValue("app")
-	assert.Error(t, err, WrongResourceTrackingFormat)
+	assert.ErrorIs(t, err, WrongResourceTrackingFormat)
 }
 
 func TestParseAppInstanceValueWrongFormat2(t *testing.T) {
 	resourceTracking := NewResourceTracking()
 	_, err := resourceTracking.ParseAppInstanceValue("app;group/kind/ns")
-	assert.Error(t, err, WrongResourceTrackingFormat)
+	assert.ErrorIs(t, err, WrongResourceTrackingFormat)
 }
 
 func TestParseAppInstanceValueCorrectFormat(t *testing.T) {
