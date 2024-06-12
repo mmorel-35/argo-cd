@@ -2,6 +2,7 @@ package scm_provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	pathpkg "path"
 	"path/filepath"
@@ -327,7 +328,7 @@ func getCodeCommitFIPSEndpoint(repoUrl string) (string, error) {
 }
 
 func hasAwsError(err error, codes ...string) bool {
-	var awsEer awserr.Error
+	var awsErr awserr.Error
 	if errors.As(err, &awsErr) {
 		return slices.Contains(codes, awsErr.Code())
 	}
