@@ -278,7 +278,7 @@ func TestAllowedSCMProviderPullRequest(t *testing.T) {
 	cases := []struct {
 		name           string
 		providerConfig *argoprojiov1alpha1.PullRequestGenerator
-		expectedError  error
+		expectedError  *ErrDisallowedSCMProvider
 	}{
 		{
 			name: "Error Github",
