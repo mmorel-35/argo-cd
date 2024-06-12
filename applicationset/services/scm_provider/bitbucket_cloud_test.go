@@ -303,7 +303,7 @@ func TestBitbucketListRepos(t *testing.T) {
 				}
 			}`))
 			if err != nil {
-				assert.NoError(t, fmt.Errorf("Error in mock response %v", err))
+				assert.NoError(t, fmt.Errorf("Error in mock response %w", err))
 			}
 		}
 		if req.URL.Path == "/repositories/test-owner" {
@@ -442,7 +442,7 @@ func TestBitbucketListRepos(t *testing.T) {
 			"size": 1
 		}`))
 			if err != nil {
-				assert.NoError(t, fmt.Errorf("Error in mock response %v", err))
+				assert.NoError(t, fmt.Errorf("Error in mock response %w", err))
 			}
 		}
 	}))
