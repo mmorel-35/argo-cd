@@ -2,6 +2,7 @@ package scm_provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	netUrl "net/url"
 	"strings"
