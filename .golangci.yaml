@@ -5,7 +5,7 @@ issues:
     - path: "(applicationset|cmpserver|reposerver|server)/"
       linters:
         - errorlint
-    - path: "(applicationset|util)/"
+    - path: "(applicationset|cmd|cmpserver|controller|util)/"
       text: "require-error:"
       linters:
         - testifylint
