@@ -283,7 +283,7 @@ func TestAllowedSCMProvider(t *testing.T) {
 			_, err := scmGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo)
 
 			assert.Error(t, err, "Must return an error")
-			assert.ErrorAs(t, err, testCaseCopy.expectedError)
+			assert.ErrorAs(t, err, &testCaseCopy.expectedError)
 		})
 	}
 }
