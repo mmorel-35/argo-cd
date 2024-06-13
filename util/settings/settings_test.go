@@ -695,7 +695,7 @@ func TestSettingsManager_GetKustomizeBuildOptions(t *testing.T) {
 		})
 
 		got, err := settingsManager.GetKustomizeSettings()
-		assert.ErrorContains(t, err, "found duplicate kustomize version: v3.2.1")
+		require.ErrorContains(t, err, "found duplicate kustomize version: v3.2.1")
 		assert.Empty(t, got)
 	})
 
