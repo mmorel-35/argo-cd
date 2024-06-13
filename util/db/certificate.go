@@ -289,13 +289,11 @@ func (db *db) CreateRepoCertificate(ctx context.Context, certificates *appsv1.Re
 					Data:    string(certificate.CertData),
 				}
 				tlsCertificates = append(tlsCertificates, tlsCertificate)
-			} else {
-				// We have made sure the upsert flag was set above. Now just figure out
-				// again if we have to actually update the data in the existing cert.
-				if tlsCertificate.Data != string(certificate.CertData) {
-					tlsCertificate.Data = string(certificate.CertData)
-					upserted = true
-				}
+			// We have made sure the upsert flag was set above. Now just figure out
+			// again if we have to actually update the data in the existing cert.
+			} else if tlsCertificate.Data != string(certificate.CertData) {
+				tlsCertificate.Data = string(certificate.CertData)
+				upserted = true
 			}
 
 			if newEntry || upserted {
