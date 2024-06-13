@@ -2,7 +2,7 @@ issues:
   exclude:
     - SA5011
   exclude-rules:
-    - path: "(cmpserver|reposerver)/"
+    - path: "cmpserver/"
       linters:
         - errorlint
     - path: "(applicationset|cmd|cmpserver|controller|pkg|reposerver|server|test)/"
