@@ -4,11 +4,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnforceToCurrentRoot(t *testing.T) {
 	cleanDir, err := EnforceToCurrentRoot("/home/argo/helmapp/", "/home/argo/helmapp/values.yaml")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "/home/argo/helmapp/values.yaml", cleanDir)
 
 	// File is outside current working directory
@@ -21,6 +22,6 @@ func TestEnforceToCurrentRoot(t *testing.T) {
 
 	// Goes back and forth, but still legal
 	cleanDir, err = EnforceToCurrentRoot("/home/argo/helmapp/", "/home/argo/helmapp/../../argo/helmapp/values.yaml")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "/home/argo/helmapp/values.yaml", cleanDir)
 }
