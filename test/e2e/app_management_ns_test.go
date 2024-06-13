@@ -1421,7 +1421,7 @@ func TestNamespacedSelfManagedApps(t *testing.T) {
 					reconciledAt = &metav1.Time{}
 				}
 				if lastReconciledAt != nil && !lastReconciledAt.Equal(reconciledAt) {
-					reconciledCount = reconciledCount + 1
+					reconciledCount++
 				}
 				lastReconciledAt = reconciledAt
 			}
