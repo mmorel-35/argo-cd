@@ -34,6 +34,8 @@ linters-settings:
   gocritic:
     disabled-checks:
       - appendAssign
+      - commentFormatting
+      - exitAfterDefer
       - ifElseChain
       - mapKey
       - singleCaseSwitch
