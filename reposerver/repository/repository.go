@@ -1517,23 +1517,23 @@ func mergeSourceParameters(source *v1alpha1.ApplicationSource, path, appName str
 
 		data, err := json.Marshal(merged)
 		if err != nil {
-			return fmt.Errorf("%s: %v", filename, err)
+			return fmt.Errorf("%s: %w", filename, err)
 		}
 		patch, err := os.ReadFile(filename)
 		if err != nil {
-			return fmt.Errorf("%s: %v", filename, err)
+			return fmt.Errorf("%s: %w", filename, err)
 		}
 		patch, err = yaml.YAMLToJSON(patch)
 		if err != nil {
-			return fmt.Errorf("%s: %v", filename, err)
+			return fmt.Errorf("%s: %w", filename, err)
 		}
 		data, err = jsonpatch.MergePatch(data, patch)
 		if err != nil {
-			return fmt.Errorf("%s: %v", filename, err)
+			return fmt.Errorf("%s: %w", filename, err)
 		}
 		err = json.Unmarshal(data, &merged)
 		if err != nil {
-			return fmt.Errorf("%s: %v", filename, err)
+			return fmt.Errorf("%s: %w", filename, err)
 		}
 	}
 
@@ -1551,7 +1551,7 @@ func mergeSourceParameters(source *v1alpha1.ApplicationSource, path, appName str
 func GetAppSourceType(ctx context.Context, source *v1alpha1.ApplicationSource, appPath, repoPath, appName string, enableGenerateManifests map[string]bool, tarExcludedGlobs []string, env []string) (v1alpha1.ApplicationSourceType, error) {
 	err := mergeSourceParameters(source, appPath, appName)
 	if err != nil {
-		return "", fmt.Errorf("error while parsing source parameters: %v", err)
+		return "", fmt.Errorf("error while parsing source parameters: %w", err)
 	}
 
 	appSourceType, err := source.ExplicitType()
@@ -1567,7 +1567,7 @@ func GetAppSourceType(ctx context.Context, source *v1alpha1.ApplicationSource, a
 	}
 	appType, err := discovery.AppType(ctx, appPath, repoPath, enableGenerateManifests, tarExcludedGlobs, env)
 	if err != nil {
-		return "", fmt.Errorf("error getting app source type: %v", err)
+		return "", fmt.Errorf("error getting app source type: %w", err)
 	}
 	return v1alpha1.ApplicationSourceType(appType), nil
 }
