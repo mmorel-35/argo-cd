@@ -39,6 +39,7 @@ linters-settings:
       - ifElseChain
       - mapKey
       - singleCaseSwitch
+      - typeSwitchVar
   goimports:
     local-prefixes: github.com/argoproj/argo-cd/v2
   testifylint:
