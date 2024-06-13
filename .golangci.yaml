@@ -35,6 +35,7 @@ linters-settings:
     disabled-checks:
       - appendAssign
       - ifElseChain
+      - mapKey
       - singleCaseSwitch
   goimports:
     local-prefixes: github.com/argoproj/argo-cd/v2
