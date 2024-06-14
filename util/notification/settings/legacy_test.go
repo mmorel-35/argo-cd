@@ -102,9 +102,7 @@ slack:
 	}}, cfg.Triggers["my-trigger2"])
 
 	label, err := labels.Parse("test=true")
-	if !require.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
 	assert.Equal(t, subscriptions.DefaultSubscriptions([]subscriptions.DefaultSubscription{
 		{Triggers: []string{"my-trigger2"}, Selector: label},
 	}), cfg.Subscriptions)
