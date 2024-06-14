@@ -6,11 +6,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCookieMaxLength(t *testing.T) {
 	cookies, err := MakeCookieMetadata("foo", "bar")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "foo=bar", cookies[0])
 
 	// keys will be of format foo, foo-1, foo-2 ..
@@ -23,14 +24,14 @@ func TestCookieWithAttributes(t *testing.T) {
 	flags := []string{"SameSite=lax", "httpOnly"}
 
 	cookies, err := MakeCookieMetadata("foo", "bar", flags...)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "foo=bar; SameSite=lax; httpOnly", cookies[0])
 }
 
 func TestSplitCookie(t *testing.T) {
 	cookieValue := strings.Repeat("_", (maxCookieLength-6)*4)
 	cookies, err := MakeCookieMetadata("foo", cookieValue)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, cookies, 4)
 	assert.Len(t, strings.Split(cookies[0], "="), 2)
 	token := strings.Split(cookies[0], "=")[1]
@@ -44,7 +45,7 @@ func TestSplitCookie(t *testing.T) {
 		cookieList = append(cookieList, &http.Cookie{Name: parts[0], Value: parts[1]})
 	}
 	token, err = JoinCookies("foo", cookieList)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, cookieValue, token)
 }
 
@@ -73,7 +74,7 @@ func TestTransportWithHeader(t *testing.T) {
 		RoundTripper: &TestRoundTripper{},
 	}
 	resp, err := client.Do(req)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, http.Header{
 		"Bar": []string{"req_1"},
 		"Foo": []string{"req_1"},
@@ -87,7 +88,7 @@ func TestTransportWithHeader(t *testing.T) {
 		},
 	}
 	resp, err = client.Do(req)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, http.Header{
 		"Bar": []string{"req_1"},
 		"Foo": []string{"default_1", "default_2", "req_1"},
