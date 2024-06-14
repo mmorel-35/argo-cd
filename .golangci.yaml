@@ -55,7 +55,7 @@ linters-settings:
         disabled: true
       - name: unexported-return
         disabled: true
-      - name: unused-paramater
+      - name: unused-parameter
         disabled: true
       - name: var-naming
         disabled: true
