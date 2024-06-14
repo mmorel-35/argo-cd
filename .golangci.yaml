@@ -44,6 +44,7 @@ linters-settings:
   goimports:
     local-prefixes: github.com/argoproj/argo-cd/v2
   revive:
+    enable-all-rules: true
     rules:
       - name: context-as-argument
         disabled: true
