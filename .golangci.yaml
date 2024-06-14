@@ -43,6 +43,22 @@ linters-settings:
       - typeSwitchVar
   goimports:
     local-prefixes: github.com/argoproj/argo-cd/v2
+  revive:
+    rules:
+      - name: context-as-argument
+        disabled: true
+      - name: error-strings
+        disabled: true
+      - name: exported
+        disabled: true
+      - name: increment-decrement
+        disabled: true
+      - name: unexported-return
+        disabled: true
+      - name: unused-paramater
+        disabled: true
+      - name: var-naming
+        disabled: true
   testifylint:
     enable-all: true
     disable:
