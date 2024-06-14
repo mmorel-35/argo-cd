@@ -208,16 +208,12 @@ func TestAPIVersions(t *testing.T) {
 
 	objs, err := template(h, &TemplateOpts{})
 	require.NoError(t, err)
-	!assert.Len(t, objs, 1) {
-		return
-	}
+	require.Len(t, objs, 1)
 	assert.Equal(t, "sample/v1", objs[0].GetAPIVersion())
 
 	objs, err = template(h, &TemplateOpts{APIVersions: []string{"sample/v2"}})
 	require.NoError(t, err)
-	if !assert.Len(t, objs, 1) {
-		return
-	}
+	require.Len(t, objs, 1)
 	assert.Equal(t, "sample/v2", objs[0].GetAPIVersion())
 }
 
@@ -227,19 +223,13 @@ func TestSkipCrds(t *testing.T) {
 
 	objs, err := template(h, &TemplateOpts{SkipCrds: false})
 	require.NoError(t, err)
-	if !assert.Len(t, objs, 1) {
-		return
-	}
+	require.Len(t, objs, 1)
 
 	objs, err = template(h, &TemplateOpts{})
 	require.NoError(t, err)
-	if !assert.Len(t, objs, 1) {
-		return
-	}
+	require.Len(t, objs, 1)
 
 	objs, err = template(h, &TemplateOpts{SkipCrds: true})
 	require.NoError(t, err)
-	if !assert.Empty(t, objs) {
-		return
-	}
+	require.Len(t, objs, 1)
 }
