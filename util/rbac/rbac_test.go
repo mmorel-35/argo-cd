@@ -353,34 +353,41 @@ func TestValidatePolicy(t *testing.T) {
 func TestEnforceErrorMessage(t *testing.T) {
 	kubeclientset := fake.NewSimpleClientset()
 	enf := NewEnforcer(kubeclientset, fakeNamespace, fakeConfigMapName, nil)
-	require.NoError(t, enf.syncUpdate(fakeConfigMap(), noOpUpdate))
+	err := enf.syncUpdate(fakeConfigMap(), noOpUpdate)
+	require.NoError(t, err)
 
-	require.Error(t, enf.EnforceErr("admin", "applications", "get", "foo/bar"))
+	err = enf.EnforceErr("admin", "applications", "get", "foo/bar")
+	require.Error(t, err)
 	assert.Equal(t, "rpc error: code = PermissionDenied desc = permission denied: applications, get, foo/bar", err.Error())
 
-	require.Error(t, enf.EnforceErr())
+	err = enf.EnforceErr()
+	require.Error(t, err)
 	assert.Equal(t, "rpc error: code = PermissionDenied desc = permission denied", err.Error())
 
 	// nolint:staticcheck
 	ctx := context.WithValue(context.Background(), "claims", &jwt.RegisteredClaims{Subject: "proj:default:admin"})
-	require.Error(t, enf.EnforceErr(ctx.Value("claims"), "project"))
+	err = enf.EnforceErr(ctx.Value("claims"), "project")
+	require.Error(t, err)
 	assert.Equal(t, "rpc error: code = PermissionDenied desc = permission denied: project, sub: proj:default:admin", err.Error())
 
 	iat := time.Unix(int64(1593035962), 0).Format(time.RFC3339)
 	exp := fmt.Sprintf("rpc error: code = PermissionDenied desc = permission denied: project, sub: proj:default:admin, iat: %s", iat)
 	// nolint:staticcheck
 	ctx = context.WithValue(context.Background(), "claims", &jwt.RegisteredClaims{Subject: "proj:default:admin", IssuedAt: jwt.NewNumericDate(time.Unix(int64(1593035962), 0))})
-	require.Error(t, enf.EnforceErr(ctx.Value("claims"), "project"))
+	err = enf.EnforceErr(ctx.Value("claims"), "project")
+	require.Error(t, err)
 	assert.Equal(t, exp, err.Error())
 
 	// nolint:staticcheck
 	ctx = context.WithValue(context.Background(), "claims", &jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now())})
-	require.Error(t, enf.EnforceErr(ctx.Value("claims"), "project"))
+	err = enf.EnforceErr(ctx.Value("claims"), "project")
+	require.Error(t, err)
 	assert.Equal(t, "rpc error: code = PermissionDenied desc = permission denied: project", err.Error())
 
 	// nolint:staticcheck
 	ctx = context.WithValue(context.Background(), "claims", &jwt.RegisteredClaims{Subject: "proj:default:admin", IssuedAt: nil})
-	require.Error(t, enf.EnforceErr(ctx.Value("claims"), "project"))
+	err = enf.EnforceErr(ctx.Value("claims"), "project")
+	require.Error(t, err)
 	assert.Equal(t, "rpc error: code = PermissionDenied desc = permission denied: project, sub: proj:default:admin", err.Error())
 }
 
