@@ -733,7 +733,7 @@ return hs`
 		status, err := overrides.GetResourceHealth(testObj)
 		assert.IsType(t, &lua.ApiError{}, err)
 		expectedErr := "<string>:4: attempt to index a non-table object(nil) with key 'find'\nstack traceback:\n\t<string>:4: in main chunk\n\t[G]: ?"
-		assert.EqualError(t, err, expectedErr)
+		require.EqualError(t, err, expectedErr)
 		assert.Nil(t, status)
 	})
 
