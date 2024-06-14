@@ -16,7 +16,7 @@ func TestCookieMaxLength(t *testing.T) {
 
 	// keys will be of format foo, foo-1, foo-2 ..
 	cookies, err = MakeCookieMetadata("foo", strings.Repeat("_", (maxCookieLength-5)*maxCookieNumber))
-	assert.EqualError(t, err, "the authentication token is 81760 characters long and requires 21 cookies but the max number of cookies is 20. Contact your Argo CD administrator to increase the max number of cookies")
+	require.EqualError(t, err, "the authentication token is 81760 characters long and requires 21 cookies but the max number of cookies is 20. Contact your Argo CD administrator to increase the max number of cookies")
 	assert.Empty(t, cookies)
 }
 
