@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"k8s.io/utils/ptr"
 
 	"github.com/microsoft/azure-devops-go-api/azuredevops"
@@ -156,9 +157,9 @@ func TestGetDefaultBranchOnDisabledRepo(t *testing.T) {
 			branches, err := provider.GetBranches(ctx, repo)
 
 			if testCase.shouldReturnError {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			assert.Empty(t, branches)
@@ -215,9 +216,9 @@ func TestGetAllBranchesOnDisabledRepo(t *testing.T) {
 			branches, err := provider.GetBranches(ctx, repo)
 
 			if testCase.shouldReturnError {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			assert.Empty(t, branches)
@@ -251,7 +252,7 @@ func TestAzureDevOpsGetDefaultBranchStripsRefsName(t *testing.T) {
 		provider := AzureDevOpsProvider{organization: organization, teamProject: teamProject, clientFactory: clientFactoryMock, allBranches: false}
 		branches, err := provider.GetBranches(ctx, repo)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, branches, 1)
 		assert.Equal(t, strippedBranchName, branches[0].Branch)
 
@@ -488,7 +489,7 @@ func TestGetAzureDevopsRepositories(t *testing.T) {
 			repositories, err := provider.ListRepos(ctx, "https")
 
 			if testCase.getRepositoriesError != nil {
-				assert.Error(t, err, "Expected an error from test case %v", testCase.name)
+				require.Error(t, err, "Expected an error from test case %v", testCase.name)
 			}
 
 			if testCase.expectedNumberOfRepos == 0 {
