@@ -351,7 +351,7 @@ func TestGitGenerateParamsFromDirectories(t *testing.T) {
 			got, err := gitGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, client)
 
 			if testCaseCopy.expectedError != nil {
-				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
+				require.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
 				require.NoError(t, err)
 				assert.Equal(t, testCaseCopy.expected, got)
@@ -652,7 +652,7 @@ func TestGitGenerateParamsFromDirectoriesGoTemplate(t *testing.T) {
 			got, err := gitGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, client)
 
 			if testCaseCopy.expectedError != nil {
-				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
+				require.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
 				require.NoError(t, err)
 				assert.Equal(t, testCaseCopy.expected, got)
@@ -1017,7 +1017,7 @@ cluster:
 			fmt.Println(got, err)
 
 			if testCaseCopy.expectedError != nil {
-				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
+				require.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
 				require.NoError(t, err)
 				assert.ElementsMatch(t, testCaseCopy.expected, got)
@@ -1373,7 +1373,7 @@ cluster:
 			fmt.Println(got, err)
 
 			if testCaseCopy.expectedError != nil {
-				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
+				require.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
 				require.NoError(t, err)
 				assert.ElementsMatch(t, testCaseCopy.expected, got)
