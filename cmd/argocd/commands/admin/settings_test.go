@@ -97,9 +97,7 @@ metadata:
   name: argocd-cm
 data:
   url: https://myargocd.com`)
-	if !require.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
 	defer utils.Close(closer)
 
 	opts := settingsOpts{argocdCMPath: f}
