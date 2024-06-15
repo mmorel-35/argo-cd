@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -342,7 +343,7 @@ func TestGitGenerateParamsFromDirectories(t *testing.T) {
 
 			scheme := runtime.NewScheme()
 			err := v1alpha1.AddToScheme(scheme)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			appProject := argoprojiov1alpha1.AppProject{}
 
 			client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&appProject).Build()
@@ -352,7 +353,7 @@ func TestGitGenerateParamsFromDirectories(t *testing.T) {
 			if testCaseCopy.expectedError != nil {
 				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, testCaseCopy.expected, got)
 			}
 
@@ -643,7 +644,7 @@ func TestGitGenerateParamsFromDirectoriesGoTemplate(t *testing.T) {
 
 			scheme := runtime.NewScheme()
 			err := v1alpha1.AddToScheme(scheme)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			appProject := argoprojiov1alpha1.AppProject{}
 
 			client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&appProject).Build()
@@ -653,7 +654,7 @@ func TestGitGenerateParamsFromDirectoriesGoTemplate(t *testing.T) {
 			if testCaseCopy.expectedError != nil {
 				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, testCaseCopy.expected, got)
 			}
 
@@ -1007,7 +1008,7 @@ cluster:
 
 			scheme := runtime.NewScheme()
 			err := v1alpha1.AddToScheme(scheme)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			appProject := argoprojiov1alpha1.AppProject{}
 
 			client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&appProject).Build()
@@ -1018,7 +1019,7 @@ cluster:
 			if testCaseCopy.expectedError != nil {
 				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.ElementsMatch(t, testCaseCopy.expected, got)
 			}
 
@@ -1363,7 +1364,7 @@ cluster:
 
 			scheme := runtime.NewScheme()
 			err := v1alpha1.AddToScheme(scheme)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			appProject := argoprojiov1alpha1.AppProject{}
 
 			client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&appProject).Build()
@@ -1374,7 +1375,7 @@ cluster:
 			if testCaseCopy.expectedError != nil {
 				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.ElementsMatch(t, testCaseCopy.expected, got)
 			}
 
