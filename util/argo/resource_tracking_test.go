@@ -171,7 +171,7 @@ func TestParseAppInstanceValueCorrectFormat(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func sampleResource() *unstructured.Unstructured {
+func sampleResource(t *testing.T) *unstructured.Unstructured {
 	yamlBytes, err := os.ReadFile("testdata/svc.yaml")
 	require.NoError(t, err)
 	var obj *unstructured.Unstructured
@@ -184,12 +184,12 @@ func TestResourceIdNormalizer_Normalize(t *testing.T) {
 	rt := NewResourceTracking()
 
 	// live object is a resource that has old style tracking label
-	liveObj := sampleResource()
+	liveObj := sampleResource(t)
 	err := rt.SetAppInstance(liveObj, common.LabelKeyAppInstance, "my-app", "", TrackingMethodLabel)
 	require.NoError(t, err)
 
 	// config object is a resource that has new style tracking annotation
-	configObj := sampleResource()
+	configObj := sampleResource(t)
 	err = rt.SetAppInstance(configObj, common.AnnotationKeyAppInstance, "my-app2", "", TrackingMethodAnnotation)
 	require.NoError(t, err)
 
@@ -207,12 +207,12 @@ func TestResourceIdNormalizer_Normalize_ConfigHasOldLabel(t *testing.T) {
 	rt := NewResourceTracking()
 
 	// live object is a resource that has old style tracking label
-	liveObj := sampleResource()
+	liveObj := sampleResource(t)
 	err := rt.SetAppInstance(liveObj, common.LabelKeyAppInstance, "my-app", "", TrackingMethodLabel)
 	require.NoError(t, err)
 
 	// config object is a resource that has new style tracking annotation
-	configObj := sampleResource()
+	configObj := sampleResource(t)
 	err = rt.SetAppInstance(configObj, common.AnnotationKeyAppInstance, "my-app2", "", TrackingMethodAnnotation)
 	require.NoError(t, err)
 	err = rt.SetAppInstance(configObj, common.LabelKeyAppInstance, "my-app", "", TrackingMethodLabel)
