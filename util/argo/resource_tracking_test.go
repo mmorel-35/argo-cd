@@ -134,9 +134,7 @@ func TestSetAppInstanceAnnotationNotFound(t *testing.T) {
 func TestParseAppInstanceValue(t *testing.T) {
 	resourceTracking := NewResourceTracking()
 	appInstanceValue, err := resourceTracking.ParseAppInstanceValue("app:<group>/<kind>:<namespace>/<name>")
-	if !require.NoError(t, err) {
-		t.Fatal()
-	}
+	require.NoError(t, err)
 	assert.Equal(t, "app", appInstanceValue.ApplicationName)
 	assert.Equal(t, "<group>", appInstanceValue.Group)
 	assert.Equal(t, "<kind>", appInstanceValue.Kind)
