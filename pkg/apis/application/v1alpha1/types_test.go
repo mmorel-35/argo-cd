@@ -1313,7 +1313,7 @@ func TestApplicationSourceHelm_AddFileParameter(t *testing.T) {
 func TestNewHelmParameter(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
 		_, err := NewHelmParameter("garbage", false)
-		assert.EqualError(t, err, "Expected helm parameter of the form: param=value. Received: garbage")
+		require.EqualError(t, err, "Expected helm parameter of the form: param=value. Received: garbage")
 	})
 	t.Run("NonString", func(t *testing.T) {
 		p, err := NewHelmParameter("foo=bar", false)
@@ -1335,11 +1335,11 @@ func TestNewKustomizeReplica(t *testing.T) {
 	})
 	t.Run("InvalidFormat", func(t *testing.T) {
 		_, err := NewKustomizeReplica("garbage")
-		assert.EqualError(t, err, "expected parameter of the form: name=count. Received: garbage")
+		require.EqualError(t, err, "expected parameter of the form: name=count. Received: garbage")
 	})
 	t.Run("InvalidCount", func(t *testing.T) {
 		_, err := NewKustomizeReplica("my-deployment=garbage")
-		assert.EqualError(t, err, "expected integer value for count. Received: garbage")
+		require.EqualError(t, err, "expected integer value for count. Received: garbage")
 	})
 }
 
@@ -1359,7 +1359,7 @@ func TestKustomizeReplica_GetIntCount(t *testing.T) {
 			Count: intstr.FromString("garbage"),
 		}
 		count, err := kr.GetIntCount()
-		assert.EqualError(t, err, "expected integer value for count. Received: garbage")
+		require.EqualError(t, err, "expected integer value for count. Received: garbage")
 		assert.Equal(t, 0, count)
 	})
 	t.Run("Integer", func(t *testing.T) {
@@ -2520,7 +2520,7 @@ func TestSyncWindow_Update(t *testing.T) {
 	})
 	t.Run("MissingConfig", func(t *testing.T) {
 		err := e.Update("", "", []string{}, []string{}, []string{}, "")
-		assert.EqualError(t, err, "cannot update: require one or more of schedule, duration, application, namespace, or cluster")
+		require.EqualError(t, err, "cannot update: require one or more of schedule, duration, application, namespace, or cluster")
 	})
 	t.Run("ChangeDuration", func(t *testing.T) {
 		err := e.Update("", "10h", []string{}, []string{}, []string{}, "")
@@ -3066,15 +3066,15 @@ func TestRemoveEnvEntry(t *testing.T) {
 			Env:  Env{&EnvEntry{"foo", "bar"}},
 		}
 		err := plugins.RemoveEnvEntry("key")
-		assert.EqualError(t, err, `unable to find env variable with key "key" for plugin "test"`)
+		require.EqualError(t, err, `unable to find env variable with key "key" for plugin "test"`)
 		err = plugins.RemoveEnvEntry("bar")
-		assert.EqualError(t, err, `unable to find env variable with key "bar" for plugin "test"`)
+		require.EqualError(t, err, `unable to find env variable with key "bar" for plugin "test"`)
 		assert.Equal(t, Env{&EnvEntry{"foo", "bar"}}, plugins.Env)
 	})
 	t.Run("Remove element from an empty list", func(t *testing.T) {
 		plugins := &ApplicationSourcePlugin{Name: "test"}
 		err := plugins.RemoveEnvEntry("key")
-		assert.EqualError(t, err, `unable to find env variable with key "key" for plugin "test"`)
+		require.EqualError(t, err, `unable to find env variable with key "key" for plugin "test"`)
 	})
 }
 
