@@ -196,9 +196,9 @@ func TestHTTPSCreds_Environ_clientCert(t *testing.T) {
 	io.Close(closer)
 
 	_, err = os.Stat(cert)
-	assert.ErrorIs(t, err, os.ErrNotExist)
+	require.ErrorIs(t, err, os.ErrNotExist)
 	_, err = os.Stat(key)
-	assert.ErrorIs(t, err, os.ErrNotExist)
+	require.ErrorIs(t, err, os.ErrNotExist)
 }
 
 func Test_SSHCreds_Environ(t *testing.T) {
