@@ -147,9 +147,7 @@ func TestParseAppInstanceValue(t *testing.T) {
 func TestParseAppInstanceValueColon(t *testing.T) {
 	resourceTracking := NewResourceTracking()
 	appInstanceValue, err := resourceTracking.ParseAppInstanceValue("app:<group>/<kind>:<namespace>/<name>:<colon>")
-	if !require.NoError(t, err) {
-		t.Fatal()
-	}
+	require.NoError(t, err)
 	assert.Equal(t, "app", appInstanceValue.ApplicationName)
 	assert.Equal(t, "<group>", appInstanceValue.Group)
 	assert.Equal(t, "<kind>", appInstanceValue.Kind)
@@ -177,14 +175,10 @@ func TestParseAppInstanceValueCorrectFormat(t *testing.T) {
 
 func sampleResource() *unstructured.Unstructured {
 	yamlBytes, err := os.ReadFile("testdata/svc.yaml")
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	var obj *unstructured.Unstructured
 	err = yaml.Unmarshal(yamlBytes, &obj)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	return obj
 }
 
