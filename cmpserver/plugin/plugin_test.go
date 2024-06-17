@@ -103,7 +103,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, match)
 		assert.True(t, discovery)
 	})
@@ -118,7 +118,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, match)
 		assert.True(t, discovery)
 	})
@@ -148,7 +148,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, match)
 		assert.True(t, discovery)
 	})
@@ -165,7 +165,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, match)
 		assert.True(t, discovery)
 	})
@@ -199,7 +199,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, match)
 		assert.True(t, discovery)
 	})
@@ -217,7 +217,7 @@ func TestMatchRepository(t *testing.T) {
 		// when
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, match)
 		assert.True(t, discovery)
 	})
@@ -236,7 +236,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, match)
 		assert.True(t, discovery)
 	})
@@ -256,7 +256,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, match)
 		assert.True(t, discovery)
 	})
@@ -275,7 +275,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.False(t, match)
 		assert.True(t, discovery)
 	})
@@ -288,7 +288,7 @@ func TestMatchRepository(t *testing.T) {
 		match, discovery, err := f.service.matchRepository(context.Background(), f.path, f.env, ".")
 
 		// then
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, match)
 		assert.False(t, discovery)
 	})
@@ -360,7 +360,7 @@ func TestRunCommandContextTimeout(t *testing.T) {
 	before := time.Now()
 	_, err := runCommand(ctx, command, "", []string{})
 	after := time.Now()
-	assert.Error(t, err) // The command should time out, causing an error.
+	require.Error(t, err) // The command should time out, causing an error.
 	assert.Less(t, after.Sub(before), 1*time.Second)
 }
 
@@ -385,7 +385,7 @@ func TestRunCommandContextTimeoutWithCleanup(t *testing.T) {
 	output, err := runCommand(ctx, command, "", []string{})
 	after := time.Now()
 
-	assert.Error(t, err) // The command should time out, causing an error.
+	require.Error(t, err) // The command should time out, causing an error.
 	assert.Less(t, after.Sub(before), 1*time.Second)
 	// The command should still have completed the cleanup after termination.
 	assert.Contains(t, output, "cleanup completed")
@@ -451,7 +451,7 @@ func Test_getParametersAnnouncement_invalid_json(t *testing.T) {
 		Args:    []string{`[`},
 	}
 	_, err := getParametersAnnouncement(context.Background(), "", []*repoclient.ParameterAnnouncement{}, command, []*apiclient.EnvEntry{})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "unexpected end of JSON input")
 }
 
@@ -461,7 +461,7 @@ func Test_getParametersAnnouncement_bad_command(t *testing.T) {
 		Args:    []string{"1"},
 	}
 	_, err := getParametersAnnouncement(context.Background(), "", []*repoclient.ParameterAnnouncement{}, command, []*apiclient.EnvEntry{})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "error executing dynamic parameter output command")
 }
 
@@ -506,7 +506,7 @@ func TestService_Init(t *testing.T) {
 	err = os.Chmod(tempDir, 0o700)
 	require.NoError(t, err)
 	err = s.Init(workDir)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.DirExists(t, workDir)
 	assert.NoFileExists(t, testfile)
 }
