@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_getChartDetailsNotSet(t *testing.T) {
@@ -58,6 +59,6 @@ maintainers: alex
 `
 
 	cd, err := getChartDetails(chart1)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, cd)
 }
