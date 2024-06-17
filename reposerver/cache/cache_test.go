@@ -390,7 +390,7 @@ func TestGetGitReferences(t *testing.T) {
 		fixtures.mockCache.RedisClient.On("Get", mock.Anything, mock.Anything).Return(errors.New("test cache error"))
 		var references []*plumbing.Reference
 		lockOwner, err := cache.GetGitReferences("test-repo", &references)
-		assert.ErrorContains(t, err, "test cache error", "Error should be propagated")
+		require.ErrorContains(t, err, "test cache error", "Error should be propagated")
 		assert.Equal(t, "", lockOwner, "Lock owner should be empty")
 		assert.Nil(t, references)
 		fixtures.mockCache.AssertCacheCalledTimes(t, &mocks.CacheCallCounts{ExternalGets: 1})
