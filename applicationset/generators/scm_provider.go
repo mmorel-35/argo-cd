@@ -75,14 +75,14 @@ type ErrDisallowedSCMProvider struct {
 	Allowed  []string
 }
 
-func NewErrDisallowedSCMProvider(provider string, allowed []string) *ErrDisallowedSCMProvider {
-	return &ErrDisallowedSCMProvider{
+func NewErrDisallowedSCMProvider(provider string, allowed []string) ErrDisallowedSCMProvider {
+	return ErrDisallowedSCMProvider{
 		Provider: provider,
 		Allowed:  allowed,
 	}
 }
 
-func (e *ErrDisallowedSCMProvider) Error() string {
+func (e ErrDisallowedSCMProvider) Error() string {
 	return fmt.Sprintf("scm provider %q not allowed, must use one of the following: %s", e.Provider, strings.Join(e.Allowed, ", "))
 }
 
