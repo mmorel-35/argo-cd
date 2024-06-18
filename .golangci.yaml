@@ -6,6 +6,7 @@ issues:
   max-same-issues: 0
 linters:
   enable:
+    - contextcheck
     - errcheck
     - errorlint
     - gocritic
