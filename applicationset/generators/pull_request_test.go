@@ -283,7 +283,7 @@ func TestAllowedSCMProviderPullRequest(t *testing.T) {
 	cases := []struct {
 		name           string
 		providerConfig *argoprojiov1alpha1.PullRequestGenerator
-		expectedError  error
+		expectedError  *ErrDisallowedSCMProvider
 	}{
 		{
 			name: "Error Github",
@@ -351,7 +351,7 @@ func TestAllowedSCMProviderPullRequest(t *testing.T) {
 			_, err := pullRequestGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 
 			require.Error(t, err, "Must return an error")
-			assert.ErrorAs(t, err, testCaseCopy.expectedError)
+			assert.ErrorAs(t, err, &testCaseCopy.expectedError)
 		})
 	}
 }
