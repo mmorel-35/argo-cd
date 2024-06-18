@@ -330,7 +330,7 @@ func ValidateRepo(
 		return conditions, nil
 	}
 	config := cluster.RESTConfig()
-	cluster.ServerVersion, err = kubectl.GetServerVersion(config)
+	cluster.Info.ServerVersion, err = kubectl.GetServerVersion(config)
 	if err != nil {
 		return nil, fmt.Errorf("error getting k8s server version: %w", err)
 	}
