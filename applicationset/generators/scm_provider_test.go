@@ -278,7 +278,7 @@ func TestAllowedSCMProvider(t *testing.T) {
 			_, err := scmGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 
 			require.Error(t, err, "Must return an error")
-			var expectedError *ErrDisallowedSCMProvider
+			var expectedError ErrDisallowedSCMProvider
 			assert.ErrorAs(t, err, &expectedError)
 		})
 	}
