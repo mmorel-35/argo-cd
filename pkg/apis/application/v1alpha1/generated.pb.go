@@ -8329,13 +8329,13 @@ func (m *Cluster) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x32
 		}
 	}
-	i -= len(m.ServerVersion)
-	copy(dAtA[i:], m.ServerVersion)
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ServerVersion)))
+	i -= len(m.Info.ServerVersion)
+	copy(dAtA[i:], m.Info.ServerVersion)
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Info.ServerVersion)))
 	i--
 	dAtA[i] = 0x2a
 	{
-		size, err := m.ConnectionState.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.Info.ConnectionState.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -15659,9 +15659,9 @@ func (m *Cluster) Size() (n int) {
 	n += 1 + l + sovGenerated(uint64(l))
 	l = m.Config.Size()
 	n += 1 + l + sovGenerated(uint64(l))
-	l = m.ConnectionState.Size()
+	l = m.Info.ConnectionState.Size()
 	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ServerVersion)
+	l = len(m.Info.ServerVersion)
 	n += 1 + l + sovGenerated(uint64(l))
 	if len(m.Namespaces) > 0 {
 		for _, s := range m.Namespaces {
