@@ -9,6 +9,7 @@ issues:
         - unparam
 linters:
   enable:
+    - contextcheck
     - errcheck
     - errorlint
     - gocritic
