@@ -10,6 +10,7 @@ issues:
 linters:
   enable:
     - errcheck
+    - errname
     - errorlint
     - gocritic
     - gofumpt
