@@ -34,7 +34,7 @@ type Service struct {
 	appSetName string
 }
 
-func NewPluginService(ctx context.Context, appSetName string, baseURL string, token string, requestTimeout int) (*Service, error) {
+func NewPluginService(_ context.Context, appSetName string, baseURL string, token string, requestTimeout int) (*Service, error) {
 	var clientOptionFns []internalhttp.ClientOptionFunc
 
 	clientOptionFns = append(clientOptionFns, internalhttp.WithToken(token))

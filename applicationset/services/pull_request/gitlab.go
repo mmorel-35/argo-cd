@@ -21,7 +21,7 @@ type GitLabService struct {
 
 var _ PullRequestService = (*GitLabService)(nil)
 
-func NewGitLabService(ctx context.Context, token, url, project string, labels []string, pullRequestState string, scmRootCAPath string, insecure bool, caCerts []byte) (PullRequestService, error) {
+func NewGitLabService(_ context.Context, token, url, project string, labels []string, pullRequestState string, scmRootCAPath string, insecure bool, caCerts []byte) (PullRequestService, error) {
 	var clientOptionFns []gitlab.ClientOptionFunc
 
 	// Set a custom Gitlab base URL if one is provided
@@ -54,7 +54,7 @@ func NewGitLabService(ctx context.Context, token, url, project string, labels []
 	}, nil
 }
 
-func (g *GitLabService) List(ctx context.Context) ([]*PullRequest, error) {
+func (g *GitLabService) List(_ context.Context) ([]*PullRequest, error) {
 	// Filter the merge requests on labels, if they are specified.
 	var labels *gitlab.LabelOptions
 	if len(g.labels) > 0 {

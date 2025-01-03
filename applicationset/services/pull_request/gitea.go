@@ -18,7 +18,7 @@ type GiteaService struct {
 
 var _ PullRequestService = (*GiteaService)(nil)
 
-func NewGiteaService(ctx context.Context, token, url, owner, repo string, insecure bool) (PullRequestService, error) {
+func NewGiteaService(_ context.Context, token, url, owner, repo string, insecure bool) (PullRequestService, error) {
 	if token == "" {
 		token = os.Getenv("GITEA_TOKEN")
 	}
@@ -45,7 +45,7 @@ func NewGiteaService(ctx context.Context, token, url, owner, repo string, insecu
 	}, nil
 }
 
-func (g *GiteaService) List(ctx context.Context) ([]*PullRequest, error) {
+func (g *GiteaService) List(_ context.Context) ([]*PullRequest, error) {
 	opts := gitea.ListPullRequestsOptions{
 		State: gitea.StateOpen,
 	}

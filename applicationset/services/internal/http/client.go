@@ -65,7 +65,7 @@ func newClient(baseURL string, options ...ClientOptionFunc) (*Client, error) {
 	return c, nil
 }
 
-func (c *Client) NewRequest(method, path string, body any, options []ClientOptionFunc) (*http.Request, error) {
+func (c *Client) NewRequest(method, path string, body any, _ []ClientOptionFunc) (*http.Request, error) {
 	// Make sure the given URL end with a slash
 	if !strings.HasSuffix(c.baseURL, "/") {
 		c.baseURL += "/"
@@ -102,7 +102,7 @@ func (c *Client) NewRequest(method, path string, body any, options []ClientOptio
 	return req, nil
 }
 
-func (c *Client) Do(ctx context.Context, req *http.Request, v any) (*http.Response, error) {
+func (c *Client) Do(_ context.Context, req *http.Request, v any) (*http.Response, error) {
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
