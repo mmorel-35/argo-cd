@@ -239,8 +239,8 @@ func (c HTTPSCreds) Environ() (io.Closer, []string, error) {
 	}), env, nil
 }
 
-func (g HTTPSCreds) HasClientCert() bool {
-	return g.clientCertData != "" && g.clientCertKey != ""
+func (c HTTPSCreds) HasClientCert() bool {
+	return c.clientCertData != "" && c.clientCertKey != ""
 }
 
 func (c HTTPSCreds) GetClientCertData() string {

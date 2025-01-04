@@ -115,7 +115,6 @@ linters-settings:
       - name: range
       # receiver names in a method should reflect the struct name (p for Person, for example)
       - name: receiver-naming
-        disabled: true
       # redefining built in names (true, false, append, make) can lead to bugs very difficult to detect.
       - name: redefines-builtin-id
         disabled: true

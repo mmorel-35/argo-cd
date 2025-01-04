@@ -29,7 +29,7 @@ func NewApplicationGenerator(argoClientSet *appclientset.Clientset, clientSet *k
 	return &ApplicationGenerator{argoClientSet, clientSet, db}
 }
 
-func (pg *ApplicationGenerator) buildRandomSource(repositories []*v1alpha1.Repository) (*v1alpha1.ApplicationSource, error) {
+func (ag *ApplicationGenerator) buildRandomSource(repositories []*v1alpha1.Repository) (*v1alpha1.ApplicationSource, error) {
 	seed := rand.New(rand.NewSource(time.Now().Unix()))
 	repoNumber := seed.Int() % len(repositories)
 	return &v1alpha1.ApplicationSource{
@@ -47,7 +47,7 @@ func (ag *ApplicationGenerator) buildSource(opts *util.GenerateOpts, repositorie
 	return ag.buildRandomSource(repositories)
 }
 
-func (pg *ApplicationGenerator) buildRandomDestination(opts *util.GenerateOpts, clusters []v1alpha1.Cluster) (*v1alpha1.ApplicationDestination, error) {
+func (ag *ApplicationGenerator) buildRandomDestination(opts *util.GenerateOpts, clusters []v1alpha1.Cluster) (*v1alpha1.ApplicationDestination, error) {
 	seed := rand.New(rand.NewSource(time.Now().Unix()))
 	clusterNumber := seed.Int() % len(clusters)
 	return &v1alpha1.ApplicationDestination{
@@ -64,25 +64,25 @@ func (ag *ApplicationGenerator) buildDestination(opts *util.GenerateOpts, cluste
 	return ag.buildRandomDestination(opts, clusters)
 }
 
-func (pg *ApplicationGenerator) Generate(opts *util.GenerateOpts) error {
-	settingsMgr := settings.NewSettingsManager(context.TODO(), pg.clientSet, opts.Namespace)
-	repositories, err := db.NewDB(opts.Namespace, settingsMgr, pg.clientSet).ListRepositories(context.TODO())
+func (ag *ApplicationGenerator) Generate(opts *util.GenerateOpts) error {
+	settingsMgr := settings.NewSettingsManager(context.TODO(), ag.clientSet, opts.Namespace)
+	repositories, err := db.NewDB(opts.Namespace, settingsMgr, ag.clientSet).ListRepositories(context.TODO())
 	if err != nil {
 		return err
 	}
-	clusters, err := db.NewDB(opts.Namespace, settingsMgr, pg.clientSet).ListClusters(context.TODO())
+	clusters, err := db.NewDB(opts.Namespace, settingsMgr, ag.clientSet).ListClusters(context.TODO())
 	if err != nil {
 		return err
 	}
-	applications := pg.argoClientSet.ArgoprojV1alpha1().Applications(opts.Namespace)
+	applications := ag.argoClientSet.ArgoprojV1alpha1().Applications(opts.Namespace)
 	for i := 0; i < opts.ApplicationOpts.Samples; i++ {
 		log.Printf("Generate application #%v", i)
-		source, err := pg.buildSource(opts, repositories)
+		source, err := ag.buildSource(opts, repositories)
 		if err != nil {
 			return err
 		}
 		log.Printf("Pick source %q", source)
-		destination, err := pg.buildDestination(opts, clusters.Items)
+		destination, err := ag.buildDestination(opts, clusters.Items)
 		if err != nil {
 			return err
 		}
