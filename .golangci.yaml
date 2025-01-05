@@ -98,7 +98,7 @@ linters-settings:
         disabled: true
       # for better readability, variables of type `error` must be named with the prefix `err`.
       - name: error-naming
-        disabled: true
+        disabled: false
       # for better readability, the errors should be last in the list of returned values by a function.
       - name: error-return
       # for better readability, error messages should not be capitalized or end with punctuation or a newline.
