@@ -1,5 +1,5 @@
 package generators
 
-type SCMGeneratorWithCustomApiUrl interface {
-	CustomApiUrl() string
+type SCMGeneratorWithCustomAPIURL interface {
+	CustomAPIURL() string
 }

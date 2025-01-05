@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	Test_Cert1CN            = "CN=foo.example.com,OU=SpecOps,O=Capone\\, Inc,L=Chicago,ST=IL,C=US"
-	Test_Cert2CN            = "CN=bar.example.com,OU=Testsuite,O=Testing Corp,L=Hanover,ST=Lower Saxony,C=DE"
-	Test_TLSValidSingleCert = `
+	TestCert1CN            = "CN=foo.example.com,OU=SpecOps,O=Capone\\, Inc,L=Chicago,ST=IL,C=US"
+	TestCert2CN            = "CN=bar.example.com,OU=Testsuite,O=Testing Corp,L=Hanover,ST=Lower Saxony,C=DE"
+	TestTLSValidSingleCert = `
 -----BEGIN CERTIFICATE-----
 MIIFvTCCA6WgAwIBAgIUGrTmW3qc39zqnE08e3qNDhUkeWswDQYJKoZIhvcNAQEL
 BQAwbjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAklMMRAwDgYDVQQHDAdDaGljYWdv
@@ -51,7 +51,7 @@ xO7Tr5lAo74vNUkF2EHNaI28/RGnJPm2TIxZqy4rNH6L
 `
 )
 
-const Test_TLSInvalidPEMData = `
+const TestTLSInvalidPEMData = `
 MIIF1zCCA7+gAwIBAgIUQdTcSHY2Sxd3Tq/v1eIEZPCNbOowDQYJKoZIhvcNAQEL
 BQAwezELMAkGA1UEBhMCREUxFTATBgNVBAgMDExvd2VyIFNheG9ueTEQMA4GA1UE
 BwwHSGFub3ZlcjEVMBMGA1UECgwMVGVzdGluZyBDb3JwMRIwEAYDVQQLDAlUZXN0
@@ -68,7 +68,7 @@ YilqCPFX+az09EqqK/iHXnkdZ/Z2fCuU+9M/Zhrnlwlygl3RuVBI6xhm/ZsXtL2E
 Gxa61lNy6pyx5+hSxHEFEJshXLtioRd702VdLKxEOuYSXKeJDs1x9o6cJ75S6hko
 `
 
-const Test_TLSInvalidSingleCert = `
+const TestTLSInvalidSingleCert = `
 -----BEGIN CERTIFICATE-----
 MIIF1zCCA7+gAwIBAgIUQdTcSHY2Sxd3Tq/v1eIEZPCNbOowDQYJKoZIhvcNAQEL
 BQAwezELMAkGA1UEBhMCREUxFTATBgNVBAgMDExvd2VyIFNheG9ueTEQMA4GA1UE
@@ -205,18 +205,18 @@ vs-ssh.visualstudio.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7Hr1oTWqNqOlzGJOf
 
 func Test_TLSCertificate_ValidPEM_ValidCert(t *testing.T) {
 	// Valid PEM data, single certificate, expect array of length 1
-	certificates, err := ParseTLSCertificatesFromData(Test_TLSValidSingleCert)
+	certificates, err := ParseTLSCertificatesFromData(TestTLSValidSingleCert)
 	require.NoError(t, err)
 	assert.Len(t, certificates, 1)
 	// Expect good decode
 	x509Cert, err := DecodePEMCertificateToX509(certificates[0])
 	require.NoError(t, err)
-	assert.Equal(t, Test_Cert1CN, x509Cert.Subject.String())
+	assert.Equal(t, TestCert1CN, x509Cert.Subject.String())
 }
 
 func Test_TLSCertificate_ValidPEM_InvalidCert(t *testing.T) {
 	// Valid PEM data, but invalid certificate
-	certificates, err := ParseTLSCertificatesFromData(Test_TLSInvalidSingleCert)
+	certificates, err := ParseTLSCertificatesFromData(TestTLSInvalidSingleCert)
 	require.NoError(t, err)
 	assert.Len(t, certificates, 1)
 	// Expect bad decode
@@ -226,7 +226,7 @@ func Test_TLSCertificate_ValidPEM_InvalidCert(t *testing.T) {
 
 func Test_TLSCertificate_InvalidPEM(t *testing.T) {
 	// Invalid PEM data, expect array of length 0
-	certificates, err := ParseTLSCertificatesFromData(Test_TLSInvalidPEMData)
+	certificates, err := ParseTLSCertificatesFromData(TestTLSInvalidPEMData)
 	require.NoError(t, err)
 	assert.Empty(t, certificates)
 }
@@ -239,10 +239,10 @@ func Test_TLSCertificate_ValidPEM_ValidCert_Multi(t *testing.T) {
 	// Expect good decode
 	x509Cert, err := DecodePEMCertificateToX509(certificates[0])
 	require.NoError(t, err)
-	assert.Equal(t, Test_Cert1CN, x509Cert.Subject.String())
+	assert.Equal(t, TestCert1CN, x509Cert.Subject.String())
 	x509Cert, err = DecodePEMCertificateToX509(certificates[1])
 	require.NoError(t, err)
-	assert.Equal(t, Test_Cert2CN, x509Cert.Subject.String())
+	assert.Equal(t, TestCert2CN, x509Cert.Subject.String())
 }
 
 func Test_TLSCertificate_ValidPEM_ValidCert_FromFile(t *testing.T) {
@@ -253,7 +253,7 @@ func Test_TLSCertificate_ValidPEM_ValidCert_FromFile(t *testing.T) {
 	// Expect good decode
 	x509Cert, err := DecodePEMCertificateToX509(certificates[0])
 	require.NoError(t, err)
-	assert.Equal(t, Test_Cert1CN, x509Cert.Subject.String())
+	assert.Equal(t, TestCert1CN, x509Cert.Subject.String())
 }
 
 func Test_TLSCertPool(t *testing.T) {

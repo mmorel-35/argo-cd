@@ -82,7 +82,7 @@ func ResolveFileOrDirectoryPath(appPath, repoRoot, dir string) (ResolvedFileOrDi
 	return ResolvedFileOrDirectoryPath(path), nil
 }
 
-// ResolveValueFilePathOrUrl will inspect and resolve given file, and make sure that its final path is within the boundaries of
+// ResolveValueFilePathOrURL will inspect and resolve given file, and make sure that its final path is within the boundaries of
 // the path specified in repoRoot.
 //
 // appPath is the path we're operating in, e.g. where a Helm chart was unpacked
@@ -110,7 +110,7 @@ func ResolveFileOrDirectoryPath(appPath, repoRoot, dir string) (ResolvedFileOrDi
 //
 // isRemote will be set to true if valueFile is an URL using an allowed
 // protocol scheme, or to false if it resolved to a local file.
-func ResolveValueFilePathOrUrl(appPath, repoRoot, valueFile string, allowedURLSchemes []string) (resolvedPath ResolvedFilePath, isRemote bool, err error) {
+func ResolveValueFilePathOrURL(appPath, repoRoot, valueFile string, allowedURLSchemes []string) (resolvedPath ResolvedFilePath, isRemote bool, err error) {
 	// A value file can be specified as an URL to a remote resource.
 	// We only allow certain URL schemes for remote value files.
 	url, err := url.Parse(valueFile)

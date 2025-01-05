@@ -307,7 +307,7 @@ func Test_GenerateDexConfig(t *testing.T) {
 			DexConfig: goodDexConfig,
 		}
 		t.Setenv(common.EnvLogLevel, log.WarnLevel.String())
-		t.Setenv(common.EnvLogFormat, utillog.JsonFormat)
+		t.Setenv(common.EnvLogFormat, utillog.JSONFormat)
 
 		config, err := GenerateDexConfigYAML(&s, false)
 		require.NoError(t, err)
@@ -335,7 +335,7 @@ func Test_GenerateDexConfig(t *testing.T) {
 			DexConfig: goodDexConfigWithLogger,
 		}
 		t.Setenv(common.EnvLogLevel, log.WarnLevel.String())
-		t.Setenv(common.EnvLogFormat, utillog.JsonFormat)
+		t.Setenv(common.EnvLogFormat, utillog.JSONFormat)
 
 		config, err := GenerateDexConfigYAML(&s, false)
 		require.NoError(t, err)

@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	JsonFormat = "json"
+	JSONFormat = "json"
 	TextFormat = "text"
 )
 
@@ -35,7 +35,7 @@ func NewWithCurrentConfig() *logrus.Logger {
 func CreateFormatter(logFormat string) logrus.Formatter {
 	var formatType logrus.Formatter
 	switch strings.ToLower(logFormat) {
-	case JsonFormat:
+	case JSONFormat:
 		formatType = &logrus.JSONFormatter{}
 	case TextFormat:
 		formatType = &logrus.TextFormatter{

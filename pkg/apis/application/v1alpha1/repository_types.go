@@ -44,8 +44,8 @@ type RepoCreds struct {
 	GCPServiceAccountKey string `json:"gcpServiceAccountKey,omitempty" protobuf:"bytes,13,opt,name=gcpServiceAccountKey"`
 	// Proxy specifies the HTTP/HTTPS proxy used to access repos at the repo server
 	Proxy string `json:"proxy,omitempty" protobuf:"bytes,19,opt,name=proxy"`
-	// ForceHttpBasicAuth specifies whether Argo CD should attempt to force basic auth for HTTP connections
-	ForceHttpBasicAuth bool `json:"forceHttpBasicAuth,omitempty" protobuf:"bytes,20,opt,name=forceHttpBasicAuth"`
+	// ForceHTTPBasicAuth specifies whether Argo CD should attempt to force basic auth for HTTP connections
+	ForceHTTPBasicAuth bool `json:"forceHttpBasicAuth,omitempty" protobuf:"bytes,20,opt,name=forceHttpBasicAuth"`
 	// NoProxy specifies a list of targets where the proxy isn't used, applies only in cases where the proxy is applied
 	NoProxy string `json:"noProxy,omitempty" protobuf:"bytes,23,opt,name=noProxy"`
 }
@@ -95,8 +95,8 @@ type Repository struct {
 	Project string `json:"project,omitempty" protobuf:"bytes,20,opt,name=project"`
 	// GCPServiceAccountKey specifies the service account key in JSON format to be used for getting credentials to Google Cloud Source repos
 	GCPServiceAccountKey string `json:"gcpServiceAccountKey,omitempty" protobuf:"bytes,21,opt,name=gcpServiceAccountKey"`
-	// ForceHttpBasicAuth specifies whether Argo CD should attempt to force basic auth for HTTP connections
-	ForceHttpBasicAuth bool `json:"forceHttpBasicAuth,omitempty" protobuf:"bytes,22,opt,name=forceHttpBasicAuth"`
+	// ForceHTTPBasicAuth specifies whether Argo CD should attempt to force basic auth for HTTP connections
+	ForceHTTPBasicAuth bool `json:"forceHttpBasicAuth,omitempty" protobuf:"bytes,22,opt,name=forceHttpBasicAuth"`
 	// NoProxy specifies a list of targets where the proxy isn't used, applies only in cases where the proxy is applied
 	NoProxy string `json:"noProxy,omitempty" protobuf:"bytes,23,opt,name=noProxy"`
 }
@@ -149,7 +149,7 @@ func (repo *Repository) CopyCredentialsFromRepo(source *Repository) {
 		if repo.GCPServiceAccountKey == "" {
 			repo.GCPServiceAccountKey = source.GCPServiceAccountKey
 		}
-		repo.ForceHttpBasicAuth = source.ForceHttpBasicAuth
+		repo.ForceHTTPBasicAuth = source.ForceHTTPBasicAuth
 	}
 }
 
@@ -192,7 +192,7 @@ func (repo *Repository) CopyCredentialsFrom(source *RepoCreds) {
 		if repo.NoProxy == "" {
 			repo.NoProxy = source.NoProxy
 		}
-		repo.ForceHttpBasicAuth = source.ForceHttpBasicAuth
+		repo.ForceHTTPBasicAuth = source.ForceHTTPBasicAuth
 	}
 }
 
@@ -202,7 +202,7 @@ func (repo *Repository) GetGitCreds(store git.CredsStore) git.Creds {
 		return git.NopCreds{}
 	}
 	if repo.Password != "" {
-		return git.NewHTTPSCreds(repo.Username, repo.Password, repo.TLSClientCertData, repo.TLSClientCertKey, repo.IsInsecure(), repo.Proxy, repo.NoProxy, store, repo.ForceHttpBasicAuth)
+		return git.NewHTTPSCreds(repo.Username, repo.Password, repo.TLSClientCertData, repo.TLSClientCertKey, repo.IsInsecure(), repo.Proxy, repo.NoProxy, store, repo.ForceHTTPBasicAuth)
 	}
 	if repo.SSHPrivateKey != "" {
 		return git.NewSSHCreds(repo.SSHPrivateKey, getCAPath(repo.Repo), repo.IsInsecure(), store, repo.Proxy, repo.NoProxy)
@@ -297,7 +297,7 @@ func (m *Repository) Sanitized() *Repository {
 		Proxy:                      m.Proxy,
 		NoProxy:                    m.NoProxy,
 		Project:                    m.Project,
-		ForceHttpBasicAuth:         m.ForceHttpBasicAuth,
+		ForceHTTPBasicAuth:         m.ForceHTTPBasicAuth,
 		InheritedCreds:             m.InheritedCreds,
 		GithubAppId:                m.GithubAppId,
 		GithubAppInstallationId:    m.GithubAppInstallationId,

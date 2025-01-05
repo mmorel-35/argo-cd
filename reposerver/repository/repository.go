@@ -1185,7 +1185,7 @@ func helmTemplate(appPath string, repoRoot string, env *v1alpha1.Env, q *apiclie
 					return nil, "", fmt.Errorf("error resolving set-file path: %w", err)
 				}
 			} else {
-				resolvedPath, _, err = pathutil.ResolveValueFilePathOrUrl(appPath, repoRoot, env.Envsubst(p.Path), q.GetValuesFileSchemes())
+				resolvedPath, _, err = pathutil.ResolveValueFilePathOrURL(appPath, repoRoot, env.Envsubst(p.Path), q.GetValuesFileSchemes())
 				if err != nil {
 					return nil, "", fmt.Errorf("error resolving helm value file path: %w", err)
 				}
@@ -1312,7 +1312,7 @@ func getResolvedValueFiles(
 			}
 		} else {
 			// This will resolve val to an absolute path (or a URL)
-			resolvedPath, isRemote, err = pathutil.ResolveValueFilePathOrUrl(appPath, repoRoot, env.Envsubst(rawValueFile), allowedValueFilesSchemas)
+			resolvedPath, isRemote, err = pathutil.ResolveValueFilePathOrURL(appPath, repoRoot, env.Envsubst(rawValueFile), allowedValueFilesSchemas)
 			if err != nil {
 				return nil, fmt.Errorf("error resolving value file path: %w", err)
 			}
@@ -1355,7 +1355,7 @@ func getResolvedRefValueFile(
 	substitutedPath := strings.Join(pathStrings, "/")
 
 	// Resolve the path relative to the referenced repo and block any attempt at traversal.
-	resolvedPath, _, err := pathutil.ResolveValueFilePathOrUrl(repoPath, repoPath, env.Envsubst(substitutedPath), allowedValueFilesSchemas)
+	resolvedPath, _, err := pathutil.ResolveValueFilePathOrURL(repoPath, repoPath, env.Envsubst(substitutedPath), allowedValueFilesSchemas)
 	if err != nil {
 		return "", fmt.Errorf("error resolving value file path: %w", err)
 	}
@@ -2151,7 +2151,7 @@ func populateHelmAppDetails(res *apiclient.RepoAppDetailsResponse, appPath strin
 	}
 	defer h.Dispose()
 
-	if resolvedValuesPath, _, err := pathutil.ResolveValueFilePathOrUrl(appPath, repoRoot, "values.yaml", []string{}); err == nil {
+	if resolvedValuesPath, _, err := pathutil.ResolveValueFilePathOrURL(appPath, repoRoot, "values.yaml", []string{}); err == nil {
 		if err := loadFileIntoIfExists(resolvedValuesPath, &res.Helm.Values); err != nil {
 			return err
 		}

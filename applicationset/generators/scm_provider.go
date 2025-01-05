@@ -94,8 +94,8 @@ func (e ErrDisallowedSCMProvider) Error() string {
 	return fmt.Sprintf("scm provider %q not allowed, must use one of the following: %s", e.Provider, strings.Join(e.Allowed, ", "))
 }
 
-func ScmProviderAllowed(applicationSetInfo *argoprojiov1alpha1.ApplicationSet, generator SCMGeneratorWithCustomApiUrl, allowedScmProviders []string) error {
-	url := generator.CustomApiUrl()
+func ScmProviderAllowed(applicationSetInfo *argoprojiov1alpha1.ApplicationSet, generator SCMGeneratorWithCustomAPIURL, allowedScmProviders []string) error {
+	url := generator.CustomAPIURL()
 
 	if url == "" || len(allowedScmProviders) == 0 {
 		return nil

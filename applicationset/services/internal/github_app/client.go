@@ -12,7 +12,7 @@ import (
 
 // Client builds a github client for the given app authentication.
 func Client(g github_app_auth.Authentication, url string) (*github.Client, error) {
-	rt, err := ghinstallation.New(http.DefaultTransport, g.Id, g.InstallationId, []byte(g.PrivateKey))
+	rt, err := ghinstallation.New(http.DefaultTransport, g.ID, g.InstallationID, []byte(g.PrivateKey))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create github app install: %w", err)
 	}

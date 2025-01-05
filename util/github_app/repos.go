@@ -26,8 +26,8 @@ func (r *repoAsCredentials) GetAuthSecret(ctx context.Context, secretName string
 		return nil, fmt.Errorf("no github app found for %s", secretName)
 	}
 	return &github_app_auth.Authentication{
-		Id:                repo.GithubAppId,
-		InstallationId:    repo.GithubAppInstallationId,
+		ID:                repo.GithubAppId,
+		InstallationID:    repo.GithubAppInstallationId,
 		EnterpriseBaseURL: repo.GitHubAppEnterpriseBaseURL,
 		PrivateKey:        repo.GithubAppPrivateKey,
 	}, nil

@@ -41,11 +41,11 @@ func (p *RandomizedTempPaths) GetPath(key string) (string, error) {
 	if val, ok := p.paths[key]; ok {
 		return val, nil
 	}
-	uniqueId, err := uuid.NewRandom()
+	uniqueID, err := uuid.NewRandom()
 	if err != nil {
 		return "", err
 	}
-	repoPath := filepath.Join(p.root, uniqueId.String())
+	repoPath := filepath.Join(p.root, uniqueID.String())
 	p.paths[key] = repoPath
 	return repoPath, nil
 }

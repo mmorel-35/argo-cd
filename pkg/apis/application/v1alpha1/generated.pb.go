@@ -12380,7 +12380,7 @@ func (m *RepoCreds) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0xba
 	i--
-	if m.ForceHttpBasicAuth {
+	if m.ForceHTTPBasicAuth {
 		dAtA[i] = 1
 	} else {
 		dAtA[i] = 0
@@ -12538,7 +12538,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0xba
 	i--
-	if m.ForceHttpBasicAuth {
+	if m.ForceHTTPBasicAuth {
 		dAtA[i] = 1
 	} else {
 		dAtA[i] = 0
@@ -21189,7 +21189,7 @@ func (this *RepoCreds) String() string {
 		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
 		`GCPServiceAccountKey:` + fmt.Sprintf("%v", this.GCPServiceAccountKey) + `,`,
 		`Proxy:` + fmt.Sprintf("%v", this.Proxy) + `,`,
-		`ForceHttpBasicAuth:` + fmt.Sprintf("%v", this.ForceHttpBasicAuth) + `,`,
+		`ForceHttpBasicAuth:` + fmt.Sprintf("%v", this.ForceHTTPBasicAuth) + `,`,
 		`NoProxy:` + fmt.Sprintf("%v", this.NoProxy) + `,`,
 		`}`,
 	}, "")
@@ -21237,7 +21237,7 @@ func (this *Repository) String() string {
 		`Proxy:` + fmt.Sprintf("%v", this.Proxy) + `,`,
 		`Project:` + fmt.Sprintf("%v", this.Project) + `,`,
 		`GCPServiceAccountKey:` + fmt.Sprintf("%v", this.GCPServiceAccountKey) + `,`,
-		`ForceHttpBasicAuth:` + fmt.Sprintf("%v", this.ForceHttpBasicAuth) + `,`,
+		`ForceHttpBasicAuth:` + fmt.Sprintf("%v", this.ForceHTTPBasicAuth) + `,`,
 		`NoProxy:` + fmt.Sprintf("%v", this.NoProxy) + `,`,
 		`}`,
 	}, "")
@@ -44304,7 +44304,7 @@ func (m *RepoCreds) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ForceHttpBasicAuth = bool(v != 0)
+			m.ForceHTTPBasicAuth = bool(v != 0)
 		case 23:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field NoProxy", wireType)
@@ -45110,7 +45110,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ForceHttpBasicAuth = bool(v != 0)
+			m.ForceHTTPBasicAuth = bool(v != 0)
 		case 23:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field NoProxy", wireType)

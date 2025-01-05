@@ -189,16 +189,16 @@ func TestCustomToolWithEnv(t *testing.T) {
 			assert.Equal(t, expectedKubeVersion, output)
 		}).
 		And(func(app *Application) {
-			expectedApiVersion := GetApiResources()
-			expectedApiVersionSlice := strings.Split(expectedApiVersion, ",")
-			sort.Strings(expectedApiVersionSlice)
+			expectedAPIVersion := GetApiResources()
+			expectedAPIVersionSlice := strings.Split(expectedAPIVersion, ",")
+			sort.Strings(expectedAPIVersionSlice)
 
 			output, err := Run("", "kubectl", "-n", DeploymentNamespace(), "get", "cm", ctx.AppName(), "-o", "jsonpath={.metadata.annotations.KubeApiVersion}")
 			require.NoError(t, err)
 			outputSlice := strings.Split(output, ",")
 			sort.Strings(outputSlice)
 
-			assert.EqualValues(t, expectedApiVersionSlice, outputSlice)
+			assert.EqualValues(t, expectedAPIVersionSlice, outputSlice)
 		})
 }
 
@@ -333,16 +333,16 @@ func TestCMPDiscoverWithFindCommandWithEnv(t *testing.T) {
 			assert.Equal(t, expectedKubeVersion, output)
 		}).
 		And(func(app *Application) {
-			expectedApiVersion := GetApiResources()
-			expectedApiVersionSlice := strings.Split(expectedApiVersion, ",")
-			sort.Strings(expectedApiVersionSlice)
+			expectedAPIVersion := GetApiResources()
+			expectedAPIVersionSlice := strings.Split(expectedAPIVersion, ",")
+			sort.Strings(expectedAPIVersionSlice)
 
 			output, err := Run("", "kubectl", "-n", DeploymentNamespace(), "get", "cm", ctx.AppName(), "-o", "jsonpath={.metadata.annotations.KubeApiVersion}")
 			require.NoError(t, err)
 			outputSlice := strings.Split(output, ",")
 			sort.Strings(outputSlice)
 
-			assert.EqualValues(t, expectedApiVersionSlice, outputSlice)
+			assert.EqualValues(t, expectedAPIVersionSlice, outputSlice)
 		})
 }
 

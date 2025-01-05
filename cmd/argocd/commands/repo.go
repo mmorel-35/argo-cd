@@ -181,7 +181,7 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 			repoOpts.Repo.GitHubAppEnterpriseBaseURL = repoOpts.GitHubAppEnterpriseBaseURL
 			repoOpts.Repo.Proxy = repoOpts.Proxy
 			repoOpts.Repo.NoProxy = repoOpts.NoProxy
-			repoOpts.Repo.ForceHttpBasicAuth = repoOpts.ForceHttpBasicAuth
+			repoOpts.Repo.ForceHTTPBasicAuth = repoOpts.ForceHttpBasicAuth
 
 			if repoOpts.Repo.Type == "helm" && repoOpts.Repo.Name == "" {
 				errors.CheckError(stderrors.New("Must specify --name for repos of type 'helm'"))
@@ -221,7 +221,7 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 				Proxy:                      repoOpts.Proxy,
 				Project:                    repoOpts.Repo.Project,
 				GcpServiceAccountKey:       repoOpts.Repo.GCPServiceAccountKey,
-				ForceHttpBasicAuth:         repoOpts.Repo.ForceHttpBasicAuth,
+				ForceHttpBasicAuth:         repoOpts.Repo.ForceHTTPBasicAuth,
 			}
 			_, err := repoIf.ValidateAccess(ctx, &repoAccessReq)
 			errors.CheckError(err)

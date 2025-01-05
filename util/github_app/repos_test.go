@@ -35,8 +35,8 @@ func Test_repoAsCredentials_GetAuth(t *testing.T) {
 			GithubAppInstallationId: 456,
 			GithubAppPrivateKey:     "private key",
 		}, want: &github_app_auth.Authentication{
-			Id:                123,
-			InstallationId:    456,
+			ID:                123,
+			InstallationID:    456,
 			EnterpriseBaseURL: "",
 			PrivateKey:        "private key",
 		}, wantErr: false},

@@ -359,7 +359,7 @@ func secretToRepository(secret *corev1.Secret) (*appsv1.Repository, error) {
 	if err != nil {
 		return repository, err
 	}
-	repository.ForceHttpBasicAuth = forceBasicAuth
+	repository.ForceHTTPBasicAuth = forceBasicAuth
 
 	return repository, nil
 }
@@ -389,7 +389,7 @@ func (s *secretsRepositoryBackend) repositoryToSecret(repository *appsv1.Reposit
 	updateSecretString(secret, "proxy", repository.Proxy)
 	updateSecretString(secret, "noProxy", repository.NoProxy)
 	updateSecretString(secret, "gcpServiceAccountKey", repository.GCPServiceAccountKey)
-	updateSecretBool(secret, "forceHttpBasicAuth", repository.ForceHttpBasicAuth)
+	updateSecretBool(secret, "forceHttpBasicAuth", repository.ForceHTTPBasicAuth)
 	addSecretMetadata(secret, s.getSecretType())
 }
 
@@ -431,7 +431,7 @@ func (s *secretsRepositoryBackend) secretToRepoCred(secret *corev1.Secret) (*app
 	if err != nil {
 		return repository, err
 	}
-	repository.ForceHttpBasicAuth = forceBasicAuth
+	repository.ForceHTTPBasicAuth = forceBasicAuth
 
 	return repository, nil
 }
@@ -456,7 +456,7 @@ func repoCredsToSecret(repoCreds *appsv1.RepoCreds, secret *corev1.Secret) {
 	updateSecretString(secret, "gcpServiceAccountKey", repoCreds.GCPServiceAccountKey)
 	updateSecretString(secret, "proxy", repoCreds.Proxy)
 	updateSecretString(secret, "noProxy", repoCreds.NoProxy)
-	updateSecretBool(secret, "forceHttpBasicAuth", repoCreds.ForceHttpBasicAuth)
+	updateSecretBool(secret, "forceHttpBasicAuth", repoCreds.ForceHTTPBasicAuth)
 	addSecretMetadata(secret, common.LabelValueSecretTypeRepoCreds)
 }
 
