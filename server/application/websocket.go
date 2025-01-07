@@ -34,7 +34,6 @@ var upgrader = func() websocket.Upgrader {
 
 // terminalSession implements PtyHandler
 type terminalSession struct {
-	ctx            context.Context
 	wsConn         *websocket.Conn
 	sizeChan       chan remotecommand.TerminalSize
 	doneChan       chan struct{}
@@ -54,7 +53,7 @@ func getToken(r *http.Request) (string, error) {
 }
 
 // newTerminalSession create terminalSession
-func newTerminalSession(ctx context.Context, w http.ResponseWriter, r *http.Request, responseHeader http.Header, sessionManager *util_session.SessionManager, appRBACName string, terminalOpts *TerminalOptions) (*terminalSession, error) {
+func newTerminalSession(w http.ResponseWriter, r *http.Request, responseHeader http.Header, sessionManager *util_session.SessionManager, appRBACName string, terminalOpts *TerminalOptions) (*terminalSession, error) {
 	token, err := getToken(r)
 	if err != nil {
 		return nil, err
@@ -65,7 +64,6 @@ func newTerminalSession(ctx context.Context, w http.ResponseWriter, r *http.Requ
 		return nil, err
 	}
 	session := &terminalSession{
-		ctx:            ctx,
 		wsConn:         conn,
 		tty:            true,
 		sizeChan:       make(chan remotecommand.TerminalSize),
@@ -134,12 +132,12 @@ func (t *terminalSession) reconnect() (int, error) {
 	return 0, nil
 }
 
-func (t *terminalSession) validatePermissions(p []byte) (int, error) {
+func (t *terminalSession) validatePermissions(ctx context.Context, p []byte) (int, error) {
 	permissionDeniedMessage, _ := json.Marshal(TerminalMessage{
 		Operation: "stdout",
 		Data:      "Permission denied",
 	})
-	if err := t.terminalOpts.Enf.EnforceErr(t.ctx.Value("claims"), rbacpolicy.ResourceApplications, rbacpolicy.ActionGet, t.appRBACName); err != nil {
+	if err := t.terminalOpts.Enf.EnforceErr(ctx.Value("claims"), rbacpolicy.ResourceApplications, rbacpolicy.ActionGet, t.appRBACName); err != nil {
 		err = t.wsConn.WriteMessage(websocket.TextMessage, permissionDeniedMessage)
 		if err != nil {
 			log.Errorf("permission denied message err: %v", err)
@@ -147,7 +145,7 @@ func (t *terminalSession) validatePermissions(p []byte) (int, error) {
 		return copy(p, EndOfTransmission), common.PermissionDeniedAPIError
 	}
 
-	if err := t.terminalOpts.Enf.EnforceErr(t.ctx.Value("claims"), rbacpolicy.ResourceExec, rbacpolicy.ActionCreate, t.appRBACName); err != nil {
+	if err := t.terminalOpts.Enf.EnforceErr(ctx.Value("claims"), rbacpolicy.ResourceExec, rbacpolicy.ActionCreate, t.appRBACName); err != nil {
 		err = t.wsConn.WriteMessage(websocket.TextMessage, permissionDeniedMessage)
 		if err != nil {
 			log.Errorf("permission denied message err: %v", err)
@@ -157,7 +155,7 @@ func (t *terminalSession) validatePermissions(p []byte) (int, error) {
 	return 0, nil
 }
 
-func (t *terminalSession) performValidationsAndReconnect(p []byte) (int, error) {
+func (t *terminalSession) performValidationsAndReconnect(ctx context.Context, p []byte) (int, error) {
 	// In disable auth mode, no point verifying the token or validating permissions
 	if t.terminalOpts.DisableAuth {
 		return 0, nil
@@ -170,7 +168,7 @@ func (t *terminalSession) performValidationsAndReconnect(p []byte) (int, error) 
 		// need to send reconnect code in case if token was refreshed
 		return t.reconnect()
 	}
-	code, err := t.validatePermissions(p)
+	code, err := t.validatePermissions(ctx, p)
 	if err != nil {
 		return code, err
 	}
@@ -180,7 +178,7 @@ func (t *terminalSession) performValidationsAndReconnect(p []byte) (int, error) 
 
 // Read called in a loop from remote command as long as the process is running
 func (t *terminalSession) Read(p []byte) (int, error) {
-	code, err := t.performValidationsAndReconnect(p)
+	code, err := t.performValidationsAndReconnect(context.Background(), p)
 	if err != nil {
 		return code, err
 	}

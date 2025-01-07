@@ -51,7 +51,7 @@ func (g *GitGenerator) GetRequeueAfter(appSetGenerator *argoprojiov1alpha1.Appli
 	return getDefaultRequeueAfter()
 }
 
-func (g *GitGenerator) GenerateParams(appSetGenerator *argoprojiov1alpha1.ApplicationSetGenerator, appSet *argoprojiov1alpha1.ApplicationSet, client client.Client) ([]map[string]any, error) {
+func (g *GitGenerator) GenerateParams(ctx context.Context, appSetGenerator *argoprojiov1alpha1.ApplicationSetGenerator, appSet *argoprojiov1alpha1.ApplicationSet, client client.Client) ([]map[string]any, error) {
 	if appSetGenerator == nil {
 		return nil, EmptyAppSetGeneratorError
 	}
@@ -74,7 +74,7 @@ func (g *GitGenerator) GenerateParams(appSetGenerator *argoprojiov1alpha1.Applic
 		if namespace == "" {
 			namespace = appSet.Namespace
 		}
-		if err := client.Get(context.TODO(), types.NamespacedName{Name: project, Namespace: namespace}, appProject); err != nil {
+		if err := client.Get(ctx, types.NamespacedName{Name: project, Namespace: namespace}, appProject); err != nil {
 			return nil, fmt.Errorf("error getting project %s: %w", project, err)
 		}
 		// we need to verify the signature on the Git revision if GPG is enabled

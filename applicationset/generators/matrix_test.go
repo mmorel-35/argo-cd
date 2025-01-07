@@ -150,7 +150,7 @@ func TestMatrixGenerate(t *testing.T) {
 					Git:  g.Git,
 					List: g.List,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
 					{
 						"path":                    "app1",
 						"path.basename":           "app1",
@@ -174,7 +174,7 @@ func TestMatrixGenerate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(context.Background(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -359,7 +359,7 @@ func TestMatrixGenerateGoTemplate(t *testing.T) {
 					Git:  g.Git,
 					List: g.List,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
 					{
 						"path": map[string]string{
 							"path":               "app1",
@@ -387,7 +387,7 @@ func TestMatrixGenerateGoTemplate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(context.Background(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -644,14 +644,14 @@ func TestInterpolatedMatrixGenerate(t *testing.T) {
 				fakeClient,
 				testCase.clientError,
 			}
-			clusterGenerator := NewClusterGenerator(context.Background(), cl, appClientset, "namespace")
+			clusterGenerator := NewClusterGenerator(cl, appClientset, "namespace")
 
 			for _, g := range testCaseCopy.baseGenerators {
 				gitGeneratorSpec := v1alpha1.ApplicationSetGenerator{
 					Git:      g.Git,
 					Clusters: g.Clusters,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{
 					{
 						"path":                    "examples/git-generator-files-discovery/cluster-config/dev/config.json",
 						"path.basename":           "dev",
@@ -673,7 +673,7 @@ func TestInterpolatedMatrixGenerate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(context.Background(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -827,14 +827,14 @@ func TestInterpolatedMatrixGenerateGoTemplate(t *testing.T) {
 				fakeClient,
 				testCase.clientError,
 			}
-			clusterGenerator := NewClusterGenerator(context.Background(), cl, appClientset, "namespace")
+			clusterGenerator := NewClusterGenerator(cl, appClientset, "namespace")
 
 			for _, g := range testCaseCopy.baseGenerators {
 				gitGeneratorSpec := v1alpha1.ApplicationSetGenerator{
 					Git:      g.Git,
 					Clusters: g.Clusters,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{
 					{
 						"path": map[string]string{
 							"path":               "examples/git-generator-files-discovery/cluster-config/dev/config.json",
@@ -860,7 +860,7 @@ func TestInterpolatedMatrixGenerateGoTemplate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(context.Background(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -985,7 +985,7 @@ func TestMatrixGenerateListElementsYaml(t *testing.T) {
 					Git:  g.Git,
 					List: g.List,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{{
 					"foo": map[string]any{
 						"bar": []any{
 							map[string]any{
@@ -1021,7 +1021,7 @@ func TestMatrixGenerateListElementsYaml(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(context.Background(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -1048,7 +1048,7 @@ func (g *generatorMock) GetTemplate(appSetGenerator *v1alpha1.ApplicationSetGene
 	return args.Get(0).(*v1alpha1.ApplicationSetTemplate)
 }
 
-func (g *generatorMock) GenerateParams(appSetGenerator *v1alpha1.ApplicationSetGenerator, appSet *v1alpha1.ApplicationSet, _ client.Client) ([]map[string]any, error) {
+func (g *generatorMock) GenerateParams(_ context.Context, appSetGenerator *v1alpha1.ApplicationSetGenerator, appSet *v1alpha1.ApplicationSet, _ client.Client) ([]map[string]any, error) {
 	args := g.Called(appSetGenerator, appSet)
 
 	return args.Get(0).([]map[string]any), args.Error(1)
@@ -1074,7 +1074,7 @@ func TestGitGenerator_GenerateParams_list_x_git_matrix_generator(t *testing.T) {
 	// of that bug.
 
 	listGeneratorMock := &generatorMock{}
-	listGeneratorMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), mock.AnythingOfType("*v1alpha1.ApplicationSet"), mock.Anything).Return([]map[string]any{
+	listGeneratorMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), mock.AnythingOfType("*v1alpha1.ApplicationSet"), mock.Anything).Return([]map[string]any{
 		{"some": "value"},
 	}, nil)
 	listGeneratorMock.On("GetTemplate", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator")).Return(&v1alpha1.ApplicationSetTemplate{})
@@ -1121,7 +1121,7 @@ func TestGitGenerator_GenerateParams_list_x_git_matrix_generator(t *testing.T) {
 
 	client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&appProject).Build()
 
-	params, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+	params, err := matrixGenerator.GenerateParams(context.Background(), &v1alpha1.ApplicationSetGenerator{
 		Matrix: matrixGeneratorSpec,
 	}, &v1alpha1.ApplicationSet{}, client)
 	require.NoError(t, err)

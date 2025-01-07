@@ -204,7 +204,7 @@ func (s *Server) Create(ctx context.Context, q *applicationset.ApplicationSetCre
 	}
 
 	if q.GetDryRun() {
-		apps, err := s.generateApplicationSetApps(ctx, log.WithField("applicationset", appset.Name), *appset, namespace)
+		apps, err := s.generateApplicationSetApps(log.WithField("applicationset", appset.Name), *appset, namespace)
 		if err != nil {
 			return nil, fmt.Errorf("unable to generate Applications of ApplicationSet: %w", err)
 		}
@@ -263,7 +263,7 @@ func (s *Server) Create(ctx context.Context, q *applicationset.ApplicationSetCre
 	return updated, nil
 }
 
-func (s *Server) generateApplicationSetApps(ctx context.Context, logEntry *log.Entry, appset v1alpha1.ApplicationSet, namespace string) ([]v1alpha1.Application, error) {
+func (s *Server) generateApplicationSetApps(logEntry *log.Entry, appset v1alpha1.ApplicationSet, namespace string) ([]v1alpha1.Application, error) {
 	argoCDDB := s.db
 
 	scmConfig := generators.NewSCMConfig(s.ScmRootCAPath, s.AllowedScmProviders, s.EnableScmProviders, github_app.NewAuthCredentials(argoCDDB.(db.RepoCredsDB)), true)
@@ -276,7 +276,7 @@ func (s *Server) generateApplicationSetApps(ctx context.Context, logEntry *log.E
 		return nil, fmt.Errorf("error creating ArgoCDService: %w", err)
 	}
 
-	appSetGenerators := generators.GetGenerators(ctx, s.client, s.k8sClient, namespace, argoCDService, s.dynamicClient, scmConfig)
+	appSetGenerators := generators.GetGenerators(s.client, s.k8sClient, namespace, argoCDService, s.dynamicClient, scmConfig)
 
 	apps, _, err := appsettemplate.GenerateApplications(logEntry, appset, appSetGenerators, &appsetutils.Render{}, s.client)
 	if err != nil {
@@ -390,7 +390,7 @@ func (s *Server) Generate(ctx context.Context, q *applicationset.ApplicationSetG
 	logger := log.New()
 	logger.SetOutput(logs)
 
-	apps, err := s.generateApplicationSetApps(ctx, logger.WithField("applicationset", appset.Name), *appset, namespace)
+	apps, err := s.generateApplicationSetApps(logger.WithField("applicationset", appset.Name), *appset, namespace)
 	if err != nil {
 		return nil, fmt.Errorf("unable to generate Applications of ApplicationSet: %w\n%s", err, logs.String())
 	}

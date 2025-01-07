@@ -1,6 +1,7 @@
 package generators
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
@@ -34,7 +35,7 @@ func NewMatrixGenerator(supportedGenerators map[string]Generator) Generator {
 	return m
 }
 
-func (m *MatrixGenerator) GenerateParams(appSetGenerator *argoprojiov1alpha1.ApplicationSetGenerator, appSet *argoprojiov1alpha1.ApplicationSet, client client.Client) ([]map[string]any, error) {
+func (m *MatrixGenerator) GenerateParams(_ context.Context, appSetGenerator *argoprojiov1alpha1.ApplicationSetGenerator, appSet *argoprojiov1alpha1.ApplicationSet, client client.Client) ([]map[string]any, error) {
 	if appSetGenerator.Matrix == nil {
 		return nil, EmptyAppSetGeneratorError
 	}

@@ -1,6 +1,7 @@
 package generators
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 
@@ -65,7 +66,7 @@ func Transform(requestedGenerator argoprojiov1alpha1.ApplicationSetGenerator, al
 				continue
 			}
 		}
-		params, err = g.GenerateParams(interpolatedGenerator, appSet, client)
+		params, err = g.GenerateParams(context.Background(), interpolatedGenerator, appSet, client)
 		if err != nil {
 			log.WithError(err).WithField("generator", g).
 				Error("error generating params")

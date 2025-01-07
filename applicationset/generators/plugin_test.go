@@ -629,8 +629,6 @@ func TestPluginGenerateParams(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			generatorConfig := argoprojiov1alpha1.ApplicationSetGenerator{
@@ -671,7 +669,7 @@ func TestPluginGenerateParams(t *testing.T) {
 
 			fakeClientWithCache := fake.NewClientBuilder().WithObjects([]client.Object{testCase.configmap, testCase.secret}...).Build()
 
-			pluginGenerator := NewPluginGenerator(ctx, fakeClientWithCache, fakeClient, "default")
+			pluginGenerator := NewPluginGenerator(fakeClientWithCache, fakeClient, "default")
 
 			applicationSetInfo := argoprojiov1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
@@ -682,7 +680,7 @@ func TestPluginGenerateParams(t *testing.T) {
 				},
 			}
 
-			got, err := pluginGenerator.GenerateParams(&generatorConfig, &applicationSetInfo, nil)
+			got, err := pluginGenerator.GenerateParams(context.Background(), &generatorConfig, &applicationSetInfo, nil)
 			if err != nil {
 				fmt.Println(err)
 			}

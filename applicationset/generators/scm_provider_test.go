@@ -1,6 +1,7 @@
 package generators
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -120,7 +121,7 @@ func TestSCMProviderGenerateParams(t *testing.T) {
 				},
 			}
 
-			got, err := scmGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
+			got, err := scmGenerator.GenerateParams(context.Background(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 
 			if testCaseCopy.expectedError != nil {
 				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
@@ -209,7 +210,7 @@ func TestAllowedSCMProvider(t *testing.T) {
 				},
 			}
 
-			_, err := scmGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
+			_, err := scmGenerator.GenerateParams(context.Background(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 
 			require.Error(t, err, "Must return an error")
 			var expectedError ErrDisallowedSCMProvider
@@ -236,6 +237,6 @@ func TestSCMProviderDisabled_SCMGenerator(t *testing.T) {
 		},
 	}
 
-	_, err := generator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
+	_, err := generator.GenerateParams(context.Background(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 	assert.ErrorIs(t, err, ErrSCMProvidersDisabled)
 }

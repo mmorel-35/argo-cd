@@ -293,7 +293,7 @@ func TestGenerateParamsForDuckType(t *testing.T) {
 
 			fakeDynClient := dynfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), gvrToListKind, testCase.resource)
 
-			duckTypeGenerator := NewDuckTypeGenerator(context.Background(), fakeDynClient, appClientset, "namespace")
+			duckTypeGenerator := NewDuckTypeGenerator(fakeDynClient, appClientset, "namespace")
 
 			applicationSetInfo := argoprojiov1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
@@ -302,7 +302,7 @@ func TestGenerateParamsForDuckType(t *testing.T) {
 				Spec: argoprojiov1alpha1.ApplicationSetSpec{},
 			}
 
-			got, err := duckTypeGenerator.GenerateParams(&argoprojiov1alpha1.ApplicationSetGenerator{
+			got, err := duckTypeGenerator.GenerateParams(context.Background(), &argoprojiov1alpha1.ApplicationSetGenerator{
 				ClusterDecisionResource: &argoprojiov1alpha1.DuckTypeGenerator{
 					ConfigMapRef:  "my-configmap",
 					Name:          testCase.resourceName,
@@ -589,7 +589,7 @@ func TestGenerateParamsForDuckTypeGoTemplate(t *testing.T) {
 
 			fakeDynClient := dynfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), gvrToListKind, testCase.resource)
 
-			duckTypeGenerator := NewDuckTypeGenerator(context.Background(), fakeDynClient, appClientset, "namespace")
+			duckTypeGenerator := NewDuckTypeGenerator(fakeDynClient, appClientset, "namespace")
 
 			applicationSetInfo := argoprojiov1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
@@ -600,7 +600,7 @@ func TestGenerateParamsForDuckTypeGoTemplate(t *testing.T) {
 				},
 			}
 
-			got, err := duckTypeGenerator.GenerateParams(&argoprojiov1alpha1.ApplicationSetGenerator{
+			got, err := duckTypeGenerator.GenerateParams(context.Background(), &argoprojiov1alpha1.ApplicationSetGenerator{
 				ClusterDecisionResource: &argoprojiov1alpha1.DuckTypeGenerator{
 					ConfigMapRef:  "my-configmap",
 					Name:          testCase.resourceName,
