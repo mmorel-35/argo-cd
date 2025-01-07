@@ -152,6 +152,9 @@ linters-settings:
       # Since Go 1.18, interface{} has an alias: any. This rule proposes to replace instances of interface{} with any.
       - name: use-any
         disabled: false
+      # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#useless-break
+      - name: useless-break
+        disabled: false
       # report when a variable declaration can be simplified
       - name: var-declaration
         disabled: false
