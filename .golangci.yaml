@@ -34,7 +34,6 @@ linters-settings:
     disabled-checks:
       - appendAssign
       - assignOp  # Keep it disabled for readability
-      - badCond
       - commentFormatting
       - exitAfterDefer
       - ifElseChain
