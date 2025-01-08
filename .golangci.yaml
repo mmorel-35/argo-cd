@@ -101,7 +101,7 @@ linters-settings:
         disabled: true
       # Importing with `.` makes the programs much harder to understand
       - name: dot-imports
-        disabled: true
+        disabled: false
       # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#duplicated-imports
       - name: duplicated-imports
         disabled: false
