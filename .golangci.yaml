@@ -112,7 +112,7 @@ linters-settings:
           - "preserveScope"
       # Empty blocks make code less readable and could be a symptom of a bug or unfinished refactoring.
       - name: empty-block
-        disabled: true
+        disabled: false
       # for better readability, variables of type `error` must be named with the prefix `err`.
       - name: error-naming
         disabled: true
