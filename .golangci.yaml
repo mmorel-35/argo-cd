@@ -36,7 +36,6 @@ linters-settings:
       - appendAssign
       - assignOp  # Keep it disabled for readability
       - badCond
-      - commentFormatting
       - exitAfterDefer
       - ifElseChain
       - mapKey
