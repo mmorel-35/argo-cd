@@ -40,7 +40,6 @@ linters-settings:
       - exitAfterDefer
       - ifElseChain
       - mapKey
-      - singleCaseSwitch
       - typeSwitchVar
   goimports:
     local-prefixes: github.com/argoproj/argo-cd/v3
