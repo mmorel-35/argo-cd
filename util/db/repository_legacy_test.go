@@ -3,6 +3,8 @@ package db
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/argoproj/argo-cd/v3/util/settings"
 )
 
@@ -27,9 +29,8 @@ func Test_getRepositoryCredentialIndex(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getRepositoryCredentialIndex(repositoryCredentials, tt.repoURL); got != tt.want {
-				t.Errorf("getRepositoryCredentialIndex() = %v, want %v", got, tt.want)
-			}
+			got := getRepositoryCredentialIndex(repositoryCredentials, tt.repoURL)
+			assert.Equal(t, tt.want, got, "getRepositoryCredentialIndex() = %v, want %v", got, tt.want)
 		})
 	}
 }

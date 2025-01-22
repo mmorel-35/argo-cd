@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -15,9 +16,7 @@ import (
 func TestMakeSignature(t *testing.T) {
 	for size := 1; size <= 64; size++ {
 		s, err := util.MakeSignature(size)
-		if err != nil {
-			t.Errorf("Could not generate signature of size %d: %v", size, err)
-		}
+		require.NoError(t, err, "Could not generate signature of size %d: %v", size, err)
 		t.Logf("Generated token: %v", s)
 	}
 }

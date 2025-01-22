@@ -90,9 +90,7 @@ func TestSessionManager_AdminToken(t *testing.T) {
 	mgr := newSessionManager(settingsMgr, getProjLister(), NewUserStateStorage(redisClient))
 
 	token, err := mgr.Create("admin:login", 0, "123")
-	if err != nil {
-		t.Errorf("Could not create token: %v", err)
-	}
+	require.NoError(t, err, "Could not create token")
 
 	claims, newToken, err := mgr.Parse(token)
 	require.NoError(t, err)
@@ -100,9 +98,7 @@ func TestSessionManager_AdminToken(t *testing.T) {
 
 	mapClaims := *(claims.(*jwt.MapClaims))
 	subject := mapClaims["sub"].(string)
-	if subject != "admin" {
-		t.Errorf("Token claim subject %q does not match expected subject %q.", subject, "admin")
-	}
+	assert.Equal(t, "admin", subject, "Token claim subject does not match expected subject")
 }
 
 func TestSessionManager_AdminToken_ExpiringSoon(t *testing.T) {
@@ -113,9 +109,7 @@ func TestSessionManager_AdminToken_ExpiringSoon(t *testing.T) {
 	mgr := newSessionManager(settingsMgr, getProjLister(), NewUserStateStorage(redisClient))
 
 	token, err := mgr.Create("admin:login", int64(autoRegenerateTokenDuration.Seconds()-1), "123")
-	if err != nil {
-		t.Errorf("Could not create token: %v", err)
-	}
+	require.NoError(t, err, "Could not create token")
 
 	// verify new token is generated is login token is expiring soon
 	_, newToken, err := mgr.Parse(token)
@@ -155,9 +149,7 @@ func TestSessionManager_AdminToken_Deactivated(t *testing.T) {
 	mgr := newSessionManager(settingsMgr, getProjLister(), NewUserStateStorage(nil))
 
 	token, err := mgr.Create("admin:login", 0, "abc")
-	if err != nil {
-		t.Errorf("Could not create token: %v", err)
-	}
+	require.NoError(t, err, "Could not create token")
 
 	_, _, err = mgr.Parse(token)
 	assert.ErrorContains(t, err, "account admin is disabled")
@@ -168,9 +160,7 @@ func TestSessionManager_AdminToken_LoginCapabilityDisabled(t *testing.T) {
 	mgr := newSessionManager(settingsMgr, getProjLister(), NewUserStateStorage(nil))
 
 	token, err := mgr.Create("admin", 0, "abc")
-	if err != nil {
-		t.Errorf("Could not create token: %v", err)
-	}
+	require.NoError(t, err, "Could not create token")
 
 	_, _, err = mgr.Parse(token)
 	assert.ErrorContains(t, err, "account admin does not have 'apiKey' capability")
