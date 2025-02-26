@@ -108,7 +108,6 @@ linters-settings:
       - name: empty-block
         disabled: true
       - name: error-naming
-        disabled: true
       - name: error-return
       - name: error-strings
         disabled: true
