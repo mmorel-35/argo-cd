@@ -19,6 +19,7 @@ linters:
     - errorlint
     - gocritic
     - gomodguard
+    - iface
     - importas
     - misspell
     - perfsprint
@@ -87,6 +88,12 @@ linters:
           - github.com/pkg/errors:
               recommendations:
                 - errors
+
+    iface:
+      enable:
+        - identical # Identifies interfaces in the same package that have identical method sets.
+        - unused # Identifies interfaces that are not used anywhere in the same package where the interface is defined.
+        - opaque # Identifies functions that return interfaces, but the actual returned value is always a single concrete implementation.
 
     importas:
       alias:

@@ -27,7 +27,7 @@ type MergeGenerator struct {
 }
 
 // NewMergeGenerator returns a MergeGenerator which allows the given supportedGenerators as child generators.
-func NewMergeGenerator(supportedGenerators map[string]Generator) Generator {
+func NewMergeGenerator(supportedGenerators map[string]Generator) *MergeGenerator {
 	m := &MergeGenerator{
 		supportedGenerators: supportedGenerators,
 	}

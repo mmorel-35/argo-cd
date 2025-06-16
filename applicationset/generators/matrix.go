@@ -25,7 +25,7 @@ type MatrixGenerator struct {
 	supportedGenerators map[string]Generator
 }
 
-func NewMatrixGenerator(supportedGenerators map[string]Generator) Generator {
+func NewMatrixGenerator(supportedGenerators map[string]Generator) *MatrixGenerator {
 	m := &MatrixGenerator{
 		supportedGenerators: supportedGenerators,
 	}

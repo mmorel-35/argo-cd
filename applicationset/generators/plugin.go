@@ -29,7 +29,7 @@ type PluginGenerator struct {
 	namespace string
 }
 
-func NewPluginGenerator(client client.Client, namespace string) Generator {
+func NewPluginGenerator(client client.Client, namespace string) *PluginGenerator {
 	g := &PluginGenerator{
 		client:    client,
 		namespace: namespace,

@@ -16,7 +16,7 @@ var _ Generator = (*ListGenerator)(nil)
 
 type ListGenerator struct{}
 
-func NewListGenerator() Generator {
+func NewListGenerator() *ListGenerator {
 	g := &ListGenerator{}
 	return g
 }

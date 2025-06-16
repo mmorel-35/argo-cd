@@ -30,7 +30,7 @@ type ClusterGenerator struct {
 
 var render = &utils.Render{}
 
-func NewClusterGenerator(ctx context.Context, c client.Client, clientset kubernetes.Interface, namespace string) Generator {
+func NewClusterGenerator(ctx context.Context, c client.Client, clientset kubernetes.Interface, namespace string) *ClusterGenerator {
 	g := &ClusterGenerator{
 		Client:    c,
 		ctx:       ctx,
