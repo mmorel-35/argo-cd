@@ -28,7 +28,7 @@ type PullRequestGenerator struct {
 	SCMConfig
 }
 
-func NewPullRequestGenerator(client client.Client, scmConfig SCMConfig) Generator {
+func NewPullRequestGenerator(client client.Client, scmConfig SCMConfig) *PullRequestGenerator {
 	g := &PullRequestGenerator{
 		client:    client,
 		SCMConfig: scmConfig,

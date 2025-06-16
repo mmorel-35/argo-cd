@@ -48,7 +48,7 @@ func NewSCMConfig(scmRootCAPath string, allowedSCMProviders []string, enableSCMP
 	}
 }
 
-func NewSCMProviderGenerator(client client.Client, scmConfig SCMConfig) Generator {
+func NewSCMProviderGenerator(client client.Client, scmConfig SCMConfig) *SCMProviderGenerator {
 	return &SCMProviderGenerator{
 		client:    client,
 		SCMConfig: scmConfig,
@@ -56,7 +56,7 @@ func NewSCMProviderGenerator(client client.Client, scmConfig SCMConfig) Generato
 }
 
 // Testing generator
-func NewTestSCMProviderGenerator(overrideProvider scm_provider.SCMProviderService) Generator {
+func NewTestSCMProviderGenerator(overrideProvider scm_provider.SCMProviderService) *SCMProviderGenerator {
 	return &SCMProviderGenerator{overrideProvider: overrideProvider, SCMConfig: SCMConfig{
 		enableSCMProviders: true,
 	}}

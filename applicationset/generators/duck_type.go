@@ -31,7 +31,7 @@ type DuckTypeGenerator struct {
 	namespace string // namespace is the Argo CD namespace
 }
 
-func NewDuckTypeGenerator(ctx context.Context, dynClient dynamic.Interface, clientset kubernetes.Interface, namespace string) Generator {
+func NewDuckTypeGenerator(ctx context.Context, dynClient dynamic.Interface, clientset kubernetes.Interface, namespace string) *DuckTypeGenerator {
 	g := &DuckTypeGenerator{
 		ctx:       ctx,
 		dynClient: dynClient,
