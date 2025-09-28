@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -23,7 +24,7 @@ var kindToCRDPath = map[string]string{
 }
 
 func getCustomResourceDefinitions() map[string]*apiextensionsv1.CustomResourceDefinition {
-	crdYamlBytes, err := exec.Command(
+	crdYamlBytes, err := exec.CommandContext(context.Baskground(), 
 		"controller-gen",
 		"paths=./pkg/apis/application/...",
 		"crd:crdVersions=v1",

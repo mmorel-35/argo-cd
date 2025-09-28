@@ -123,7 +123,7 @@ func (c *nativeHelmChart) CleanChartCache(chart string, version string) error {
 
 func untarChart(tempDir string, cachedChartPath string, manifestMaxExtractedSize int64, disableManifestMaxExtractedSize bool) error {
 	if disableManifestMaxExtractedSize {
-		cmd := exec.Command("tar", "-zxvf", cachedChartPath)
+		cmd := exec.CommandContext(context.Background(), "tar", "-zxvf", cachedChartPath)
 		cmd.Dir = tempDir
 		_, err := executil.Run(cmd)
 		if err != nil {
@@ -312,7 +312,7 @@ func (c *nativeHelmChart) loadRepoIndex(maxIndexSize int64) ([]byte, error) {
 		return nil, fmt.Errorf("error getting index URL: %w", err)
 	}
 
-	req, err := http.NewRequest(http.MethodGet, indexURL, http.NoBody)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, indexURL, http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("error creating HTTP request: %w", err)
 	}

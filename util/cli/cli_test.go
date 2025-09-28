@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"os"
@@ -73,7 +74,7 @@ func TestSetLogFormat(t *testing.T) {
 					SetLogFormat(tt.logFormat)
 					return
 				}
-				cmd := exec.Command(os.Args[0], "-test.run="+t.Name())
+				cmd := exec.CommandContext(context.Background(), os.Args[0], "-test.run="+t.Name())
 				cmd.Env = append(os.Environ(), "TEST_FATAL=1")
 				err := cmd.Run()
 				e := &exec.ExitError{}

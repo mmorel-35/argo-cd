@@ -1,6 +1,7 @@
 package helm
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -51,7 +52,7 @@ var redactor = func(text string) string {
 }
 
 func (c Cmd) run(args ...string) (string, string, error) {
-	cmd := exec.Command("helm", args...)
+	cmd := exec.CommandContext(context.Background(), "helm", args...)
 	cmd.Dir = c.WorkDir
 	cmd.Env = os.Environ()
 	if !c.IsLocal {

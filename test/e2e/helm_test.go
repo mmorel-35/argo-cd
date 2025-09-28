@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -208,9 +209,10 @@ func TestHelmValuesLiteralFileLocal(t *testing.T) {
 
 func TestHelmValuesLiteralFileRemote(t *testing.T) {
 	sentinel := "a: b"
+	lc := &net.ListenConfig{}
 	serve := func(c chan<- string) {
 		// listen on first available dynamic (unprivileged) port
-		listener, err := net.Listen("tcp", ":0")
+		listener, err := lc.Listen(context.Background(), "tcp", ":0")
 		if err != nil {
 			panic(err)
 		}

@@ -1,6 +1,7 @@
 package gpg
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -78,7 +79,7 @@ func Test_GPG_InitializeGnuPG(t *testing.T) {
 
 	// During unit-tests, we need to also kill gpg-agent so we can create a new key.
 	// In real world scenario -- i.e. container crash -- gpg-agent is not running yet.
-	cmd := exec.Command("gpgconf", "--kill", "gpg-agent")
+	cmd := exec.CommandContext(context.Background(), "gpgconf", "--kill", "gpg-agent")
 	cmd.Env = []string{"GNUPGHOME=" + p}
 	err = cmd.Run()
 	require.NoError(t, err)

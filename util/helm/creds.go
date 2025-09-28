@@ -1,6 +1,7 @@
 package helm
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"errors"
@@ -203,7 +204,13 @@ func (creds AzureWorkloadIdentityCreds) getAccessTokenAfterChallenge(tokenParams
 	formValues.Add("service", service)
 	formValues.Add("access_token", armAccessToken.AccessToken)
 
-	resp, err := client.PostForm(refreshTokenURL, formValues)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, refreshTokenURL, strings.NewReader(formValues.Encode()))
+	if err != nil {
+		return "", fmt.Errorf("failed to create request to get refresh token: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("unable to connect to registry '%w'", err)
 	}
@@ -244,7 +251,7 @@ func (creds AzureWorkloadIdentityCreds) challengeAzureContainerRegistry(azureCon
 		},
 	}
 
-	req, err := http.NewRequest(http.MethodGet, requestURL, http.NoBody)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, requestURL, http.NoBody)
 	if err != nil {
 		return nil, err
 	}

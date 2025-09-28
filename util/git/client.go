@@ -2,6 +2,7 @@ package git
 
 import (
 	"bufio"
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"errors"
@@ -430,7 +431,7 @@ func (m *nativeGitClient) IsRevisionPresent(revision string) bool {
 		return false
 	}
 
-	cmd := exec.Command("git", "cat-file", "-t", revision)
+	cmd := exec.CommandContext(context.Background(), "git", "cat-file", "-t", revision)
 	out, err := m.runCmdOutput(cmd, runOpts{SkipErrorLogging: true})
 	if out == "commit" && err == nil {
 		return true
@@ -784,7 +785,7 @@ func (m *nativeGitClient) RevisionMetadata(revision string) (*RevisionMetadata, 
 	authorDateUnixTimestamp, _ := strconv.ParseInt(segments[1], 10, 64)
 	message := strings.TrimSpace(segments[2])
 
-	cmd := exec.Command("git", "interpret-trailers", "--parse")
+	cmd := exec.CommandContext(context.Background(), "git", "interpret-trailers", "--parse")
 	cmd.Stdin = strings.NewReader(message)
 	out, err = m.runCmdOutput(cmd, runOpts{})
 	if err != nil {
@@ -913,7 +914,7 @@ func (m *nativeGitClient) VerifyCommitSignature(revision string) (string, error)
 
 // IsAnnotatedTag returns true if the revision points to an annotated tag
 func (m *nativeGitClient) IsAnnotatedTag(revision string) bool {
-	cmd := exec.Command("git", "describe", "--exact-match", revision)
+	cmd := exec.CommandContext(context.Background(), "git", "describe", "--exact-match", revision)
 	out, err := m.runCmdOutput(cmd, runOpts{SkipErrorLogging: true})
 	if out != "" && err == nil {
 		return true
@@ -1065,14 +1066,14 @@ func (m *nativeGitClient) CommitAndPush(branch, message string) (string, error) 
 
 // runWrapper runs a custom command with all the semantics of running the Git client
 func (m *nativeGitClient) runGnuPGWrapper(wrapper string, args ...string) (string, error) {
-	cmd := exec.Command(wrapper, args...)
+	cmd := exec.CommandContext(context.Background(), wrapper, args...)
 	cmd.Env = append(cmd.Env, "GNUPGHOME="+common.GetGnuPGHomePath(), "LANG=C")
 	return m.runCmdOutput(cmd, runOpts{})
 }
 
 // runCmd is a convenience function to run a command in a given directory and return its output
 func (m *nativeGitClient) runCmd(args ...string) (string, error) {
-	cmd := exec.Command("git", args...)
+	cmd := exec.CommandContext(context.Background(), "git", args...)
 	return m.runCmdOutput(cmd, runOpts{})
 }
 
@@ -1094,7 +1095,7 @@ func (m *nativeGitClient) runCredentialedCmd(args ...string) error {
 		}
 	}
 
-	cmd := exec.Command("git", args...)
+	cmd := exec.CommandContext(context.Background(), "git", args...)
 	cmd.Env = append(cmd.Env, environ...)
 	_, err = m.runCmdOutput(cmd, runOpts{})
 	return err

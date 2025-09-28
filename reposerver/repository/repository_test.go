@@ -2054,7 +2054,7 @@ func mkTempParameters(source string) string {
 	if err != nil {
 		panic(err)
 	}
-	cmd := exec.Command("cp", "-R", source, tempDir)
+	cmd := exec.CommandContext(context.Background(), "cp", "-R", source, tempDir)
 	err = cmd.Run()
 	if err != nil {
 		os.RemoveAll(tempDir)
@@ -3077,10 +3077,10 @@ func addHelmToGitRepo(t *testing.T, options newGitRepoOptions) {
 		require.NoError(t, err)
 	}
 	require.NoError(t, err)
-	cmd := exec.Command("git", "add", "-A")
+	cmd := exec.CommandContext(context.Background(), "git", "add", "-A")
 	cmd.Dir = options.path
 	require.NoError(t, cmd.Run())
-	cmd = exec.Command("git", "commit", "-m", "Initial commit")
+	cmd = exec.CommandContext(context.Background(), "git", "commit", "-m", "Initial commit")
 	cmd.Dir = options.path
 	require.NoError(t, cmd.Run())
 }
@@ -3091,19 +3091,19 @@ func initGitRepo(t *testing.T, options newGitRepoOptions) (revision string) {
 		require.NoError(t, os.Mkdir(options.path, 0o755))
 	}
 
-	cmd := exec.Command("git", "init", "-b", "main", options.path)
+	cmd := exec.CommandContext(context.Background(), "git", "init", "-b", "main", options.path)
 	cmd.Dir = options.path
 	require.NoError(t, cmd.Run())
 
 	if options.remote != "" {
-		cmd = exec.Command("git", "remote", "add", "origin", options.path)
+		cmd = exec.CommandContext(context.Background(), "git", "remote", "add", "origin", options.path)
 		cmd.Dir = options.path
 		require.NoError(t, cmd.Run())
 	}
 
 	commitAdded := options.addEmptyCommit || options.helmChartOptions.chartName != ""
 	if options.addEmptyCommit {
-		cmd = exec.Command("git", "commit", "-m", "Initial commit", "--allow-empty")
+		cmd = exec.CommandContext(context.Background(), "git", "commit", "-m", "Initial commit", "--allow-empty")
 		cmd.Dir = options.path
 		require.NoError(t, cmd.Run())
 	} else if options.helmChartOptions.chartName != "" {
@@ -3112,7 +3112,7 @@ func initGitRepo(t *testing.T, options newGitRepoOptions) (revision string) {
 
 	if commitAdded {
 		var revB bytes.Buffer
-		cmd = exec.Command("git", "rev-parse", "HEAD", options.path)
+		cmd = exec.CommandContext(context.Background(), "git", "rev-parse", "HEAD", options.path)
 		cmd.Dir = options.path
 		cmd.Stdout = &revB
 		require.NoError(t, cmd.Run())
@@ -3263,7 +3263,7 @@ func TestFetchRevisionCanGetNonstandardRefs(t *testing.T) {
 // and error output. If it fails, it stops the test with a failure message.
 func runGit(t *testing.T, workDir string, args ...string) string {
 	t.Helper()
-	cmd := exec.Command("git", args...)
+	cmd := exec.CommandContext(context.Background(), "git", args...)
 	cmd.Dir = workDir
 	out, err := cmd.CombinedOutput()
 	stringOut := string(out)

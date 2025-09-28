@@ -2,6 +2,7 @@ package commands
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -115,7 +116,7 @@ func NewRunDexCommand() *cobra.Command {
 					err = os.WriteFile("/tmp/dex.yaml", dexCfgBytes, 0o644)
 					errors.CheckError(err)
 					log.Debug(redactor(string(dexCfgBytes)))
-					cmd = exec.Command("dex", "serve", "/tmp/dex.yaml")
+					cmd = exec.CommandContext(context.Background(), "dex", "serve", "/tmp/dex.yaml")
 					cmd.Stdout = os.Stdout
 					cmd.Stderr = os.Stderr
 					err = cmd.Start()

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"golang.org/x/mod/semver"
 	"os"
@@ -111,7 +112,7 @@ func findPreviousTag(proposedTag string, tags []string) (string, error) {
 }
 
 func getGitTags() ([]string, error) {
-	cmd := exec.Command("git", "tag", "--sort=-v:refname")
+	cmd := exec.CommandContext(context.Background(), "git", "tag", "--sort=-v:refname")
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("error executing git command: %v", err)

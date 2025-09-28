@@ -60,7 +60,7 @@ func (s *settings) getGCMark(key kube.ResourceKey) string {
 }
 
 func (s *settings) parseManifests() ([]*unstructured.Unstructured, string, error) {
-	cmd := exec.Command("git", "rev-parse", "HEAD")
+	cmd := exec.CommandContext(context.Background(), "git", "rev-parse", "HEAD")
 	cmd.Dir = s.repoPath
 	revision, err := cmd.CombinedOutput()
 	if err != nil {

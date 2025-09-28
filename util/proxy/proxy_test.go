@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -15,7 +16,7 @@ func TestAddProxyEnvIfAbsent(t *testing.T) {
 	t.Run("Existing proxy env variables", func(t *testing.T) {
 		proxy := "https://proxy:5000"
 		noProxy := ".argoproj.io"
-		cmd := exec.Command("test")
+		cmd := exec.CommandContext(context.Background(), "test")
 		cmd.Env = []string{`http_proxy="https_proxy=https://env-proxy:8888"`, "key=val", "no_proxy=.argoproj.io"}
 		got := UpsertEnv(cmd, proxy, noProxy)
 		assert.Equal(t, []string{"key=val", httpProxy(proxy), httpsProxy(proxy), noProxyVar(noProxy)}, got)
@@ -23,7 +24,7 @@ func TestAddProxyEnvIfAbsent(t *testing.T) {
 	t.Run("proxy env variables not found", func(t *testing.T) {
 		proxy := "http://proxy:5000"
 		noProxy := ".argoproj.io"
-		cmd := exec.Command("test")
+		cmd := exec.CommandContext(context.Background(), "test")
 		cmd.Env = []string{"key=val"}
 		got := UpsertEnv(cmd, proxy, noProxy)
 		assert.Equal(t, []string{"key=val", httpProxy(proxy), httpsProxy(proxy), noProxyVar(noProxy)}, got)

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -60,7 +61,8 @@ func NewCommand() *cobra.Command {
 			server := commitserver.NewServer(askPassServer, metricsServer)
 			grpc := server.CreateGRPC()
 
-			listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", listenHost, listenPort))
+			lc := &net.ListenConfig{}
+			listener, err := lc.Listen(context.Background(), "tcp", fmt.Sprintf("%s:%d", listenHost, listenPort))
 			errors.CheckError(err)
 
 			healthz.ServeHealthCheck(http.DefaultServeMux, func(r *http.Request) error {

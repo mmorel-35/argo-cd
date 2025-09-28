@@ -2,6 +2,7 @@ package gpg
 
 import (
 	"bufio"
+	"context"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -273,7 +274,7 @@ func InitializeGnuPG() error {
 		}
 	}()
 
-	cmd := exec.Command("gpg", "--no-permission-warning", "--logger-fd", "1", "--batch", "--gen-key", f.Name())
+	cmd := exec.CommandContext(context.Background(), "gpg", "--no-permission-warning", "--logger-fd", "1", "--batch", "--gen-key", f.Name())
 	cmd.Env = getGPGEnviron()
 
 	_, err = executil.Run(cmd)
@@ -307,7 +308,7 @@ func ImportPGPKeysFromString(keyData string) ([]*appsv1.GnuPGPublicKey, error) {
 func ImportPGPKeys(keyFile string) ([]*appsv1.GnuPGPublicKey, error) {
 	keys := make([]*appsv1.GnuPGPublicKey, 0)
 
-	cmd := exec.Command("gpg", "--no-permission-warning", "--logger-fd", "1", "--import", keyFile)
+	cmd := exec.CommandContext(context.Background(), "gpg", "--no-permission-warning", "--logger-fd", "1", "--import", keyFile)
 	cmd.Env = getGPGEnviron()
 
 	out, err := executil.Run(cmd)
@@ -429,7 +430,7 @@ func SetPGPTrustLevel(pgpKeys []*appsv1.GnuPGPublicKey, trustLevel string) error
 	}()
 
 	// Load ownertrust from the file we have constructed and instruct gpg to update the trustdb
-	cmd := exec.Command("gpg", "--no-permission-warning", "--import-ownertrust", f.Name())
+	cmd := exec.CommandContext(context.Background(), "gpg", "--no-permission-warning", "--import-ownertrust", f.Name())
 	cmd.Env = getGPGEnviron()
 
 	_, err = executil.Run(cmd)
@@ -438,7 +439,7 @@ func SetPGPTrustLevel(pgpKeys []*appsv1.GnuPGPublicKey, trustLevel string) error
 	}
 
 	// Update the trustdb once we updated the ownertrust, to prevent gpg to do it once we validate a signature
-	cmd = exec.Command("gpg", "--no-permission-warning", "--update-trustdb")
+	cmd = exec.CommandContext(context.Background(), "gpg", "--no-permission-warning", "--update-trustdb")
 	cmd.Env = getGPGEnviron()
 	_, err = executil.Run(cmd)
 	if err != nil {
@@ -451,7 +452,7 @@ func SetPGPTrustLevel(pgpKeys []*appsv1.GnuPGPublicKey, trustLevel string) error
 // DeletePGPKey deletes a key from our GnuPG key ring
 func DeletePGPKey(keyID string) error {
 	args := append([]string{}, "--no-permission-warning", "--yes", "--batch", "--delete-keys", keyID)
-	cmd := exec.Command("gpg", args...)
+	cmd := exec.CommandContext(context.Background(), "gpg", args...)
 	cmd.Env = getGPGEnviron()
 
 	_, err := executil.Run(cmd)
@@ -465,7 +466,7 @@ func DeletePGPKey(keyID string) error {
 // IsSecretKey returns true if the keyID also has a private key in the keyring
 func IsSecretKey(keyID string) (bool, error) {
 	args := append([]string{}, "--no-permission-warning", "--list-secret-keys", keyID)
-	cmd := exec.Command("gpg-wrapper.sh", args...)
+	cmd := exec.CommandContext(context.Background(), "gpg-wrapper.sh", args...)
 	cmd.Env = getGPGEnviron()
 	out, err := executil.Run(cmd)
 	if err != nil {
@@ -486,7 +487,7 @@ func GetInstalledPGPKeys(kids []string) ([]*appsv1.GnuPGPublicKey, error) {
 	if len(kids) > 0 {
 		args = append(args, kids...)
 	}
-	cmd := exec.Command("gpg", args...)
+	cmd := exec.CommandContext(context.Background(), "gpg", args...)
 	cmd.Env = getGPGEnviron()
 
 	out, err := executil.Run(cmd)
@@ -562,7 +563,7 @@ func GetInstalledPGPKeys(kids []string) ([]*appsv1.GnuPGPublicKey, error) {
 
 	// We need to get the final key for each imported key, so we run --export on each key
 	for _, key := range keys {
-		cmd := exec.Command("gpg", "--no-permission-warning", "-a", "--export", key.KeyID)
+		cmd := exec.CommandContext(context.Background(), "gpg", "--no-permission-warning", "-a", "--export", key.KeyID)
 		cmd.Env = getGPGEnviron()
 
 		out, err := executil.Run(cmd)

@@ -74,7 +74,7 @@ func printDiffInternal(name string, live *unstructured.Unstructured, target *uns
 	if err != nil {
 		return nil, fmt.Errorf("failed to write live object: %w", err)
 	}
-	cmd := exec.Command("diff", liveFile, targetFile)
+	cmd := exec.CommandContext(context.Background(), "diff", liveFile, targetFile)
 	out, err := cmd.Output()
 	if err != nil {
 		// return output even if there's an error

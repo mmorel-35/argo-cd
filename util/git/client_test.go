@@ -28,7 +28,7 @@ import (
 )
 
 func runCmd(workingDir string, name string, args ...string) error {
-	cmd := exec.Command(name, args...)
+	cmd := exec.CommandContext(context.Background(), name, args...)
 	cmd.Dir = workingDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -36,7 +36,7 @@ func runCmd(workingDir string, name string, args ...string) error {
 }
 
 func outputCmd(workingDir string, name string, args ...string) ([]byte, error) {
-	cmd := exec.Command(name, args...)
+	cmd := exec.CommandContext(context.Background(), name, args...)
 	cmd.Dir = workingDir
 	cmd.Stderr = os.Stderr
 	return cmd.Output()
@@ -411,7 +411,7 @@ func Test_nativeGitClient_Submodule(t *testing.T) {
 	require.NoError(t, err)
 
 	// Check if the .gitmodule URL is reflected in .git/config
-	cmd := exec.Command("git", "config", "submodule.bar.url")
+	cmd := exec.CommandContext(context.Background(), "git", "config", "submodule.bar.url")
 	cmd.Dir = client.Root()
 	result, err := cmd.Output()
 	require.NoError(t, err)
@@ -426,7 +426,7 @@ func Test_nativeGitClient_Submodule(t *testing.T) {
 	require.NoError(t, err)
 
 	// Check if the URL change in .gitmodule is reflected in .git/config
-	cmd = exec.Command("git", "config", "submodule.bar.url")
+	cmd = exec.CommandContext(context.Background(), "git", "config", "submodule.bar.url")
 	cmd.Dir = client.Root()
 	result, err = cmd.Output()
 	require.NoError(t, err)
@@ -1018,7 +1018,7 @@ func Test_nativeGitClient_runCredentialedCmd(t *testing.T) {
 				return
 			}
 
-			cmd := exec.Command("git", tt.expectedArgs...)
+			cmd := exec.CommandContext(context.Background(), "git", tt.expectedArgs...)
 			cmd.Env = append(os.Environ(), tt.expectedEnv...)
 			output, err := cmd.CombinedOutput()
 			if err != nil {

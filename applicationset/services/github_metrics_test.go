@@ -97,7 +97,7 @@ func TestGitHubMetrics_CollectorApproach_Success(t *testing.T) {
 		),
 	}
 
-	req, _ := http.NewRequest(http.MethodGet, ts.URL+URL, http.NoBody)
+	req, _ := http.NewRequestWithContext(t.Context(), http.MethodGet, ts.URL+URL, http.NoBody)
 	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -109,7 +109,11 @@ func TestGitHubMetrics_CollectorApproach_Success(t *testing.T) {
 	server := httptest.NewServer(handler)
 	defer server.Close()
 
-	resp, err = http.Get(server.URL)
+	req, err = http.NewRequestWithContext(t.Context(), http.MethodGet, server.URL, http.NoBody)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatalf("failed to scrape metrics: %v", err)
 	}
@@ -152,14 +156,21 @@ func TestGitHubMetrics_CollectorApproach_NoRateLimitMetricsOnNilResponse(t *test
 		},
 	}
 
-	req, _ := http.NewRequest(http.MethodGet, URL, http.NoBody)
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, URL, http.NoBody)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
 	_, _ = client.Do(req)
 
 	handler := promhttp.HandlerFor(reg, promhttp.HandlerOpts{})
 	server := httptest.NewServer(handler)
 	defer server.Close()
 
-	resp, err := http.Get(server.URL)
+	req, err = http.NewRequestWithContext(t.Context(), http.MethodGet, server.URL, http.NoBody)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatalf("failed to scrape metrics: %v", err)
 	}
