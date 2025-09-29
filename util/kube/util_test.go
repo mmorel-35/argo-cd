@@ -49,8 +49,9 @@ func Test_CreateOrUpdateSecretField(t *testing.T) {
 	client := fake.NewClientset(secret)
 
 	t.Run("Change field in existing secret", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client)
-		err := ku.CreateOrUpdateSecretField("test", "test-secret", "password", "barfoo")
+		ctx := t.Context()
+		ku := NewKubeUtil(client)
+		err := ku.CreateOrUpdateSecretField(ctx, "test", "test-secret", "password", "barfoo")
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "test-secret")
 		require.NoError(t, err)
@@ -64,8 +65,9 @@ func Test_CreateOrUpdateSecretField(t *testing.T) {
 	})
 
 	t.Run("Change field in non-existing secret", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client)
-		err := ku.CreateOrUpdateSecretField("test", "nonexist-secret", "password", "foobaz")
+		ctx := t.Context()
+		ku := NewKubeUtil(client)
+		err := ku.CreateOrUpdateSecretField(ctx, "test", "nonexist-secret", "password", "foobaz")
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "nonexist-secret")
 		require.NoError(t, err)
@@ -79,8 +81,9 @@ func Test_CreateOrUpdateSecretField(t *testing.T) {
 	})
 
 	t.Run("Change field in existing secret with labels", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client).WithAnnotations(annotations).WithLabels(labels)
-		err := ku.CreateOrUpdateSecretField("test", "test-secret", "password", "barfoo")
+		ctx := t.Context()
+		ku := NewKubeUtil(client).WithAnnotations(annotations).WithLabels(labels)
+		err := ku.CreateOrUpdateSecretField(ctx, "test", "test-secret", "password", "barfoo")
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "test-secret")
 		require.NoError(t, err)
@@ -94,8 +97,9 @@ func Test_CreateOrUpdateSecretField(t *testing.T) {
 	})
 
 	t.Run("Change field in existing secret with labels", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client).WithAnnotations(annotations).WithLabels(labels)
-		err := ku.CreateOrUpdateSecretField("test", "nonexisting-secret", "password", "barfoo")
+		ctx := t.Context()
+		ku := NewKubeUtil(client).WithAnnotations(annotations).WithLabels(labels)
+		err := ku.CreateOrUpdateSecretField(ctx, "test", "nonexisting-secret", "password", "barfoo")
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "nonexisting-secret")
 		require.NoError(t, err)
@@ -135,8 +139,9 @@ func Test_CreateOrUpdateSecretData(t *testing.T) {
 	client := fake.NewClientset(secret)
 
 	t.Run("Change data in existing secret with merge", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client)
-		err := ku.CreateOrUpdateSecretData("test", "test-secret", data1, true)
+		ctx := t.Context()
+		ku := NewKubeUtil(client)
+		err := ku.CreateOrUpdateSecretData(ctx, "test", "test-secret", data1, true)
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "test-secret")
 		require.NoError(t, err)
@@ -146,8 +151,9 @@ func Test_CreateOrUpdateSecretData(t *testing.T) {
 	})
 
 	t.Run("Change data in non-existing secret with merge", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client)
-		err := ku.CreateOrUpdateSecretData("test", "nonexist-secret", data1, true)
+		ctx := t.Context()
+		ku := NewKubeUtil(client)
+		err := ku.CreateOrUpdateSecretData(ctx, "test", "nonexist-secret", data1, true)
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "nonexist-secret")
 		require.NoError(t, err)
@@ -156,8 +162,9 @@ func Test_CreateOrUpdateSecretData(t *testing.T) {
 	})
 
 	t.Run("Change data in existing secret without merge", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client)
-		err := ku.CreateOrUpdateSecretData("test", "test-secret", data2, false)
+		ctx := t.Context()
+		ku := NewKubeUtil(client)
+		err := ku.CreateOrUpdateSecretData(ctx, "test", "test-secret", data2, false)
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "test-secret")
 		require.NoError(t, err)
@@ -168,8 +175,9 @@ func Test_CreateOrUpdateSecretData(t *testing.T) {
 	})
 
 	t.Run("Change data in non-existing secret without merge", func(t *testing.T) {
-		ku := NewKubeUtil(t.Context(), client)
-		err := ku.CreateOrUpdateSecretData("test", "nonexist-secret", data2, false)
+		ctx := t.Context()
+		ku := NewKubeUtil(client)
+		err := ku.CreateOrUpdateSecretData(ctx, "test", "nonexist-secret", data2, false)
 		require.NoError(t, err)
 		s, err := getSecret(client, "test", "nonexist-secret")
 		require.NoError(t, err)

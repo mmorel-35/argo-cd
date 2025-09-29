@@ -1290,13 +1290,13 @@ type ArgoDB_GetProjectRepositories_Call struct {
 
 // GetProjectRepositories is a helper method to define mock.On call
 //   - project string
-func (_e *ArgoDB_Expecter) GetProjectRepositories(project interface{}) *ArgoDB_GetProjectRepositories_Call {
-	return &ArgoDB_GetProjectRepositories_Call{Call: _e.mock.On("GetProjectRepositories", project)}
+func (_e *ArgoDB_Expecter) GetProjectRepositories(ctx context.Context, project interface{}) *ArgoDB_GetProjectRepositories_Call {
+	return &ArgoDB_GetProjectRepositories_Call{Call: _e.mock.On("GetProjectRepositories", ctx, project)}
 }
 
-func (_c *ArgoDB_GetProjectRepositories_Call) Run(run func(project string)) *ArgoDB_GetProjectRepositories_Call {
+func (_c *ArgoDB_GetProjectRepositories_Call) Run(run func(ctx context.Context, project string)) *ArgoDB_GetProjectRepositories_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(string)
 		}
@@ -1318,8 +1318,8 @@ func (_c *ArgoDB_GetProjectRepositories_Call) RunAndReturn(run func(project stri
 }
 
 // GetProjectWriteRepositories provides a mock function for the type ArgoDB
-func (_mock *ArgoDB) GetProjectWriteRepositories(project string) ([]*v1alpha1.Repository, error) {
-	ret := _mock.Called(project)
+func (_mock *ArgoDB) GetProjectWriteRepositories(ctx context.Context, project string) ([]*v1alpha1.Repository, error) {
+	ret := _mock.Called(ctx, project)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetProjectWriteRepositories")

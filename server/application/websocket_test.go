@@ -118,7 +118,7 @@ func TestVerifyAndReconnectDisableAuthTrue(t *testing.T) {
 		// the underlying token nil pointer dereference is swallowed in a location I didn't find,
 		// or even swallowed by the test framework.
 		ts.terminalOpts = &TerminalOptions{DisableAuth: true}
-		code, err := ts.performValidationsAndReconnect([]byte{})
+		code, err := ts.performValidationsAndReconnect(r.Context(), []byte{})
 		assert.Equal(t, 0, code)
 		require.NoError(t, err)
 	}
@@ -136,9 +136,8 @@ func TestValidateWithAdminPermissions(t *testing.T) {
 		ts := newTestTerminalSession(w, r)
 		ts.terminalOpts = &TerminalOptions{Enf: enf}
 		ts.appRBACName = "test"
-		//nolint:staticcheck
-		ts.ctx = context.WithValue(t.Context(), "claims", &jwt.MapClaims{"groups": []string{"admin"}})
-		_, err := ts.validatePermissions([]byte{})
+		ctx := context.WithValue(r.Context(), "claims", &jwt.MapClaims{"groups": []string{"admin"}})
+		_, err := ts.validatePermissions(ctx, []byte{})
 		require.NoError(t, err)
 	}
 
@@ -156,9 +155,8 @@ func TestValidateWithoutPermissions(t *testing.T) {
 		ts := newTestTerminalSession(w, r)
 		ts.terminalOpts = &TerminalOptions{Enf: enf}
 		ts.appRBACName = "test"
-		//nolint:staticcheck
-		ts.ctx = context.WithValue(t.Context(), "claims", &jwt.MapClaims{"groups": []string{"test"}})
-		_, err := ts.validatePermissions([]byte{})
+		ctx := context.WithValue(r.Context(), "claims", &jwt.MapClaims{"groups": []string{"test"}})
+		_, err := ts.validatePermissions(ctx, []byte{})
 		require.Error(t, err)
 		assert.EqualError(t, err, common.PermissionDeniedAPIError.Error())
 	}

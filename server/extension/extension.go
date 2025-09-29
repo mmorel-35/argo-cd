@@ -236,7 +236,7 @@ type ProxyConfig struct {
 
 // SettingsGetter defines the contract to retrieve Argo CD Settings.
 type SettingsGetter interface {
-	Get() (*settings.ArgoCDSettings, error)
+	Get(context.Context) (*settings.ArgoCDSettings, error)
 }
 
 // DefaultSettingsGetter is the real settings getter implementation.
@@ -252,8 +252,8 @@ func NewDefaultSettingsGetter(mgr *settings.SettingsManager) *DefaultSettingsGet
 }
 
 // Get will retrieve the Argo CD settings.
-func (s *DefaultSettingsGetter) Get() (*settings.ArgoCDSettings, error) {
-	return s.settingsMgr.GetSettings()
+func (s *DefaultSettingsGetter) Get(ctx context.Context) (*settings.ArgoCDSettings, error) {
+	return s.settingsMgr.GetSettings(ctx)
 }
 
 // ProjectGetter defines the contract to retrieve Argo CD Project.
@@ -576,8 +576,8 @@ func applyProxyConfigDefaults(c *ProxyConfig) {
 
 // RegisterExtensions will retrieve all extensions configurations
 // and update the extension registry.
-func (m *Manager) RegisterExtensions() error {
-	settings, err := m.settings.Get()
+func (m *Manager) RegisterExtensions(ctx context.Context) error {
+	settings, err := m.settings.Get(ctx)
 	if err != nil {
 		return fmt.Errorf("error getting settings: %w", err)
 	}
@@ -703,7 +703,7 @@ func (m *Manager) authorize(ctx context.Context, rr *RequestResources, extName s
 		return nil, fmt.Errorf("project mismatch provided in the %q header", HeaderArgoCDProjectName)
 	}
 
-	proj, err := m.project.Get(app.Spec.GetProject())
+	proj, err := m.project.Get(ctx, app.Spec.GetProject())
 	if err != nil {
 		return nil, fmt.Errorf("error getting project: %w", err)
 	}

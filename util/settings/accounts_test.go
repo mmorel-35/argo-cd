@@ -15,8 +15,9 @@ import (
 )
 
 func TestGetAccounts_NoAccountsConfigured(t *testing.T) {
+	ctx := t.Context()
 	_, settingsManager := fixtures(nil)
-	accounts, err := settingsManager.GetAccounts()
+	accounts, err := settingsManager.GetAccounts(ctx)
 	require.NoError(t, err)
 
 	adminAccount, ok := accounts[common.ArgoCDAdminUsername]
@@ -25,10 +26,11 @@ func TestGetAccounts_NoAccountsConfigured(t *testing.T) {
 }
 
 func TestGetAccounts_HasConfiguredAccounts(t *testing.T) {
+	ctx := t.Context()
 	_, settingsManager := fixtures(map[string]string{"accounts.test": "apiKey"}, func(secret *corev1.Secret) {
 		secret.Data["accounts.test.tokens"] = []byte(`[{"id":"123","iat":1583789194,"exp":1583789194}]`)
 	})
-	accounts, err := settingsManager.GetAccounts()
+	accounts, err := settingsManager.GetAccounts(ctx)
 	require.NoError(t, err)
 
 	acc, ok := accounts["test"]
@@ -39,11 +41,12 @@ func TestGetAccounts_HasConfiguredAccounts(t *testing.T) {
 }
 
 func TestGetAccounts_DisableAccount(t *testing.T) {
+	ctx := t.Context()
 	_, settingsManager := fixtures(map[string]string{
 		"accounts.test":         "apiKey",
 		"accounts.test.enabled": "false",
 	})
-	accounts, err := settingsManager.GetAccounts()
+	accounts, err := settingsManager.GetAccounts(ctx)
 	require.NoError(t, err)
 
 	acc, ok := accounts["test"]
@@ -57,13 +60,15 @@ func TestGetAccount(t *testing.T) {
 	})
 
 	t.Run("ExistingUserName", func(t *testing.T) {
-		_, err := settingsManager.GetAccount("test")
+		ctx := t.Context()
+		_, err := settingsManager.GetAccount(ctx, "test")
 
 		require.NoError(t, err)
 	})
 
 	t.Run("IncorrectName", func(t *testing.T) {
-		_, err := settingsManager.GetAccount("incorrect-name")
+		ctx := t.Context()
+		_, err := settingsManager.GetAccount(ctx, "incorrect-name")
 
 		require.Error(t, err)
 		assert.Equal(t, codes.NotFound, status.Code(err))
@@ -71,6 +76,7 @@ func TestGetAccount(t *testing.T) {
 }
 
 func TestGetAccount_WithInvalidToken(t *testing.T) {
+	ctx := t.Context()
 	_, settingsManager := fixtures(map[string]string{
 		"accounts.user1":       "apiKey",
 		"accounts.invaliduser": "apiKey",
@@ -87,18 +93,19 @@ func TestGetAccount_WithInvalidToken(t *testing.T) {
 		},
 	)
 
-	_, err := settingsManager.GetAccounts()
+	_, err := settingsManager.GetAccounts(ctx)
 	require.NoError(t, err)
 }
 
 func TestGetAdminAccount(t *testing.T) {
+	ctx := t.Context()
 	mTime := time.Now().Format(time.RFC3339)
 	_, settingsManager := fixtures(nil, func(secret *corev1.Secret) {
 		secret.Data["admin.password"] = []byte("admin-password")
 		secret.Data["admin.passwordMtime"] = []byte(mTime)
 	})
 
-	acc, err := settingsManager.GetAccount(common.ArgoCDAdminUsername)
+	acc, err := settingsManager.GetAccount(ctx, common.ArgoCDAdminUsername)
 	require.NoError(t, err)
 
 	assert.Equal(t, "admin-password", acc.PasswordHash)
@@ -140,6 +147,7 @@ func TestTokenIndex_TokenDoesNotExist(t *testing.T) {
 }
 
 func TestAddAccount_AccountAdded(t *testing.T) {
+	ctx := t.Context()
 	clientset, settingsManager := fixtures(nil)
 	mTime := time.Now()
 	addedAccount := Account{
@@ -149,10 +157,10 @@ func TestAddAccount_AccountAdded(t *testing.T) {
 		PasswordHash:  "hash",
 		PasswordMtime: &mTime,
 	}
-	err := settingsManager.AddAccount("test", addedAccount)
+	err := settingsManager.AddAccount(ctx, "test", addedAccount)
 	require.NoError(t, err)
 
-	cm, err := clientset.CoreV1().ConfigMaps("default").Get(t.Context(), common.ArgoCDConfigMapName, metav1.GetOptions{})
+	cm, err := clientset.CoreV1().ConfigMaps("default").Get(ctx, common.ArgoCDConfigMapName, metav1.GetOptions{})
 	require.NoError(t, err)
 
 	assert.Equal(t, "login", cm.Data["accounts.test"])
@@ -167,22 +175,25 @@ func TestAddAccount_AccountAdded(t *testing.T) {
 }
 
 func TestAddAccount_AlreadyExists(t *testing.T) {
+	ctx := t.Context()
 	_, settingsManager := fixtures(map[string]string{"accounts.test": "login"})
-	err := settingsManager.AddAccount("test", Account{})
+	err := settingsManager.AddAccount(ctx, "test", Account{})
 	require.Error(t, err)
 }
 
 func TestAddAccount_CannotAddAdmin(t *testing.T) {
+	ctx := t.Context()
 	_, settingsManager := fixtures(nil)
-	err := settingsManager.AddAccount("admin", Account{})
+	err := settingsManager.AddAccount(ctx, "admin", Account{})
 	require.Error(t, err)
 }
 
 func TestUpdateAccount_SuccessfullyUpdated(t *testing.T) {
+	ctx := t.Context()
 	clientset, settingsManager := fixtures(map[string]string{"accounts.test": "login"})
 	mTime := time.Now()
 
-	err := settingsManager.UpdateAccount("test", func(account *Account) error {
+	err := settingsManager.UpdateAccount(ctx, "test", func(account *Account) error {
 		account.Tokens = []Token{{ID: "123"}}
 		account.Capabilities = []AccountCapability{AccountCapabilityLogin}
 		account.Enabled = false
@@ -207,10 +218,11 @@ func TestUpdateAccount_SuccessfullyUpdated(t *testing.T) {
 }
 
 func TestUpdateAccount_UpdateAdminPassword(t *testing.T) {
+	ctx := t.Context()
 	clientset, settingsManager := fixtures(nil)
 	mTime := time.Now()
 
-	err := settingsManager.UpdateAccount("admin", func(account *Account) error {
+	err := settingsManager.UpdateAccount(ctx, "admin", func(account *Account) error {
 		account.PasswordHash = "newPassword"
 		account.PasswordMtime = &mTime
 		return nil
@@ -225,9 +237,10 @@ func TestUpdateAccount_UpdateAdminPassword(t *testing.T) {
 }
 
 func TestUpdateAccount_AccountDoesNotExist(t *testing.T) {
+	ctx := t.Context()
 	_, settingsManager := fixtures(map[string]string{"accounts.test": "login"})
 
-	err := settingsManager.UpdateAccount("test1", func(account *Account) error {
+	err := settingsManager.UpdateAccount(ctx, "test1", func(account *Account) error {
 		account.Enabled = false
 		return nil
 	})

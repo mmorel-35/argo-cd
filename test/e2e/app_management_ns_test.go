@@ -1025,6 +1025,7 @@ func TestNamespacedSyncAsync(t *testing.T) {
 // assertResourceActions verifies if view/modify resource actions are successful/failing for given application
 func assertNSResourceActions(t *testing.T, appName string, successful bool) {
 	t.Helper()
+	ctx := t.Context()
 	assertError := func(err error, message string) {
 		if successful {
 			require.NoError(t, err)
@@ -1036,10 +1037,10 @@ func assertNSResourceActions(t *testing.T, appName string, successful bool) {
 	closer, cdClient := fixture.ArgoCDClientset.NewApplicationClientOrDie()
 	defer utilio.Close(closer)
 
-	deploymentResource, err := fixture.KubeClientset.AppsV1().Deployments(fixture.DeploymentNamespace()).Get(t.Context(), "guestbook-ui", metav1.GetOptions{})
+	deploymentResource, err := fixture.KubeClientset.AppsV1().Deployments(fixture.DeploymentNamespace()).Get(ctx, "guestbook-ui", metav1.GetOptions{})
 	require.NoError(t, err)
 
-	logs, err := cdClient.PodLogs(t.Context(), &applicationpkg.ApplicationPodLogsQuery{
+	logs, err := cdClient.PodLogs(ctx, &applicationpkg.ApplicationPodLogsQuery{
 		Group:        ptr.To("apps"),
 		Kind:         ptr.To("Deployment"),
 		Name:         &appName,
@@ -1056,7 +1057,7 @@ func assertNSResourceActions(t *testing.T, appName string, successful bool) {
 
 	expectedError := "Deployment apps guestbook-ui not found as part of application " + appName
 
-	_, err = cdClient.ListResourceEvents(t.Context(), &applicationpkg.ApplicationResourceEventsQuery{
+	_, err = cdClient.ListResourceEvents(ctx, &applicationpkg.ApplicationResourceEventsQuery{
 		Name:              &appName,
 		AppNamespace:      ptr.To(fixture.AppNamespace()),
 		ResourceName:      ptr.To("guestbook-ui"),
@@ -1065,7 +1066,7 @@ func assertNSResourceActions(t *testing.T, appName string, successful bool) {
 	})
 	assertError(err, fmt.Sprintf("%s not found as part of application %s", "guestbook-ui", appName))
 
-	_, err = cdClient.GetResource(t.Context(), &applicationpkg.ApplicationResourceRequest{
+	_, err = cdClient.GetResource(ctx, &applicationpkg.ApplicationResourceRequest{
 		Name:         &appName,
 		AppNamespace: ptr.To(fixture.AppNamespace()),
 		ResourceName: ptr.To("guestbook-ui"),

@@ -305,7 +305,7 @@ func ValidateRepo(
 	}
 	defer utilio.Close(conn)
 
-	helmOptions, err := settingsMgr.GetHelmSettings()
+	helmOptions, err := settingsMgr.GetHelmSettings(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting helm settings: %w", err)
 	}
@@ -364,7 +364,7 @@ func ValidateRepo(
 	if err != nil {
 		return nil, fmt.Errorf("error getting API resources: %w", err)
 	}
-	enabledSourceTypes, err := settingsMgr.GetEnabledSourceTypes()
+	enabledSourceTypes, err := settingsMgr.GetEnabledSourceTypes(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting enabled source types: %w", err)
 	}
@@ -675,7 +675,7 @@ func GetAppProjectWithScopedResources(ctx context.Context, name string, projList
 		return nil, nil, nil, fmt.Errorf("error getting app project %q: %w", name, err)
 	}
 
-	project, err := GetAppVirtualProject(projOrig, projLister, settingsManager)
+	project, err := GetAppVirtualProject(ctx, projOrig, projLister, settingsManager)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("error getting app virtual project: %w", err)
 	}
@@ -684,7 +684,7 @@ func GetAppProjectWithScopedResources(ctx context.Context, name string, projList
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("error getting project clusters: %w", err)
 	}
-	repos, err := db.GetProjectRepositories(name)
+	repos, err := db.GetProjectRepositories(ctx, name)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("error getting project repos: %w", err)
 	}
@@ -698,7 +698,7 @@ func GetAppProjectByName(ctx context.Context, name string, projLister applicatio
 		return nil, fmt.Errorf("error getting app project %q: %w", name, err)
 	}
 	project := projOrig.DeepCopy()
-	repos, err := db.GetProjectRepositories(name)
+	repos, err := db.GetProjectRepositories(ctx, name)
 	if err != nil {
 		return nil, fmt.Errorf("error getting project repositories: %w", err)
 	}
@@ -718,7 +718,7 @@ func GetAppProjectByName(ctx context.Context, name string, projLister applicatio
 			}
 		}
 	}
-	return GetAppVirtualProject(project, projLister, settingsManager)
+	return GetAppVirtualProject(ctx, project, projLister, settingsManager)
 }
 
 // GetAppProject returns a project from an application. It will also ensure
@@ -755,7 +755,7 @@ func verifyGenerateManifests(
 ) []argoappv1.ApplicationCondition {
 	var conditions []argoappv1.ApplicationCondition
 	// If source is Kustomize add build options
-	kustomizeSettings, err := settingsMgr.GetKustomizeSettings()
+	kustomizeSettings, err := settingsMgr.GetKustomizeSettings(ctx)
 	if err != nil {
 		conditions = append(conditions, argoappv1.ApplicationCondition{
 			Type:    argoappv1.ApplicationConditionInvalidSpecError,
@@ -773,7 +773,7 @@ func verifyGenerateManifests(
 			})
 			continue
 		}
-		installationID, err := settingsMgr.GetInstallationID()
+		installationID, err := settingsMgr.GetInstallationID(ctx)
 		if err != nil {
 			conditions = append(conditions, argoappv1.ApplicationCondition{
 				Type:    argoappv1.ApplicationConditionInvalidSpecError,
@@ -782,7 +782,7 @@ func verifyGenerateManifests(
 			continue
 		}
 
-		appLabelKey, err := settingsMgr.GetAppInstanceLabelKey()
+		appLabelKey, err := settingsMgr.GetAppInstanceLabelKey(ctx)
 		if err != nil {
 			conditions = append(conditions, argoappv1.ApplicationCondition{
 				Type:    argoappv1.ApplicationConditionInvalidSpecError,
@@ -791,7 +791,7 @@ func verifyGenerateManifests(
 			continue
 		}
 
-		trackingMethod, err := settingsMgr.GetTrackingMethod()
+		trackingMethod, err := settingsMgr.GetTrackingMethod(ctx)
 		if err != nil {
 			conditions = append(conditions, argoappv1.ApplicationCondition{
 				Type:    argoappv1.ApplicationConditionInvalidSpecError,
@@ -1008,7 +1008,7 @@ func GetPermittedRepos(proj *argoappv1.AppProject, repos []*argoappv1.Repository
 }
 
 type ClusterGetter interface {
-	GetCluster(ctx context.Context, name string) (*argoappv1.Cluster, error)
+	GetCluster(name string) (*argoappv1.Cluster, error)
 	GetClusterServersByName(ctx context.Context, server string) ([]string, error)
 }
 
@@ -1021,7 +1021,7 @@ func GetDestinationCluster(ctx context.Context, destination argoappv1.Applicatio
 		return nil, fmt.Errorf("application destination can't have both name and server defined: %s %s", destination.Name, destination.Server)
 	}
 	if destination.Server != "" {
-		cluster, err := db.GetCluster(ctx, destination.Server)
+		cluster, err := db.GetCluster(destination.Server)
 		if err != nil {
 			return nil, fmt.Errorf("error getting cluster by server %q: %w", destination.Server, err)
 		}
@@ -1037,7 +1037,7 @@ func GetDestinationCluster(ctx context.Context, destination argoappv1.Applicatio
 		if len(clusterURLs) > 1 {
 			return nil, fmt.Errorf("there are %d clusters with the same name: [%s]", len(clusterURLs), strings.Join(clusterURLs, " "))
 		}
-		cluster, err := db.GetCluster(ctx, clusterURLs[0])
+		cluster, err := db.GetCluster(clusterURLs[0])
 		if err != nil {
 			return nil, fmt.Errorf("error getting cluster by URL: %w", err)
 		}
@@ -1047,8 +1047,8 @@ func GetDestinationCluster(ctx context.Context, destination argoappv1.Applicatio
 	return nil, errors.New(ErrDestinationMissing)
 }
 
-func GetGlobalProjects(proj *argoappv1.AppProject, projLister applicationsv1.AppProjectLister, settingsManager *settings.SettingsManager) []*argoappv1.AppProject {
-	gps, err := settingsManager.GetGlobalProjectsSettings()
+func GetGlobalProjects(ctx context.Context, proj *argoappv1.AppProject, projLister applicationsv1.AppProjectLister, settingsManager *settings.SettingsManager) []*argoappv1.AppProject {
+	gps, err := settingsManager.GetGlobalProjectsSettings(ctx)
 	globalProjects := make([]*argoappv1.AppProject, 0)
 
 	if err != nil {
@@ -1091,9 +1091,9 @@ func GetGlobalProjects(proj *argoappv1.AppProject, projLister applicationsv1.App
 	return globalProjects
 }
 
-func GetAppVirtualProject(proj *argoappv1.AppProject, projLister applicationsv1.AppProjectLister, settingsManager *settings.SettingsManager) (*argoappv1.AppProject, error) {
+func GetAppVirtualProject(ctx context.Context, proj *argoappv1.AppProject, projLister applicationsv1.AppProjectLister, settingsManager *settings.SettingsManager) (*argoappv1.AppProject, error) {
 	virtualProj := proj.DeepCopy()
-	globalProjects := GetGlobalProjects(proj, projLister, settingsManager)
+	globalProjects := GetGlobalProjects(ctx, proj, projLister, settingsManager)
 
 	for _, gp := range globalProjects {
 		virtualProj = mergeVirtualProject(virtualProj, gp)
@@ -1250,7 +1250,7 @@ func GetAppEventLabels(ctx context.Context, app *argoappv1.Application, projList
 	}
 
 	// Filter out event labels to include
-	inKeys := settingsManager.GetIncludeEventLabelKeys()
+	inKeys := settingsManager.GetIncludeEventLabelKeys(ctx)
 	for k, v := range labels {
 		found := glob.MatchStringInList(inKeys, k, glob.GLOB)
 		if found {
@@ -1259,7 +1259,7 @@ func GetAppEventLabels(ctx context.Context, app *argoappv1.Application, projList
 	}
 
 	// Remove excluded event labels
-	exKeys := settingsManager.GetExcludeEventLabelKeys()
+	exKeys := settingsManager.GetExcludeEventLabelKeys(ctx)
 	for k := range eventLabels {
 		found := glob.MatchStringInList(exKeys, k, glob.GLOB)
 		if found {

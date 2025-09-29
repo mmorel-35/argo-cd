@@ -41,7 +41,7 @@ import (
 )
 
 type settingsSource interface {
-	GetAppInstanceLabelKey() (string, error)
+	GetAppInstanceLabelKey(context.Context) (string, error)
 	GetTrackingMethod() (string, error)
 	GetInstallationID() (string, error)
 }
@@ -121,12 +121,12 @@ func NewHandler(namespace string, applicationNamespaces []string, webhookParalle
 		appsLister:             appsLister,
 	}
 
-	acdWebhook.startWorkerPool(webhookParallelism)
+	acdWebhook.startWorkerPool(context.Background(), webhookParallelism)
 
 	return &acdWebhook
 }
 
-func (a *ArgoCDWebhookHandler) startWorkerPool(webhookParallelism int) {
+func (a *ArgoCDWebhookHandler) startWorkerPool(ctx context.Context, webhookParallelism int) {
 	for i := 0; i < webhookParallelism; i++ {
 		a.Add(1)
 		go func() {
@@ -136,7 +136,7 @@ func (a *ArgoCDWebhookHandler) startWorkerPool(webhookParallelism int) {
 				if !ok {
 					return
 				}
-				a.HandleEvent(payload)
+				a.HandleEvent(ctx, payload)
 			}
 		}()
 	}
@@ -300,7 +300,7 @@ type changeInfo struct {
 }
 
 // HandleEvent handles webhook events for repo push events
-func (a *ArgoCDWebhookHandler) HandleEvent(payload any) {
+func (a *ArgoCDWebhookHandler) HandleEvent(ctx context.Context, payload any) {
 	webURLs, revision, change, touchedHead, changedFiles := a.affectedRevisionInfo(payload)
 	// NOTE: the webURL does not include the .git extension
 	if len(webURLs) == 0 {
@@ -334,7 +334,7 @@ func (a *ArgoCDWebhookHandler) HandleEvent(payload any) {
 		log.Warnf("Failed to get trackingMethod: %v", err)
 		return
 	}
-	appInstanceLabelKey, err := a.settingsSrc.GetAppInstanceLabelKey()
+	appInstanceLabelKey, err := a.settingsSrc.GetAppInstanceLabelKey(ctx)
 	if err != nil {
 		log.Warnf("Failed to get appInstanceLabelKey: %v", err)
 		return
@@ -385,7 +385,7 @@ func (a *ArgoCDWebhookHandler) HandleEvent(payload any) {
 						// No need to refresh multiple times if multiple sources match.
 						break
 					} else if change.shaBefore != "" && change.shaAfter != "" {
-						if err := a.storePreviouslyCachedManifests(&app, change, trackingMethod, appInstanceLabelKey, installationID); err != nil {
+						if err := a.storePreviouslyCachedManifests(ctx, &app, change, trackingMethod, appInstanceLabelKey, installationID); err != nil {
 							log.Warnf("Failed to store cached manifests of previous revision for app '%s': %v", app.Name, err)
 						}
 					}
@@ -439,8 +439,8 @@ func getURLRegex(originalURL string, regexpFormat string) (*regexp.Regexp, error
 	return repoRegexp, nil
 }
 
-func (a *ArgoCDWebhookHandler) storePreviouslyCachedManifests(app *v1alpha1.Application, change changeInfo, trackingMethod string, appInstanceLabelKey string, installationID string) error {
-	destCluster, err := argo.GetDestinationCluster(context.Background(), app.Spec.Destination, a.db)
+func (a *ArgoCDWebhookHandler) storePreviouslyCachedManifests(ctx context.Context, app *v1alpha1.Application, change changeInfo, trackingMethod string, appInstanceLabelKey string, installationID string) error {
+	destCluster, err := argo.GetDestinationCluster(ctx, app.Spec.Destination, a.db)
 	if err != nil {
 		return fmt.Errorf("error validating destination: %w", err)
 	}

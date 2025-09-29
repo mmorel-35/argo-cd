@@ -94,7 +94,7 @@ func TestProjectServer(t *testing.T) {
 			"server": []byte("https://server3"),
 		},
 	})
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 	enforcer := newEnforcer(kubeclientset)
 	existingProj := v1alpha1.AppProject{
 		ObjectMeta: metav1.ObjectMeta{Name: "test", Namespace: testNamespace},
@@ -123,7 +123,8 @@ func TestProjectServer(t *testing.T) {
 	}
 
 	t.Run("TestNormalizeProj", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projectWithRole := existingProj.DeepCopy()
 		roleName := "roleName"
 		role1 := v1alpha1.ProjectRole{Name: roleName, JWTTokens: []v1alpha1.JWTToken{{IssuedAt: 1}}}
@@ -371,7 +372,8 @@ func TestProjectServer(t *testing.T) {
 	id := "testId"
 
 	t.Run("TestCreateTokenDenied", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projectWithRole := existingProj.DeepCopy()
 		projectWithRole.Spec.Roles = []v1alpha1.ProjectRole{{Name: tokenName}}
 
@@ -382,7 +384,8 @@ func TestProjectServer(t *testing.T) {
 	})
 
 	t.Run("TestCreateTokenSuccessfullyUsingGroup", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projectWithRole := existingProj.DeepCopy()
 		projectWithRole.Spec.Roles = []v1alpha1.ProjectRole{{Name: tokenName, Groups: []string{"my-group"}}}
 		argoDB := db.NewDB("default", settingsMgr, kubeclientset)
@@ -394,16 +397,17 @@ func TestProjectServer(t *testing.T) {
 	_ = enforcer.SetBuiltinPolicy(`p, role:admin, projects, update, *, allow`)
 
 	t.Run("TestCreateTokenSuccessfully", func(t *testing.T) {
+		ctx := t.Context()
 		projectWithRole := existingProj.DeepCopy()
 		projectWithRole.Spec.Roles = []v1alpha1.ProjectRole{{Name: tokenName}}
 		clientset := apps.NewSimpleClientset(projectWithRole)
 
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjListerFromInterface(clientset.ArgoprojV1alpha1().AppProjects("default")), "", nil, session.NewUserStateStorage(nil))
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjListerFromInterface(clientset.ArgoprojV1alpha1().AppProjects("default")), "", nil, session.NewUserStateStorage(nil))
 		argoDB := db.NewDB("default", settingsMgr, kubeclientset)
 		projectServer := NewServer("default", fake.NewSimpleClientset(), clientset, enforcer, sync.NewKeyLock(), sessionMgr, policyEnf, projInformer, settingsMgr, argoDB, testEnableEventList)
-		tokenResponse, err := projectServer.CreateToken(t.Context(), &project.ProjectTokenCreateRequest{Project: projectWithRole.Name, Role: tokenName, ExpiresIn: 100})
+		tokenResponse, err := projectServer.CreateToken(ctx, &project.ProjectTokenCreateRequest{Project: projectWithRole.Name, Role: tokenName, ExpiresIn: 100})
 		require.NoError(t, err)
-		claims, _, err := sessionMgr.Parse(tokenResponse.Token)
+		claims, _, err := sessionMgr.Parse(ctx, tokenResponse.Token)
 		require.NoError(t, err)
 
 		mapClaims, err := jwtutil.MapClaims(claims)
@@ -415,16 +419,17 @@ func TestProjectServer(t *testing.T) {
 	})
 
 	t.Run("TestCreateTokenWithIDSuccessfully", func(t *testing.T) {
+		ctx := t.Context()
 		projectWithRole := existingProj.DeepCopy()
 		projectWithRole.Spec.Roles = []v1alpha1.ProjectRole{{Name: tokenName}}
 		clientset := apps.NewSimpleClientset(projectWithRole)
 
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjListerFromInterface(clientset.ArgoprojV1alpha1().AppProjects("default")), "", nil, session.NewUserStateStorage(nil))
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjListerFromInterface(clientset.ArgoprojV1alpha1().AppProjects("default")), "", nil, session.NewUserStateStorage(nil))
 		argoDB := db.NewDB("default", settingsMgr, kubeclientset)
 		projectServer := NewServer("default", fake.NewSimpleClientset(), clientset, enforcer, sync.NewKeyLock(), sessionMgr, policyEnf, projInformer, settingsMgr, argoDB, testEnableEventList)
 		tokenResponse, err := projectServer.CreateToken(t.Context(), &project.ProjectTokenCreateRequest{Project: projectWithRole.Name, Role: tokenName, ExpiresIn: 1, Id: id})
 		require.NoError(t, err)
-		claims, _, err := sessionMgr.Parse(tokenResponse.Token)
+		claims, _, err := sessionMgr.Parse(ctx, tokenResponse.Token)
 		require.NoError(t, err)
 
 		mapClaims, err := jwtutil.MapClaims(claims)
@@ -436,17 +441,18 @@ func TestProjectServer(t *testing.T) {
 	})
 
 	t.Run("TestCreateTokenWithSameIdDeny", func(t *testing.T) {
+		ctx := t.Context()
 		projectWithRole := existingProj.DeepCopy()
 		projectWithRole.Spec.Roles = []v1alpha1.ProjectRole{{Name: tokenName}}
 		clientset := apps.NewSimpleClientset(projectWithRole)
 
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjListerFromInterface(clientset.ArgoprojV1alpha1().AppProjects("default")), "", nil, session.NewUserStateStorage(nil))
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjListerFromInterface(clientset.ArgoprojV1alpha1().AppProjects("default")), "", nil, session.NewUserStateStorage(nil))
 		argoDB := db.NewDB("default", settingsMgr, kubeclientset)
 		projectServer := NewServer("default", fake.NewSimpleClientset(), clientset, enforcer, sync.NewKeyLock(), sessionMgr, policyEnf, projInformer, settingsMgr, argoDB, testEnableEventList)
 		tokenResponse, err := projectServer.CreateToken(t.Context(), &project.ProjectTokenCreateRequest{Project: projectWithRole.Name, Role: tokenName, ExpiresIn: 1, Id: id})
 
 		require.NoError(t, err)
-		claims, _, err := sessionMgr.Parse(tokenResponse.Token)
+		claims, _, err := sessionMgr.Parse(ctx, tokenResponse.Token)
 		require.NoError(t, err)
 
 		mapClaims, err := jwtutil.MapClaims(claims)
@@ -464,7 +470,8 @@ func TestProjectServer(t *testing.T) {
 	_ = enforcer.SetBuiltinPolicy(`p, *, *, *, *, deny`)
 
 	t.Run("TestDeleteTokenDenied", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projWithToken := existingProj.DeepCopy()
 		issuedAt := int64(1)
 		secondIssuedAt := issuedAt + 1
@@ -477,7 +484,8 @@ func TestProjectServer(t *testing.T) {
 	})
 
 	t.Run("TestDeleteTokenSuccessfullyWithGroup", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projWithToken := existingProj.DeepCopy()
 		issuedAt := int64(1)
 		secondIssuedAt := issuedAt + 1
@@ -493,7 +501,8 @@ func TestProjectServer(t *testing.T) {
 p, role:admin, projects, update, *, allow`)
 
 	t.Run("TestDeleteTokenSuccessfully", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projWithToken := existingProj.DeepCopy()
 		issuedAt := int64(1)
 		secondIssuedAt := issuedAt + 1
@@ -514,7 +523,8 @@ p, role:admin, projects, update, *, allow`)
 p, role:admin, projects, update, *, allow`)
 
 	t.Run("TestDeleteTokenByIdSuccessfully", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projWithToken := existingProj.DeepCopy()
 		issuedAt := int64(1)
 		secondIssuedAt := issuedAt + 1
@@ -537,7 +547,8 @@ p, role:admin, projects, update, *, allow`)
 	enforcer = newEnforcer(kubeclientset)
 
 	t.Run("TestCreateTwoTokensInRoleSuccess", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projWithToken := existingProj.DeepCopy()
 		tokenName := "testToken"
 		token := v1alpha1.ProjectRole{Name: tokenName, JWTTokens: []v1alpha1.JWTToken{{IssuedAt: 1}}}
@@ -702,7 +713,8 @@ p, role:admin, projects, update, *, allow`)
 	})
 
 	t.Run("TestSyncWindowsActive", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projectWithSyncWindows := existingProj.DeepCopy()
 		projectWithSyncWindows.Spec.SyncWindows = v1alpha1.SyncWindows{}
 		win := &v1alpha1.SyncWindow{Kind: "allow", Schedule: "* * * * *", Duration: "1h"}
@@ -715,7 +727,8 @@ p, role:admin, projects, update, *, allow`)
 	})
 
 	t.Run("TestGetSyncWindowsStateCannotGetProjectDetails", func(t *testing.T) {
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		ctx := t.Context()
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projectWithSyncWindows := existingProj.DeepCopy()
 		projectWithSyncWindows.Spec.SyncWindows = v1alpha1.SyncWindows{}
 		win := &v1alpha1.SyncWindow{Kind: "allow", Schedule: "* * * * *", Duration: "1h"}
@@ -728,13 +741,14 @@ p, role:admin, projects, update, *, allow`)
 	})
 
 	t.Run("TestGetSyncWindowsStateDenied", func(t *testing.T) {
+		ctx := t.Context()
 		enforcer = newEnforcer(kubeclientset)
 		_ = enforcer.SetBuiltinPolicy(`p, *, *, *, *, deny`)
 		enforcer.SetClaimsEnforcerFunc(nil)
 		//nolint:staticcheck
-		ctx := context.WithValue(t.Context(), "claims", &jwt.MapClaims{"groups": []string{"my-group"}})
+		ctx = context.WithValue(ctx, "claims", &jwt.MapClaims{"groups": []string{"my-group"}})
 
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projectWithSyncWindows := existingProj.DeepCopy()
 		win := &v1alpha1.SyncWindow{Kind: "allow", Schedule: "* * * * *", Duration: "1h"}
 		projectWithSyncWindows.Spec.SyncWindows = append(projectWithSyncWindows.Spec.SyncWindows, win)
@@ -745,9 +759,10 @@ p, role:admin, projects, update, *, allow`)
 	})
 
 	t.Run("TestAddSyncWindowWhenAnAppReferencesAClusterThatDoesNotExist", func(t *testing.T) {
+		ctx := t.Context()
 		_ = enforcer.SetBuiltinPolicy(`p, role:admin, projects, get, *, allow
 p, role:admin, projects, update, *, allow`)
-		sessionMgr := session.NewSessionManager(settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
+		sessionMgr := session.NewSessionManager(ctx, settingsMgr, test.NewFakeProjLister(), "", nil, session.NewUserStateStorage(nil))
 		projectWithAppWithInvalidCluster := existingProj.DeepCopy()
 
 		argoDB := db.NewDB("default", settingsMgr, kubeclientset)

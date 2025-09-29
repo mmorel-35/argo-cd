@@ -121,7 +121,7 @@ func (s *Server) createToken(ctx context.Context, q *project.ProjectTokenCreateR
 		id = uniqueId.String()
 	}
 	subject := fmt.Sprintf(JWTTokenSubFormat, q.Project, q.Role)
-	jwtToken, err := s.sessionMgr.Create(subject, q.ExpiresIn, id)
+	jwtToken, err := s.sessionMgr.Create(ctx, subject, q.ExpiresIn, id)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -184,7 +184,7 @@ func (s *Server) ListLinks(ctx context.Context, q *project.ListProjectLinksReque
 		return nil, fmt.Errorf("error getting application: %w", err)
 	}
 
-	deepLinks, err := s.settingsMgr.GetDeepLinks(settings.ProjectDeepLinks)
+	deepLinks, err := s.settingsMgr.GetDeepLinks(ctx, settings.ProjectDeepLinks)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read application deep links from configmap: %w", err)
 	}
@@ -309,7 +309,7 @@ func (s *Server) GetDetailedProject(ctx context.Context, q *project.ProjectQuery
 		return nil, err
 	}
 	proj.NormalizeJWTTokens()
-	globalProjects := argo.GetGlobalProjects(proj, listersv1alpha1.NewAppProjectLister(s.projInformer.GetIndexer()), s.settingsMgr)
+	globalProjects := argo.GetGlobalProjects(ctx, proj, listersv1alpha1.NewAppProjectLister(s.projInformer.GetIndexer()), s.settingsMgr)
 	var apiRepos []*v1alpha1.Repository
 	for _, repo := range repositories {
 		apiRepos = append(apiRepos, repo.Normalize().Sanitized())
@@ -347,7 +347,7 @@ func (s *Server) GetGlobalProjects(ctx context.Context, q *project.ProjectQuery)
 		return nil, err
 	}
 
-	globalProjects := argo.GetGlobalProjects(projOrig, listersv1alpha1.NewAppProjectLister(s.projInformer.GetIndexer()), s.settingsMgr)
+	globalProjects := argo.GetGlobalProjects(ctx, projOrig, listersv1alpha1.NewAppProjectLister(s.projInformer.GetIndexer()), s.settingsMgr)
 
 	res := &project.GlobalProjectsResponse{}
 	res.Items = globalProjects

@@ -495,7 +495,7 @@ func (ctrl *ApplicationController) handleObjectUpdated(managedByApp map[string]b
 
 // setAppManagedResources will build a list of ResourceDiff based on the provided comparisonResult
 // and persist app resources related data in the cache. Will return the persisted ApplicationTree.
-func (ctrl *ApplicationController) setAppManagedResources(destCluster *appv1.Cluster, a *appv1.Application, comparisonResult *comparisonResult) (*appv1.ApplicationTree, error) {
+func (ctrl *ApplicationController) setAppManagedResources(ctx context.Context, destCluster *appv1.Cluster, a *appv1.Application, comparisonResult *comparisonResult) (*appv1.ApplicationTree, error) {
 	ts := stats.NewTimingStats()
 	defer func() {
 		logCtx := log.WithFields(applog.GetAppLogFields(a))
@@ -510,7 +510,7 @@ func (ctrl *ApplicationController) setAppManagedResources(destCluster *appv1.Clu
 	if err != nil {
 		return nil, fmt.Errorf("error getting managed resources: %w", err)
 	}
-	tree, err := ctrl.getResourceTree(destCluster, a, managedResources)
+	tree, err := ctrl.getResourceTree(ctx, destCluster, a, managedResources)
 	ts.AddCheckpoint("get_resource_tree_ms")
 	if err != nil {
 		return nil, fmt.Errorf("error getting resource tree: %w", err)
@@ -552,7 +552,7 @@ func isKnownOrphanedResourceExclusion(key kube.ResourceKey, proj *appv1.AppProje
 	return false
 }
 
-func (ctrl *ApplicationController) getResourceTree(destCluster *appv1.Cluster, a *appv1.Application, managedResources []*appv1.ResourceDiff) (*appv1.ApplicationTree, error) {
+func (ctrl *ApplicationController) getResourceTree(ctx context.Context, destCluster *appv1.Cluster, a *appv1.Application, managedResources []*appv1.ResourceDiff) (*appv1.ApplicationTree, error) {
 	ts := stats.NewTimingStats()
 	defer func() {
 		logCtx := log.WithFields(applog.GetAppLogFields(a))
@@ -677,7 +677,7 @@ func (ctrl *ApplicationController) getResourceTree(destCluster *appv1.Cluster, a
 	})
 	ts.AddCheckpoint("process_orphaned_resources_ms")
 
-	hosts, err := ctrl.getAppHosts(destCluster, a, nodes)
+	hosts, err := ctrl.getAppHosts(ctx, destCluster, a, nodes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get app hosts: %w", err)
 	}
@@ -685,7 +685,7 @@ func (ctrl *ApplicationController) getResourceTree(destCluster *appv1.Cluster, a
 	return &appv1.ApplicationTree{Nodes: nodes, OrphanedNodes: orphanedNodes, Hosts: hosts}, nil
 }
 
-func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *appv1.Application, appNodes []appv1.ResourceNode) ([]appv1.HostInfo, error) {
+func (ctrl *ApplicationController) getAppHosts(ctx context.Context, destCluster *appv1.Cluster, a *appv1.Application, appNodes []appv1.ResourceNode) ([]appv1.HostInfo, error) {
 	ts := stats.NewTimingStats()
 	defer func() {
 		logCtx := log.WithFields(applog.GetAppLogFields(a))
@@ -779,7 +779,7 @@ func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *ap
 			return resourcesInfo[i].ResourceName < resourcesInfo[j].ResourceName
 		})
 
-		allowedNodeLabels := ctrl.settingsMgr.GetAllowedNodeLabels()
+		allowedNodeLabels := ctrl.settingsMgr.GetAllowedNodeLabels(ctx)
 		nodeLabels := make(map[string]string)
 		for _, label := range allowedNodeLabels {
 			if val, ok := node.Labels[label]; ok {
@@ -793,7 +793,7 @@ func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *ap
 	return hosts, nil
 }
 
-func (ctrl *ApplicationController) hideSecretData(destCluster *appv1.Cluster, app *appv1.Application, comparisonResult *comparisonResult) ([]*appv1.ResourceDiff, error) {
+func (ctrl *ApplicationController) hideSecretData(ctx context.Context, destCluster *appv1.Cluster, app *appv1.Application, comparisonResult *comparisonResult) ([]*appv1.ResourceDiff, error) {
 	items := make([]*appv1.ResourceDiff, len(comparisonResult.managedResources))
 	for i := range comparisonResult.managedResources {
 		res := comparisonResult.managedResources[i]
@@ -811,23 +811,23 @@ func (ctrl *ApplicationController) hideSecretData(destCluster *appv1.Cluster, ap
 		resDiff := res.Diff
 		if res.Kind == kube.SecretKind && res.Group == "" {
 			var err error
-			target, live, err = diff.HideSecretData(res.Target, res.Live, ctrl.settingsMgr.GetSensitiveAnnotations())
+			target, live, err = diff.HideSecretData(res.Target, res.Live, ctrl.settingsMgr.GetSensitiveAnnotations(ctx))
 			if err != nil {
 				return nil, fmt.Errorf("error hiding secret data: %w", err)
 			}
-			compareOptions, err := ctrl.settingsMgr.GetResourceCompareOptions()
+			compareOptions, err := ctrl.settingsMgr.GetResourceCompareOptions(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting resource compare options: %w", err)
 			}
-			resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides()
+			resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting resource overrides: %w", err)
 			}
-			appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey()
+			appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting app instance label key: %w", err)
 			}
-			trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod()
+			trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting tracking method: %w", err)
 			}

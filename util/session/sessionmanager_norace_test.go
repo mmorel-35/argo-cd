@@ -14,6 +14,7 @@ import (
 )
 
 func TestRandomPasswordVerificationDelay(t *testing.T) {
+	ctx := t.Context()
 	// !race:
 	// `SessionManager.VerifyUsernamePassword` uses bcrypt to prevent against time-based attacks
 	// and verify the hashed password; however this is a CPU intensive algorithm that is made
@@ -21,8 +22,8 @@ func TestRandomPasswordVerificationDelay(t *testing.T) {
 	// the maximum time limit required by `TestRandomPasswordVerificationDelay`.
 
 	var sleptFor time.Duration
-	settingsMgr := settings.NewSettingsManager(t.Context(), getKubeClient(t, "password", true), "argocd")
-	mgr := newSessionManager(settingsMgr, getProjLister(), NewUserStateStorage(nil))
+	settingsMgr := settings.NewSettingsManager(getKubeClient(t, "password", true), "argocd")
+	mgr := newSessionManager(ctx, settingsMgr, getProjLister(), NewUserStateStorage(nil))
 	mgr.verificationDelayNoiseEnabled = true
 	mgr.sleep = func(d time.Duration) {
 		sleptFor = d
@@ -30,7 +31,7 @@ func TestRandomPasswordVerificationDelay(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		sleptFor = 0
 		start := time.Now()
-		require.NoError(t, mgr.VerifyUsernamePassword("admin", "password"))
+		require.NoError(t, mgr.VerifyUsernamePassword(ctx, "admin", "password"))
 		totalDuration := time.Since(start) + sleptFor
 		assert.GreaterOrEqual(t, totalDuration.Nanoseconds(), verificationDelayNoiseMin.Nanoseconds())
 		assert.LessOrEqual(t, totalDuration.Nanoseconds(), verificationDelayNoiseMax.Nanoseconds())

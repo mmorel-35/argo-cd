@@ -41,8 +41,8 @@ func isPostDeleteHook(obj *unstructured.Unstructured) bool {
 	return false
 }
 
-func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Application, proj *v1alpha1.AppProject, liveObjs map[kube.ResourceKey]*unstructured.Unstructured, config *rest.Config, logCtx *log.Entry) (bool, error) {
-	appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey()
+func (ctrl *ApplicationController) executePostDeleteHooks(ctx context.Context, app *v1alpha1.Application, proj *v1alpha1.AppProject, liveObjs map[kube.ResourceKey]*unstructured.Unstructured, config *rest.Config, logCtx *log.Entry) (bool, error) {
+	appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(ctx)
 	if err != nil {
 		return false, err
 	}

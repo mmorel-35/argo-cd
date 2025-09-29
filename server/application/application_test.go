@@ -187,7 +187,7 @@ func newTestAppServerWithEnforcerConfigure(t *testing.T, f func(*rbac.Enforcer),
 		},
 	})
 	ctx := t.Context()
-	db := db.NewDB(testNamespace, settings.NewSettingsManager(ctx, kubeclientset, testNamespace), kubeclientset)
+	db := db.NewDB(testNamespace, settings.NewSettingsManager(kubeclientset, testNamespace), kubeclientset)
 	_, err := db.CreateRepository(ctx, fakeRepo())
 	require.NoError(t, err)
 	_, err = db.CreateCluster(ctx, fakeCluster())
@@ -236,7 +236,7 @@ func newTestAppServerWithEnforcerConfigure(t *testing.T, f func(*rbac.Enforcer),
 	f(enforcer)
 	enforcer.SetClaimsEnforcerFunc(rbacpolicy.NewRBACPolicyEnforcer(enforcer, fakeProjLister).EnforceClaims)
 
-	settingsMgr := settings.NewSettingsManager(ctx, kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	// populate the app informer with the fake objects
 	appInformer := factory.Argoproj().V1alpha1().Applications().Informer()
@@ -352,7 +352,7 @@ func newTestAppServerWithEnforcerConfigureWithBenchmark(b *testing.B, f func(*rb
 		},
 	})
 	ctx := b.Context()
-	db := db.NewDB(testNamespace, settings.NewSettingsManager(ctx, kubeclientset, testNamespace), kubeclientset)
+	db := db.NewDB(testNamespace, settings.NewSettingsManager(kubeclientset, testNamespace), kubeclientset)
 	_, err := db.CreateRepository(ctx, fakeRepo())
 	require.NoError(b, err)
 	_, err = db.CreateCluster(ctx, fakeCluster())
@@ -400,7 +400,7 @@ func newTestAppServerWithEnforcerConfigureWithBenchmark(b *testing.B, f func(*rb
 	f(enforcer)
 	enforcer.SetClaimsEnforcerFunc(rbacpolicy.NewRBACPolicyEnforcer(enforcer, fakeProjLister).EnforceClaims)
 
-	settingsMgr := settings.NewSettingsManager(ctx, kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	// populate the app informer with the fake objects
 	appInformer := factory.Argoproj().V1alpha1().Applications().Informer()
@@ -1049,13 +1049,14 @@ func TestNoAppEnumeration(t *testing.T) {
 	})
 
 	t.Run("PodLogs", func(t *testing.T) {
-		err := appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
+		ctx := t.Context()
+		err := appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
 		require.NoError(t, err)
-		err = appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: noRoleCtx})
+		err = appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: noRoleCtx})
 		require.EqualError(t, err, common.PermissionDeniedAPIError.Error(), "error message must be _only_ the permission error, to avoid leaking information about app existence")
-		err = appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("does-not-exist")}, &TestPodLogsServer{ctx: adminCtx})
+		err = appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("does-not-exist")}, &TestPodLogsServer{ctx: adminCtx})
 		require.EqualError(t, err, common.PermissionDeniedAPIError.Error(), "error message must be _only_ the permission error, to avoid leaking information about app existence")
-		err = appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("does-not-exist"), Project: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
+		err = appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("does-not-exist"), Project: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
 		assert.EqualError(t, err, "rpc error: code = NotFound desc = applications.argoproj.io \"does-not-exist\" not found", "when the request specifies a project, we can return the standard k8s error message")
 	})
 
@@ -2525,14 +2526,16 @@ func TestLogsGetSelectedPod(t *testing.T) {
 }
 
 func TestMaxPodLogsRender(t *testing.T) {
-	defaultMaxPodLogsToRender, _ := newTestAppServer(t).settingsMgr.GetMaxPodLogsToRender()
+	ctx := t.Context()
+	defaultMaxPodLogsToRender, _ := newTestAppServer(t).settingsMgr.GetMaxPodLogsToRender(ctx)
 
 	// Case: number of pods to view logs is less than defaultMaxPodLogsToRender
 	podNumber := int(defaultMaxPodLogsToRender - 1)
 	appServer, adminCtx := createAppServerWithMaxLodLogs(t, podNumber)
 
 	t.Run("PodLogs", func(t *testing.T) {
-		err := appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
+		ctx := t.Context()
+		err := appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
 		statusCode, _ := status.FromError(err)
 		assert.Equal(t, codes.OK, statusCode.Code())
 	})
@@ -2542,7 +2545,8 @@ func TestMaxPodLogsRender(t *testing.T) {
 	appServer, adminCtx = createAppServerWithMaxLodLogs(t, podNumber)
 
 	t.Run("PodLogs", func(t *testing.T) {
-		err := appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
+		ctx := t.Context()
+		err := appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
 		require.Error(t, err)
 		statusCode, _ := status.FromError(err)
 		assert.Equal(t, codes.InvalidArgument, statusCode.Code())
@@ -2555,7 +2559,8 @@ func TestMaxPodLogsRender(t *testing.T) {
 	appServer, adminCtx = createAppServerWithMaxLodLogs(t, podNumber, customMaxPodLogsToRender)
 
 	t.Run("PodLogs", func(t *testing.T) {
-		err := appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
+		ctx := t.Context()
+		err := appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
 		statusCode, _ := status.FromError(err)
 		assert.Equal(t, codes.OK, statusCode.Code())
 	})
@@ -2566,7 +2571,8 @@ func TestMaxPodLogsRender(t *testing.T) {
 	appServer, adminCtx = createAppServerWithMaxLodLogs(t, podNumber, customMaxPodLogsToRender)
 
 	t.Run("PodLogs", func(t *testing.T) {
-		err := appServer.PodLogs(&application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
+		ctx := t.Context()
+		err := appServer.PodLogs(ctx, &application.ApplicationPodLogsQuery{Name: ptr.To("test")}, &TestPodLogsServer{ctx: adminCtx})
 		require.Error(t, err)
 		statusCode, _ := status.FromError(err)
 		assert.Equal(t, codes.InvalidArgument, statusCode.Code())
