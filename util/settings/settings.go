@@ -570,7 +570,6 @@ var sourceTypeToEnableGenerationKey = map[v1alpha1.ApplicationSourceType]string{
 
 // SettingsManager holds config info for a new manager with which to access Kubernetes ConfigMaps.
 type SettingsManager struct {
-	ctx             context.Context
 	clientset       kubernetes.Interface
 	secrets         v1listers.SecretLister
 	secretsInformer cache.SharedIndexInformer
@@ -642,7 +641,7 @@ func (mgr *SettingsManager) RespectRBAC() (int, error) {
 }
 
 func (mgr *SettingsManager) GetSecretsLister() (v1listers.SecretLister, error) {
-	err := mgr.ensureSynced(false)
+	err := mgr.ensureSynced(context.Background(), false)
 	if err != nil {
 		return nil, err
 	}
@@ -650,7 +649,7 @@ func (mgr *SettingsManager) GetSecretsLister() (v1listers.SecretLister, error) {
 }
 
 func (mgr *SettingsManager) GetSecretsInformer() (cache.SharedIndexInformer, error) {
-	err := mgr.ensureSynced(false)
+	err := mgr.ensureSynced(context.Background(), false)
 	if err != nil {
 		return nil, fmt.Errorf("error ensuring that the secrets manager is synced: %w", err)
 	}
@@ -741,7 +740,7 @@ func (mgr *SettingsManager) getConfigMap() (*corev1.ConfigMap, error) {
 // The ConfigMap must be labeled with "app.kubernetes.io/part-of: argocd" in
 // order to be retrievable.
 func (mgr *SettingsManager) GetConfigMapByName(configMapName string) (*corev1.ConfigMap, error) {
-	err := mgr.ensureSynced(false)
+	err := mgr.ensureSynced(context.Background(), false)
 	if err != nil {
 		return nil, err
 	}
@@ -762,7 +761,7 @@ func (mgr *SettingsManager) getSecret() (*corev1.Secret, error) {
 
 // GetSecretByName returns the Secret with the given name from the cluster.
 func (mgr *SettingsManager) GetSecretByName(secretName string) (*corev1.Secret, error) {
-	err := mgr.ensureSynced(false)
+	err := mgr.ensureSynced(context.Background(), false)
 	if err != nil {
 		return nil, err
 	}
@@ -778,7 +777,7 @@ func (mgr *SettingsManager) GetSecretByName(secretName string) (*corev1.Secret, 
 }
 
 func (mgr *SettingsManager) getSecrets() ([]*corev1.Secret, error) {
-	err := mgr.ensureSynced(false)
+	err := mgr.ensureSynced(context.Background(), false)
 	if err != nil {
 		return nil, err
 	}
@@ -1388,7 +1387,7 @@ func (mgr *SettingsManager) initialize(ctx context.Context) error {
 	return nil
 }
 
-func (mgr *SettingsManager) ensureSynced(forceResync bool) error {
+func (mgr *SettingsManager) ensureSynced(ctx context.Context, forceResync bool) error {
 	mgr.mutex.Lock()
 	defer mgr.mutex.Unlock()
 	if !forceResync && mgr.secrets != nil && mgr.configmaps != nil {
@@ -1398,7 +1397,7 @@ func (mgr *SettingsManager) ensureSynced(forceResync bool) error {
 	if mgr.initContextCancel != nil {
 		mgr.initContextCancel()
 	}
-	ctx, cancel := context.WithCancel(mgr.ctx)
+	ctx, cancel := context.WithCancel(ctx)
 	mgr.initContextCancel = cancel
 	return mgr.initialize(ctx)
 }
@@ -1678,9 +1677,8 @@ func WithRepoOrClusterChangedHandler(handler func()) SettingsManagerOpts {
 }
 
 // NewSettingsManager generates a new SettingsManager pointer and returns it
-func NewSettingsManager(ctx context.Context, clientset kubernetes.Interface, namespace string, opts ...SettingsManagerOpts) *SettingsManager {
+func NewSettingsManager(clientset kubernetes.Interface, namespace string, opts ...SettingsManagerOpts) *SettingsManager {
 	mgr := &SettingsManager{
-		ctx:           ctx,
 		clientset:     clientset,
 		namespace:     namespace,
 		mutex:         &sync.Mutex{},
@@ -1694,7 +1692,7 @@ func NewSettingsManager(ctx context.Context, clientset kubernetes.Interface, nam
 }
 
 func (mgr *SettingsManager) ResyncInformers() error {
-	return mgr.ensureSynced(true)
+	return mgr.ensureSynced(context.Background(), true)
 }
 
 // IsSSOConfigured returns whether or not single-sign-on is configured
@@ -2085,7 +2083,7 @@ func (mgr *SettingsManager) InitializeSettings(insecureModeEnabled bool) (*ArgoC
 				if err != nil {
 					return err
 				}
-				ku := kube.NewKubeUtil(mgr.ctx, mgr.clientset)
+				ku := kube.NewKubeUtil(mgr.clientset)
 				err = ku.CreateOrUpdateSecretField(mgr.namespace, initialPasswordSecretName, initialPasswordSecretField, initialPassword)
 				if err != nil {
 					return err

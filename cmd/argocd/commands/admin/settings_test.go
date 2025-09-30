@@ -41,8 +41,6 @@ func captureStdout(callback func()) (string, error) {
 }
 
 func newSettingsManager(data map[string]string) *settings.SettingsManager {
-	ctx := context.Background()
-
 	clientset := fake.NewClientset(&corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
@@ -62,7 +60,7 @@ func newSettingsManager(data map[string]string) *settings.SettingsManager {
 			"server.secretkey": []byte("test"),
 		},
 	})
-	return settings.NewSettingsManager(ctx, clientset, "default")
+	return settings.NewSettingsManager(clientset, "default")
 }
 
 type fakeCmdContext struct {

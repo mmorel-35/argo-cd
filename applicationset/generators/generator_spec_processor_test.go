@@ -1,7 +1,6 @@
 package generators
 
 import (
-	"context"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -342,7 +341,7 @@ func getMockClusterGenerator() Generator {
 	appClientset := kubefake.NewSimpleClientset(runtimeClusters...)
 
 	fakeClient := fake.NewClientBuilder().WithObjects(clusters...).Build()
-	return NewClusterGenerator(context.Background(), fakeClient, appClientset, "namespace")
+	return NewClusterGenerator(fakeClient, appClientset, "namespace")
 }
 
 func getMockGitGenerator() Generator {

@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"context"
 	"errors"
 	"net"
 	"net/url"
@@ -65,7 +64,7 @@ func fixtures(data map[string]string, opts ...func(secret *corev1.Secret)) (*fak
 		opts[i](secret)
 	}
 	kubeClient := fake.NewClientset(cm, secret)
-	settingsManager := argosettings.NewSettingsManager(context.Background(), kubeClient, "default")
+	settingsManager := argosettings.NewSettingsManager(kubeClient, "default")
 
 	return kubeClient, settingsManager
 }
@@ -171,7 +170,7 @@ func TestHandleDeleteEvent_CacheDeadlock(t *testing.T) {
 	db := &dbmocks.ArgoDB{}
 	db.On("GetApplicationControllerReplicas").Return(1)
 	fakeClient := fake.NewClientset()
-	settingsMgr := argosettings.NewSettingsManager(t.Context(), fakeClient, "argocd")
+	settingsMgr := argosettings.NewSettingsManager(fakeClient, "argocd")
 	liveStateCacheLock := sync.RWMutex{}
 	gitopsEngineClusterCache := &mocks.ClusterCache{}
 	clustersCache := liveStateCache{

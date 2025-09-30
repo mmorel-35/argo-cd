@@ -262,7 +262,7 @@ func NewCommand() *cobra.Command {
 			stats.RegisterStackDumper()
 			stats.StartStatsTicker(10 * time.Minute)
 			stats.RegisterHeapDumper("memprofile")
-			argocd := server.NewServer(ctx, argoCDOpts, appsetOpts)
+			argocd := server.NewServer(argoCDOpts, appsetOpts)
 			argocd.Init(ctx)
 			for {
 				var closer func()

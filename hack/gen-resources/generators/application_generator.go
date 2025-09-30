@@ -62,7 +62,7 @@ func (generator *ApplicationGenerator) buildDestination(opts *util.GenerateOpts,
 }
 
 func (generator *ApplicationGenerator) Generate(opts *util.GenerateOpts) error {
-	settingsMgr := settings.NewSettingsManager(context.TODO(), generator.clientSet, opts.Namespace)
+	settingsMgr := settings.NewSettingsManager(generator.clientSet, opts.Namespace)
 	repositories, err := db.NewDB(opts.Namespace, settingsMgr, generator.clientSet).ListRepositories(context.TODO())
 	if err != nil {
 		return err

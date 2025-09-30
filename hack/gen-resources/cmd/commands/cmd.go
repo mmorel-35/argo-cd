@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"context"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -62,7 +61,7 @@ func NewGenerateCommand(opts *util.GenerateOpts) *cobra.Command {
 			argoClientSet := util.ConnectToK8sArgoClientSet()
 			clientSet := util.ConnectToK8sClientSet()
 
-			settingsMgr := settings.NewSettingsManager(context.TODO(), clientSet, opts.Namespace)
+			settingsMgr := settings.NewSettingsManager(clientSet, opts.Namespace)
 			argoDB := db.NewDB(opts.Namespace, settingsMgr, clientSet)
 
 			pg := generator.NewProjectGenerator(argoClientSet)
@@ -100,7 +99,7 @@ func NewCleanCommand(opts *util.GenerateOpts) *cobra.Command {
 		Run: func(_ *cobra.Command, _ []string) {
 			argoClientSet := util.ConnectToK8sArgoClientSet()
 			clientSet := util.ConnectToK8sClientSet()
-			settingsMgr := settings.NewSettingsManager(context.TODO(), clientSet, opts.Namespace)
+			settingsMgr := settings.NewSettingsManager(clientSet, opts.Namespace)
 			argoDB := db.NewDB(opts.Namespace, settingsMgr, clientSet)
 
 			pg := generator.NewProjectGenerator(argoClientSet)

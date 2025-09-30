@@ -24,7 +24,6 @@ func TestGetDirectories(t *testing.T) {
 		getGitDirectories func(ctx context.Context, req *apiclient.GitDirectoriesRequest) (*apiclient.GitDirectoriesResponse, error)
 	}
 	type args struct {
-		ctx             context.Context
 		repoURL         string
 		revision        string
 		noRevisionCache bool
@@ -75,16 +74,17 @@ func TestGetDirectories(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			ctx := t.Context()
 			a := &argoCDService{
 				getRepository:                   tt.fields.getRepository,
 				submoduleEnabled:                tt.fields.submoduleEnabled,
 				getGitDirectoriesFromRepoServer: tt.fields.getGitDirectories,
 			}
-			got, err := a.GetDirectories(tt.args.ctx, tt.args.repoURL, tt.args.revision, "", tt.args.noRevisionCache, tt.args.verifyCommit)
-			if !tt.wantErr(t, err, fmt.Sprintf("GetDirectories(%v, %v, %v, %v)", tt.args.ctx, tt.args.repoURL, tt.args.revision, tt.args.noRevisionCache)) {
+			got, err := a.GetDirectories(ctx, tt.args.repoURL, tt.args.revision, "", tt.args.noRevisionCache, tt.args.verifyCommit)
+			if !tt.wantErr(t, err, fmt.Sprintf("GetDirectories(%v, %v, %v, %v)", ctx, tt.args.repoURL, tt.args.revision, tt.args.noRevisionCache)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "GetDirectories(%v, %v, %v, %v)", tt.args.ctx, tt.args.repoURL, tt.args.revision, tt.args.noRevisionCache)
+			assert.Equalf(t, tt.want, got, "GetDirectories(%v, %v, %v, %v)", ctx, tt.args.repoURL, tt.args.revision, tt.args.noRevisionCache)
 		})
 	}
 }
@@ -96,7 +96,6 @@ func TestGetFiles(t *testing.T) {
 		getGitFiles      func(ctx context.Context, req *apiclient.GitFilesRequest) (*apiclient.GitFilesResponse, error)
 	}
 	type args struct {
-		ctx             context.Context
 		repoURL         string
 		revision        string
 		pattern         string
@@ -154,16 +153,17 @@ func TestGetFiles(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			ctx := t.Context()
 			a := &argoCDService{
 				getRepository:             tt.fields.getRepository,
 				submoduleEnabled:          tt.fields.submoduleEnabled,
 				getGitFilesFromRepoServer: tt.fields.getGitFiles,
 			}
-			got, err := a.GetFiles(tt.args.ctx, tt.args.repoURL, tt.args.revision, tt.args.pattern, "", tt.args.noRevisionCache, tt.args.verifyCommit)
-			if !tt.wantErr(t, err, fmt.Sprintf("GetFiles(%v, %v, %v, %v, %v)", tt.args.ctx, tt.args.repoURL, tt.args.revision, tt.args.pattern, tt.args.noRevisionCache)) {
+			got, err := a.GetFiles(ctx, tt.args.repoURL, tt.args.revision, tt.args.pattern, "", tt.args.noRevisionCache, tt.args.verifyCommit)
+			if !tt.wantErr(t, err, fmt.Sprintf("GetFiles(%v, %v, %v, %v, %v)", ctx, tt.args.repoURL, tt.args.revision, tt.args.pattern, tt.args.noRevisionCache)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "GetFiles(%v, %v, %v, %v, %v)", tt.args.ctx, tt.args.repoURL, tt.args.revision, tt.args.pattern, tt.args.noRevisionCache)
+			assert.Equalf(t, tt.want, got, "GetFiles(%v, %v, %v, %v, %v)", ctx, tt.args.repoURL, tt.args.revision, tt.args.pattern, tt.args.noRevisionCache)
 		})
 	}
 }
@@ -171,7 +171,7 @@ func TestGetFiles(t *testing.T) {
 func TestNewArgoCDService(t *testing.T) {
 	testNamespace := "test"
 	clientset := fake.NewClientset()
-	testDB := db.NewDB(testNamespace, settings.NewSettingsManager(t.Context(), clientset, testNamespace), clientset)
+	testDB := db.NewDB(testNamespace, settings.NewSettingsManager(clientset, testNamespace), clientset)
 	service := NewArgoCDService(testDB, false, &repo_mocks.Clientset{}, false)
 	assert.NotNil(t, service)
 }

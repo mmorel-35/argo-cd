@@ -256,7 +256,7 @@ func Test_createRBACObject(t *testing.T) {
 
 func TestRepositoryServer(t *testing.T) {
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 	enforcer := newEnforcer(kubeclientset)
 	appLister, projInformer := newAppAndProjLister(defaultProj)
 	argoDB := db.NewDB("default", settingsMgr, kubeclientset)
@@ -506,7 +506,7 @@ func TestRepositoryServer(t *testing.T) {
 
 func TestRepositoryServerListApps(t *testing.T) {
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	t.Run("Test_WithoutAppCreateUpdatePrivileges", func(t *testing.T) {
 		repoServerClient := mocks.RepoServerServiceClient{}
@@ -593,7 +593,7 @@ func TestRepositoryServerListApps(t *testing.T) {
 
 func TestRepositoryServerGetAppDetails(t *testing.T) {
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	t.Run("Test_WithoutRepoReadPrivileges", func(t *testing.T) {
 		repoServerClient := mocks.RepoServerServiceClient{}
@@ -970,7 +970,6 @@ func newEnforcer(kubeclientset *fake.Clientset) *rbac.Enforcer {
 
 func TestGetRepository(t *testing.T) {
 	type args struct {
-		ctx              context.Context
 		listRepositories func(context.Context, *repository.RepoQuery) (*appsv1.RepositoryList, error)
 		q                *repository.RepoQuery
 	}
@@ -983,7 +982,6 @@ func TestGetRepository(t *testing.T) {
 		{
 			name: "empty project and no repos",
 			args: args{
-				ctx: t.Context(),
 				listRepositories: func(_ context.Context, _ *repository.RepoQuery) (*appsv1.RepositoryList, error) {
 					return &appsv1.RepositoryList{
 						Items: []*appsv1.Repository{
@@ -999,7 +997,6 @@ func TestGetRepository(t *testing.T) {
 		{
 			name: "empty project and no matching repos",
 			args: args{
-				ctx: t.Context(),
 				listRepositories: func(_ context.Context, _ *repository.RepoQuery) (*appsv1.RepositoryList, error) {
 					return &appsv1.RepositoryList{}, nil
 				},
@@ -1013,7 +1010,6 @@ func TestGetRepository(t *testing.T) {
 		{
 			name: "empty project + matching repo with an empty project",
 			args: args{
-				ctx: t.Context(),
 				listRepositories: func(_ context.Context, _ *repository.RepoQuery) (*appsv1.RepositoryList, error) {
 					return &appsv1.RepositoryList{
 						Items: []*appsv1.Repository{
@@ -1035,7 +1031,6 @@ func TestGetRepository(t *testing.T) {
 		{
 			name: "empty project + matching repo with a non-empty project",
 			args: args{
-				ctx: t.Context(),
 				listRepositories: func(_ context.Context, _ *repository.RepoQuery) (*appsv1.RepositoryList, error) {
 					return &appsv1.RepositoryList{
 						Items: []*appsv1.Repository{
@@ -1057,7 +1052,6 @@ func TestGetRepository(t *testing.T) {
 		{
 			name: "non-empty project + matching repo with an empty project",
 			args: args{
-				ctx: t.Context(),
 				listRepositories: func(_ context.Context, _ *repository.RepoQuery) (*appsv1.RepositoryList, error) {
 					return &appsv1.RepositoryList{
 						Items: []*appsv1.Repository{
@@ -1076,7 +1070,6 @@ func TestGetRepository(t *testing.T) {
 		{
 			name: "non-empty project + matching repo with a matching project",
 			args: args{
-				ctx: t.Context(),
 				listRepositories: func(_ context.Context, _ *repository.RepoQuery) (*appsv1.RepositoryList, error) {
 					return &appsv1.RepositoryList{
 						Items: []*appsv1.Repository{
@@ -1098,7 +1091,6 @@ func TestGetRepository(t *testing.T) {
 		{
 			name: "non-empty project + matching repo with a non-matching project",
 			args: args{
-				ctx: t.Context(),
 				listRepositories: func(_ context.Context, _ *repository.RepoQuery) (*appsv1.RepositoryList, error) {
 					return &appsv1.RepositoryList{
 						Items: []*appsv1.Repository{
@@ -1117,9 +1109,10 @@ func TestGetRepository(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getRepository(tt.args.ctx, tt.args.listRepositories, tt.args.q)
+			ctx := t.Context()
+			got, err := getRepository(ctx, tt.args.listRepositories, tt.args.q)
 			assert.Equal(t, tt.error, err)
-			assert.Equalf(t, tt.want, got, "getRepository(%v, %v) = %v", tt.args.ctx, tt.args.q, got)
+			assert.Equalf(t, tt.want, got, "getRepository(%v, %v) = %v", ctx, tt.args.q, got)
 		})
 	}
 }
@@ -1132,7 +1125,7 @@ func TestDeleteRepository(t *testing.T) {
 	}
 
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	for name, repo := range repositories {
 		t.Run(name, func(t *testing.T) {

@@ -125,7 +125,7 @@ func (opts *settingsOpts) createSettingsManager(ctx context.Context) (*settings.
 	setSettingsMeta(argocdSecret)
 	clientset := fake.NewClientset(argocdSecret, argocdCM)
 
-	manager := settings.NewSettingsManager(ctx, clientset, "default")
+	manager := settings.NewSettingsManager(clientset, "default")
 	errors.CheckError(manager.ResyncInformers())
 
 	return manager, nil

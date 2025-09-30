@@ -89,8 +89,6 @@ func NewCommand() *cobra.Command {
 		Short:             "Starts Argo CD ApplicationSet controller",
 		DisableAutoGenTag: true,
 		RunE: func(c *cobra.Command, _ []string) error {
-			ctx := c.Context()
-
 			vers := common.GetVersion()
 			namespace, _, err := clientConfig.Namespace()
 			applicationSetNamespaces = append(applicationSetNamespaces, namespace)
@@ -175,7 +173,7 @@ func NewCommand() *cobra.Command {
 			k8sClient, err := kubernetes.NewForConfig(mgr.GetConfig())
 			errors.CheckError(err)
 
-			argoSettingsMgr := argosettings.NewSettingsManager(ctx, k8sClient, namespace)
+			argoSettingsMgr := argosettings.NewSettingsManager(k8sClient, namespace)
 			argoCDDB := db.NewDB(namespace, argoSettingsMgr, k8sClient)
 
 			scmConfig := generators.NewSCMConfig(scmRootCAPath, allowedScmProviders, enableScmProviders, enableGitHubAPIMetrics, github_app.NewAuthCredentials(argoCDDB.(db.RepoCredsDB)), tokenRefStrictMode)
@@ -197,7 +195,7 @@ func NewCommand() *cobra.Command {
 			repoClientset := apiclient.NewRepoServerClientset(argocdRepoServer, repoServerTimeoutSeconds, tlsConfig)
 			argoCDService := services.NewArgoCDService(argoCDDB, gitSubmoduleEnabled, repoClientset, enableNewGitFileGlobbing)
 
-			topLevelGenerators := generators.GetGenerators(ctx, mgr.GetClient(), k8sClient, namespace, argoCDService, dynamicClient, scmConfig)
+			topLevelGenerators := generators.GetGenerators(mgr.GetClient(), k8sClient, namespace, argoCDService, dynamicClient, scmConfig)
 
 			// start a webhook server that listens to incoming webhook payloads
 			webhookHandler, err := webhook.NewWebhookHandler(webhookParallelism, argoSettingsMgr, mgr.GetClient(), topLevelGenerators)
