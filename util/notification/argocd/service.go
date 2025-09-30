@@ -20,16 +20,13 @@ type Service interface {
 }
 
 func NewArgoCDService(clientset kubernetes.Interface, namespace string, repoClientset apiclient.Clientset) (*argoCDService, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	settingsMgr := settings.NewSettingsManager(ctx, clientset, namespace)
+	settingsMgr := settings.NewSettingsManager(clientset, namespace)
 	closer, repoClient, err := repoClientset.NewRepoServerClient()
 	if err != nil {
-		cancel()
 		return nil, err
 	}
 
 	dispose := func() {
-		cancel()
 		if err := closer.Close(); err != nil {
 			log.Warnf("Failed to close repo server connection: %v", err)
 		}

@@ -22,7 +22,6 @@ var _ Generator = (*ClusterGenerator)(nil)
 // ClusterGenerator generates Applications for some or all clusters registered with ArgoCD.
 type ClusterGenerator struct {
 	client.Client
-	ctx       context.Context
 	clientset kubernetes.Interface
 	// namespace is the Argo CD namespace
 	namespace string
@@ -30,10 +29,9 @@ type ClusterGenerator struct {
 
 var render = &utils.Render{}
 
-func NewClusterGenerator(ctx context.Context, c client.Client, clientset kubernetes.Interface, namespace string) Generator {
+func NewClusterGenerator(c client.Client, clientset kubernetes.Interface, namespace string) Generator {
 	g := &ClusterGenerator{
 		Client:    c,
-		ctx:       ctx,
 		clientset: clientset,
 		namespace: namespace,
 	}
@@ -65,7 +63,7 @@ func (g *ClusterGenerator) GenerateParams(appSetGenerator *argoappsetv1alpha1.Ap
 	ignoreLocalClusters := len(appSetGenerator.Clusters.Selector.MatchExpressions) > 0 || len(appSetGenerator.Clusters.Selector.MatchLabels) > 0
 
 	// ListCluster will include the local cluster in the list of clusters
-	clustersFromArgoCD, err := utils.ListClusters(g.ctx, g.clientset, g.namespace)
+	clustersFromArgoCD, err := utils.ListClusters(context.Background(), g.clientset, g.namespace)
 	if err != nil {
 		return nil, fmt.Errorf("error listing clusters: %w", err)
 	}

@@ -2251,14 +2251,12 @@ func TestGenerateManifestWithAnnotatedAndRegularGitTagHashes(t *testing.T) {
 
 	tests := []struct {
 		name            string
-		ctx             context.Context
 		manifestRequest *apiclient.ManifestRequest
 		wantError       bool
 		service         *Service
 	}{
 		{
 			name: "Case: Git tag hash matches latest commit SHA (regular tag)",
-			ctx:  t.Context(),
 			manifestRequest: &apiclient.ManifestRequest{
 				Repo: &v1alpha1.Repository{},
 				ApplicationSource: &v1alpha1.ApplicationSource{
@@ -2274,7 +2272,6 @@ func TestGenerateManifestWithAnnotatedAndRegularGitTagHashes(t *testing.T) {
 
 		{
 			name: "Case: Git tag hash does not match latest commit SHA (annotated tag)",
-			ctx:  t.Context(),
 			manifestRequest: &apiclient.ManifestRequest{
 				Repo: &v1alpha1.Repository{},
 				ApplicationSource: &v1alpha1.ApplicationSource{
@@ -2290,7 +2287,6 @@ func TestGenerateManifestWithAnnotatedAndRegularGitTagHashes(t *testing.T) {
 
 		{
 			name: "Case: Git tag hash is invalid",
-			ctx:  t.Context(),
 			manifestRequest: &apiclient.ManifestRequest{
 				Repo: &v1alpha1.Repository{},
 				ApplicationSource: &v1alpha1.ApplicationSource{
@@ -2306,7 +2302,8 @@ func TestGenerateManifestWithAnnotatedAndRegularGitTagHashes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			manifestResponse, err := tt.service.GenerateManifest(tt.ctx, tt.manifestRequest)
+			ctx := t.Context()
+			manifestResponse, err := tt.service.GenerateManifest(ctx, tt.manifestRequest)
 			if !tt.wantError {
 				require.NoError(t, err)
 				assert.Equal(t, manifestResponse.Revision, actualCommitSHA)
@@ -3588,7 +3585,6 @@ func TestErrorGetGitDirectories(t *testing.T) {
 		service *Service
 	}
 	type args struct {
-		ctx     context.Context
 		request *apiclient.GitDirectoriesRequest
 	}
 	tests := []struct {
@@ -3599,7 +3595,6 @@ func TestErrorGetGitDirectories(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 		{name: "InvalidRepo", fields: fields{service: newService(t, ".")}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.GitDirectoriesRequest{
 				Repo:             nil,
 				SubmoduleEnabled: false,
@@ -3616,7 +3611,6 @@ func TestErrorGetGitDirectories(t *testing.T) {
 			}, ".")
 			return s
 		}()}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.GitDirectoriesRequest{
 				Repo:             &v1alpha1.Repository{Repo: "not-a-valid-url"},
 				SubmoduleEnabled: false,
@@ -3634,7 +3628,6 @@ func TestErrorGetGitDirectories(t *testing.T) {
 			}, ".")
 			return s
 		}()}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.GitDirectoriesRequest{
 				Repo:             &v1alpha1.Repository{Repo: "not-a-valid-url"},
 				SubmoduleEnabled: false,
@@ -3646,11 +3639,12 @@ func TestErrorGetGitDirectories(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := tt.fields.service
-			got, err := s.GetGitDirectories(tt.args.ctx, tt.args.request)
-			if !tt.wantErr(t, err, fmt.Sprintf("GetGitDirectories(%v, %v)", tt.args.ctx, tt.args.request)) {
+			ctx := t.Context()
+			got, err := s.GetGitDirectories(ctx, tt.args.request)
+			if !tt.wantErr(t, err, fmt.Sprintf("GetGitDirectories(%v, %v)", ctx, tt.args.request)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "GetGitDirectories(%v, %v)", tt.args.ctx, tt.args.request)
+			assert.Equalf(t, tt.want, got, "GetGitDirectories(%v, %v)", ctx, tt.args.request)
 		})
 	}
 }
@@ -3730,7 +3724,6 @@ func TestErrorGetGitFiles(t *testing.T) {
 		service *Service
 	}
 	type args struct {
-		ctx     context.Context
 		request *apiclient.GitFilesRequest
 	}
 	tests := []struct {
@@ -3741,7 +3734,6 @@ func TestErrorGetGitFiles(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 		{name: "InvalidRepo", fields: fields{service: newService(t, ".")}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.GitFilesRequest{
 				Repo:             nil,
 				SubmoduleEnabled: false,
@@ -3758,7 +3750,6 @@ func TestErrorGetGitFiles(t *testing.T) {
 			}, ".")
 			return s
 		}()}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.GitFilesRequest{
 				Repo:             &v1alpha1.Repository{Repo: "not-a-valid-url"},
 				SubmoduleEnabled: false,
@@ -3769,11 +3760,12 @@ func TestErrorGetGitFiles(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := tt.fields.service
-			got, err := s.GetGitFiles(tt.args.ctx, tt.args.request)
-			if !tt.wantErr(t, err, fmt.Sprintf("GetGitFiles(%v, %v)", tt.args.ctx, tt.args.request)) {
+			ctx := t.Context()
+			got, err := s.GetGitFiles(ctx, tt.args.request)
+			if !tt.wantErr(t, err, fmt.Sprintf("GetGitFiles(%v, %v)", ctx, tt.args.request)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "GetGitFiles(%v, %v)", tt.args.ctx, tt.args.request)
+			assert.Equalf(t, tt.want, got, "GetGitFiles(%v, %v)", ctx, tt.args.request)
 		})
 	}
 }
@@ -3833,7 +3825,6 @@ func TestErrorUpdateRevisionForPaths(t *testing.T) {
 		service *Service
 	}
 	type args struct {
-		ctx     context.Context
 		request *apiclient.UpdateRevisionForPathsRequest
 	}
 	tests := []struct {
@@ -3844,7 +3835,6 @@ func TestErrorUpdateRevisionForPaths(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 		{name: "InvalidRepo", fields: fields{service: newService(t, ".")}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:           nil,
 				Revision:       "HEAD",
@@ -3861,7 +3851,6 @@ func TestErrorUpdateRevisionForPaths(t *testing.T) {
 			}, ".")
 			return s
 		}()}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:           &v1alpha1.Repository{Repo: "not-a-valid-url"},
 				Revision:       "sadfsadf",
@@ -3880,7 +3869,6 @@ func TestErrorUpdateRevisionForPaths(t *testing.T) {
 			}, ".")
 			return s
 		}()}, args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:           &v1alpha1.Repository{Repo: "not-a-valid-url"},
 				Revision:       "HEAD",
@@ -3892,11 +3880,12 @@ func TestErrorUpdateRevisionForPaths(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := tt.fields.service
-			got, err := s.UpdateRevisionForPaths(tt.args.ctx, tt.args.request)
-			if !tt.wantErr(t, err, fmt.Sprintf("UpdateRevisionForPaths(%v, %v)", tt.args.ctx, tt.args.request)) {
+			ctx := t.Context()
+			got, err := s.UpdateRevisionForPaths(ctx, tt.args.request)
+			if !tt.wantErr(t, err, fmt.Sprintf("UpdateRevisionForPaths(%v, %v)", ctx, tt.args.request)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "UpdateRevisionForPaths(%v, %v)", tt.args.ctx, tt.args.request)
+			assert.Equalf(t, tt.want, got, "UpdateRevisionForPaths(%v, %v)", ctx, tt.args.request)
 		})
 	}
 }
@@ -3907,7 +3896,6 @@ func TestUpdateRevisionForPaths(t *testing.T) {
 		cache   *repoCacheMocks
 	}
 	type args struct {
-		ctx     context.Context
 		request *apiclient.UpdateRevisionForPathsRequest
 	}
 	type cacheHit struct {
@@ -3931,7 +3919,6 @@ func TestUpdateRevisionForPaths(t *testing.T) {
 				cache:   c,
 			}
 		}(), args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:  &v1alpha1.Repository{Repo: "a-url.com"},
 				Paths: []string{},
@@ -3950,7 +3937,6 @@ func TestUpdateRevisionForPaths(t *testing.T) {
 				cache:   c,
 			}
 		}(), args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:           &v1alpha1.Repository{Repo: "a-url.com"},
 				Revision:       "HEAD",
@@ -3982,7 +3968,6 @@ func TestUpdateRevisionForPaths(t *testing.T) {
 				cache:   c,
 			}
 		}(), args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:           &v1alpha1.Repository{Repo: "a-url.com"},
 				Revision:       "HEAD",
@@ -4015,7 +4000,6 @@ func TestUpdateRevisionForPaths(t *testing.T) {
 				cache:   c,
 			}
 		}(), args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:           &v1alpha1.Repository{Repo: "a-url.com"},
 				Revision:       "HEAD",
@@ -4056,7 +4040,6 @@ func TestUpdateRevisionForPaths(t *testing.T) {
 				cache:   c,
 			}
 		}(), args: args{
-			ctx: t.Context(),
 			request: &apiclient.UpdateRevisionForPathsRequest{
 				Repo:           &v1alpha1.Repository{Repo: "a-url.com"},
 				Revision:       "HEAD",
@@ -4083,16 +4066,17 @@ func TestUpdateRevisionForPaths(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := tt.fields.service
 			cache := tt.fields.cache
+			ctx := t.Context()
 
 			if tt.cacheHit != nil {
 				cache.mockCache.On("Rename", tt.cacheHit.previousRevision, tt.cacheHit.revision, mock.Anything).Return(nil)
 			}
 
-			got, err := s.UpdateRevisionForPaths(tt.args.ctx, tt.args.request)
-			if !tt.wantErr(t, err, fmt.Sprintf("UpdateRevisionForPaths(%v, %v)", tt.args.ctx, tt.args.request)) {
+			got, err := s.UpdateRevisionForPaths(ctx, tt.args.request)
+			if !tt.wantErr(t, err, fmt.Sprintf("UpdateRevisionForPaths(%v, %v)", ctx, tt.args.request)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "UpdateRevisionForPaths(%v, %v)", tt.args.ctx, tt.args.request)
+			assert.Equalf(t, tt.want, got, "UpdateRevisionForPaths(%v, %v)", ctx, tt.args.request)
 
 			if tt.cacheHit != nil {
 				cache.mockCache.AssertCacheCalledTimes(t, &repositorymocks.CacheCallCounts{

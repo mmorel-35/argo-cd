@@ -142,7 +142,7 @@ func Test_ListConfiguredGPGPublicKeys(t *testing.T) {
 	// Good case. Single key in input, right mapping to Key ID in CM
 	{
 		clientset := getGPGKeysClientset(gpgCMSingleGoodPubkey)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 		if db == nil {
 			panic("could not get database")
@@ -154,7 +154,7 @@ func Test_ListConfiguredGPGPublicKeys(t *testing.T) {
 	// Good case. No certificates in ConfigMap
 	{
 		clientset := getGPGKeysClientset(gpgCMEmpty)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 		if db == nil {
 			panic("could not get database")
@@ -166,7 +166,7 @@ func Test_ListConfiguredGPGPublicKeys(t *testing.T) {
 	// Bad case. Single key in input, wrong mapping to Key ID in CM
 	{
 		clientset := getGPGKeysClientset(gpgCMSingleKeyWrongId)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 		if db == nil {
 			panic("could not get database")
@@ -178,7 +178,7 @@ func Test_ListConfiguredGPGPublicKeys(t *testing.T) {
 	// Bad case. Garbage public key
 	{
 		clientset := getGPGKeysClientset(gpgCMGarbagePubkey)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 		if db == nil {
 			panic("could not get database")
@@ -190,7 +190,7 @@ func Test_ListConfiguredGPGPublicKeys(t *testing.T) {
 	// Bad case. Garbage ConfigMap key in data
 	{
 		clientset := getGPGKeysClientset(gpgCMGarbageCMKey)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 		if db == nil {
 			panic("could not get database")
@@ -205,7 +205,7 @@ func Test_AddGPGPublicKey(t *testing.T) {
 	// Good case
 	{
 		clientset := getGPGKeysClientset(gpgCMEmpty)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 
 		// Key should be added
@@ -260,7 +260,7 @@ func Test_DeleteGPGPublicKey(t *testing.T) {
 
 	t.Run("good case", func(t *testing.T) {
 		clientset := getGPGKeysClientset(gpgCMMultiGoodPubkey)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 
 		// Key should be removed
@@ -292,7 +292,7 @@ func Test_DeleteGPGPublicKey(t *testing.T) {
 
 	t.Run("bad case - empty ConfigMap", func(t *testing.T) {
 		clientset := getGPGKeysClientset(gpgCMEmpty)
-		settings := settings.NewSettingsManager(t.Context(), clientset, testNamespace)
+		settings := settings.NewSettingsManager(clientset, testNamespace)
 		db := NewDB(testNamespace, settings, clientset)
 
 		// Key should be removed

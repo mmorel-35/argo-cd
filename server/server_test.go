@@ -90,7 +90,7 @@ func fakeServer(t *testing.T) (*FakeArgoCDServer, func()) {
 		DynamicClientset:        dynamicClient,
 		KubeControllerClientset: fakeClient,
 	}
-	srv := NewServer(t.Context(), argoCDOpts, ApplicationSetOpts{})
+	srv := NewServer(argoCDOpts, ApplicationSetOpts{})
 	fakeSrv := &FakeArgoCDServer{srv, tmpAssetsDir}
 	return fakeSrv, closer
 }
@@ -126,7 +126,7 @@ func TestEnforceProjectToken(t *testing.T) {
 	mockRepoClient := &mocks.Clientset{RepoServerServiceClient: &mocks.RepoServerServiceClient{}}
 
 	t.Run("TestEnforceProjectTokenSuccessful", func(t *testing.T) {
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		cancel := test.StartInformer(s.projInformer)
 		defer cancel()
 		claims := jwt.MapClaims{"sub": defaultSub, "iat": defaultIssuedAt}
@@ -135,21 +135,21 @@ func TestEnforceProjectToken(t *testing.T) {
 	})
 
 	t.Run("TestEnforceProjectTokenWithDiffCreateAtFailure", func(t *testing.T) {
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		diffCreateAt := defaultIssuedAt + 1
 		claims := jwt.MapClaims{"sub": defaultSub, "iat": diffCreateAt}
 		assert.False(t, s.enf.Enforce(claims, "applications", "get", defaultTestObject))
 	})
 
 	t.Run("TestEnforceProjectTokenIncorrectSubFormatFailure", func(t *testing.T) {
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		invalidSub := "proj:test"
 		claims := jwt.MapClaims{"sub": invalidSub, "iat": defaultIssuedAt}
 		assert.False(t, s.enf.Enforce(claims, "applications", "get", defaultTestObject))
 	})
 
 	t.Run("TestEnforceProjectTokenNoTokenFailure", func(t *testing.T) {
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		nonExistentToken := "fake-token"
 		invalidSub := fmt.Sprintf(subFormat, projectName, nonExistentToken)
 		claims := jwt.MapClaims{"sub": invalidSub, "iat": defaultIssuedAt}
@@ -159,7 +159,7 @@ func TestEnforceProjectToken(t *testing.T) {
 	t.Run("TestEnforceProjectTokenNotJWTTokenFailure", func(t *testing.T) {
 		proj := existingProj.DeepCopy()
 		proj.Spec.Roles[0].JWTTokens = nil
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(proj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(proj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		claims := jwt.MapClaims{"sub": defaultSub, "iat": defaultIssuedAt}
 		assert.False(t, s.enf.Enforce(claims, "applications", "get", defaultTestObject))
 	})
@@ -172,7 +172,7 @@ func TestEnforceProjectToken(t *testing.T) {
 		proj := existingProj.DeepCopy()
 		proj.Spec.Roles[0] = role
 
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(proj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(proj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		cancel := test.StartInformer(s.projInformer)
 		defer cancel()
 		claims := jwt.MapClaims{"sub": defaultSub, "iat": defaultIssuedAt}
@@ -183,7 +183,7 @@ func TestEnforceProjectToken(t *testing.T) {
 	})
 
 	t.Run("TestEnforceProjectTokenWithIdSuccessful", func(t *testing.T) {
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		cancel := test.StartInformer(s.projInformer)
 		defer cancel()
 		claims := jwt.MapClaims{"sub": defaultSub, "jti": defaultId}
@@ -192,7 +192,7 @@ func TestEnforceProjectToken(t *testing.T) {
 	})
 
 	t.Run("TestEnforceProjectTokenWithInvalidIdFailure", func(t *testing.T) {
-		s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+		s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 		invalidId := "invalidId"
 		claims := jwt.MapClaims{"sub": defaultSub, "jti": defaultId}
 		res := s.enf.Enforce(claims, "applications", "get", invalidId)
@@ -276,7 +276,7 @@ func TestInitializingExistingDefaultProject(t *testing.T) {
 		RepoClientset: mockRepoClient,
 	}
 
-	argocd := NewServer(t.Context(), argoCDOpts, ApplicationSetOpts{})
+	argocd := NewServer(argoCDOpts, ApplicationSetOpts{})
 	assert.NotNil(t, argocd)
 
 	proj, err := appClientSet.ArgoprojV1alpha1().AppProjects(test.FakeArgoCDNamespace).Get(t.Context(), v1alpha1.DefaultAppProjectName, metav1.GetOptions{})
@@ -299,7 +299,7 @@ func TestInitializingNotExistingDefaultProject(t *testing.T) {
 		RepoClientset: mockRepoClient,
 	}
 
-	argocd := NewServer(t.Context(), argoCDOpts, ApplicationSetOpts{})
+	argocd := NewServer(argoCDOpts, ApplicationSetOpts{})
 	assert.NotNil(t, argocd)
 
 	proj, err := appClientSet.ArgoprojV1alpha1().AppProjects(test.FakeArgoCDNamespace).Get(t.Context(), v1alpha1.DefaultAppProjectName, metav1.GetOptions{})
@@ -341,7 +341,7 @@ func TestEnforceProjectGroups(t *testing.T) {
 	}
 	mockRepoClient := &mocks.Clientset{RepoServerServiceClient: &mocks.RepoServerServiceClient{}}
 	kubeclientset := fake.NewClientset(test.NewFakeConfigMap(), test.NewFakeSecret())
-	s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+	s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 	cancel := test.StartInformer(s.projInformer)
 	defer cancel()
 	claims := jwt.MapClaims{
@@ -403,7 +403,7 @@ func TestRevokedToken(t *testing.T) {
 		},
 	}
 
-	s := NewServer(t.Context(), ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
+	s := NewServer(ArgoCDServerOpts{Namespace: test.FakeArgoCDNamespace, KubeClientset: kubeclientset, AppClientset: apps.NewSimpleClientset(&existingProj), RepoClientset: mockRepoClient}, ApplicationSetOpts{})
 	cancel := test.StartInformer(s.projInformer)
 	defer cancel()
 	claims := jwt.MapClaims{"sub": defaultSub, "iat": defaultIssuedAt}
@@ -426,7 +426,6 @@ func TestGracefulShutdown(t *testing.T) {
 	redis, redisCloser := test.NewInMemoryRedis()
 	defer redisCloser()
 	s := NewServer(
-		t.Context(),
 		ArgoCDServerOpts{
 			ListenPort:    port,
 			Namespace:     test.FakeArgoCDNamespace,
@@ -524,7 +523,7 @@ func TestAuthenticate(t *testing.T) {
 				AppClientset:  appClientSet,
 				RepoClientset: mockRepoClient,
 			}
-			argocd := NewServer(t.Context(), argoCDOpts, ApplicationSetOpts{})
+			argocd := NewServer(argoCDOpts, ApplicationSetOpts{})
 			ctx := t.Context()
 			if testData.user != "" {
 				token, err := argocd.sessionMgr.Create(testData.user, 0, "abc")
@@ -663,7 +662,7 @@ connectors:
 	if withFakeSSO && useDexForSSO {
 		argoCDOpts.DexServerAddr = ts.URL
 	}
-	argocd = NewServer(t.Context(), argoCDOpts, ApplicationSetOpts{})
+	argocd = NewServer(argoCDOpts, ApplicationSetOpts{})
 	var err error
 	argocd.ssoClientApp, err = oidc.NewClientApp(argocd.settings, argocd.DexServerAddr, argocd.DexTLSConfig, argocd.BaseHRef, cache.NewInMemoryCache(24*time.Hour))
 	require.NoError(t, err)
@@ -1173,7 +1172,7 @@ func TestTranslateGrpcCookieHeader(t *testing.T) {
 		AppClientset:  apps.NewSimpleClientset(),
 		RepoClientset: &mocks.Clientset{RepoServerServiceClient: &mocks.RepoServerServiceClient{}},
 	}
-	argocd := NewServer(t.Context(), argoCDOpts, ApplicationSetOpts{})
+	argocd := NewServer(argoCDOpts, ApplicationSetOpts{})
 
 	t.Run("TokenIsNotEmpty", func(t *testing.T) {
 		recorder := httptest.NewRecorder()

@@ -11,7 +11,6 @@ import (
 
 type kubeUtil struct {
 	client      kubernetes.Interface
-	ctx         context.Context
 	labels      map[string]string
 	annotations map[string]string
 }
@@ -21,8 +20,8 @@ type kubeUtil struct {
 type updateFn func(s *corev1.Secret, new bool) error
 
 // NewKubeUtil NewUtil returns a new kubeUtil receiver
-func NewKubeUtil(ctx context.Context, client kubernetes.Interface) *kubeUtil {
-	return &kubeUtil{client: client, ctx: ctx}
+func NewKubeUtil(client kubernetes.Interface) *kubeUtil {
+	return &kubeUtil{client: client}
 }
 
 // CreateOrUpdateSecret creates or updates a secret, using the update function.
@@ -33,8 +32,9 @@ func (ku *kubeUtil) CreateOrUpdateSecret(ns string, name string, update updateFn
 	var s *corev1.Secret
 	var err error
 	var create bool
+	ctx := context.Background()
 
-	s, err = ku.client.CoreV1().Secrets(ns).Get(ku.ctx, name, metav1.GetOptions{})
+	s, err = ku.client.CoreV1().Secrets(ns).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		if !errors.IsNotFound(err) {
 			return err
@@ -60,9 +60,9 @@ func (ku *kubeUtil) CreateOrUpdateSecret(ns string, name string, update updateFn
 	}
 
 	if create {
-		_, err = ku.client.CoreV1().Secrets(ns).Create(ku.ctx, s, metav1.CreateOptions{})
+		_, err = ku.client.CoreV1().Secrets(ns).Create(ctx, s, metav1.CreateOptions{})
 	} else {
-		_, err = ku.client.CoreV1().Secrets(ns).Update(ku.ctx, s, metav1.UpdateOptions{})
+		_, err = ku.client.CoreV1().Secrets(ns).Update(ctx, s, metav1.UpdateOptions{})
 	}
 
 	return err
@@ -97,7 +97,6 @@ func (ku *kubeUtil) CreateOrUpdateSecretData(ns string, name string, data map[st
 func (ku *kubeUtil) DeepCopy() *kubeUtil {
 	kun := &kubeUtil{
 		client:      ku.client,
-		ctx:         ku.ctx,
 		labels:      ku.labels,
 		annotations: ku.annotations,
 	}
