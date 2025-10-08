@@ -3,6 +3,8 @@
 package v1alpha1
 
 import (
+	"context"
+
 	applicationv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	listers "k8s.io/client-go/listers"
@@ -14,7 +16,7 @@ import (
 type ApplicationLister interface {
 	// List lists all Applications in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*applicationv1alpha1.Application, err error)
+	List(ctx context.Context, selector labels.Selector) (ret []*applicationv1alpha1.Application, err error)
 	// Applications returns an object that can list and get Applications.
 	Applications(namespace string) ApplicationNamespaceLister
 	ApplicationListerExpansion
@@ -40,7 +42,7 @@ func (s *applicationLister) Applications(namespace string) ApplicationNamespaceL
 type ApplicationNamespaceLister interface {
 	// List lists all Applications in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*applicationv1alpha1.Application, err error)
+	List(ctx context.Context, selector labels.Selector) (ret []*applicationv1alpha1.Application, err error)
 	// Get retrieves the Application from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
 	Get(name string) (*applicationv1alpha1.Application, error)

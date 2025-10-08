@@ -21,8 +21,8 @@ type deepCopyApplicationLister struct {
 }
 
 // List lists all Applications in the indexer and returns deep copies.
-func (d *deepCopyApplicationLister) List(selector labels.Selector) ([]*v1alpha1.Application, error) {
-	apps, err := d.ApplicationLister.List(selector)
+func (d *deepCopyApplicationLister) List(ctx context.Context, selector labels.Selector) ([]*v1alpha1.Application, error) {
+	apps, err := d.ApplicationLister.List(ctx, selector)
 	if err != nil {
 		return nil, err
 	}
@@ -43,8 +43,8 @@ type deepCopyApplicationNamespaceLister struct {
 }
 
 // List lists all Applications in the indexer for a given namespace and returns deep copies.
-func (d *deepCopyApplicationNamespaceLister) List(selector labels.Selector) ([]*v1alpha1.Application, error) {
-	apps, err := d.ApplicationNamespaceLister.List(selector)
+func (d *deepCopyApplicationNamespaceLister) List(ctx context.Context, selector labels.Selector) ([]*v1alpha1.Application, error) {
+	apps, err := d.ApplicationNamespaceLister.List(ctx, selector)
 	if err != nil {
 		return nil, err
 	}

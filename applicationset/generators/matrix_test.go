@@ -173,7 +173,7 @@ func TestMatrixGenerate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(t.Context(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -386,7 +386,7 @@ func TestMatrixGenerateGoTemplate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(t.Context(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -672,7 +672,7 @@ func TestInterpolatedMatrixGenerate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(t.Context(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -859,7 +859,7 @@ func TestInterpolatedMatrixGenerateGoTemplate(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(t.Context(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -1020,7 +1020,7 @@ func TestMatrixGenerateListElementsYaml(t *testing.T) {
 				},
 			)
 
-			got, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+			got, err := matrixGenerator.GenerateParams(t.Context(), &v1alpha1.ApplicationSetGenerator{
 				Matrix: &v1alpha1.MatrixGenerator{
 					Generators: testCaseCopy.baseGenerators,
 					Template:   v1alpha1.ApplicationSetTemplate{},
@@ -1120,7 +1120,7 @@ func TestGitGenerator_GenerateParams_list_x_git_matrix_generator(t *testing.T) {
 
 	client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&appProject).Build()
 
-	params, err := matrixGenerator.GenerateParams(&v1alpha1.ApplicationSetGenerator{
+	params, err := matrixGenerator.GenerateParams(t.Context(), &v1alpha1.ApplicationSetGenerator{
 		Matrix: matrixGeneratorSpec,
 	}, &v1alpha1.ApplicationSet{}, client)
 	require.NoError(t, err)

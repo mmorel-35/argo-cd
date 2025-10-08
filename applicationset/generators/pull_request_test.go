@@ -411,7 +411,7 @@ func TestAllowedSCMProviderPullRequest(t *testing.T) {
 				},
 			}
 
-			_, err := pullRequestGenerator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
+			_, err := pullRequestGenerator.GenerateParams(t.Context(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 
 			require.Error(t, err, "Must return an error")
 			var expectedError ErrDisallowedSCMProvider
@@ -438,6 +438,6 @@ func TestSCMProviderDisabled_PRGenerator(t *testing.T) {
 		},
 	}
 
-	_, err := generator.GenerateParams(&applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
+	_, err := generator.GenerateParams(t.Context(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 	assert.ErrorIs(t, err, ErrSCMProvidersDisabled)
 }

@@ -393,7 +393,7 @@ func (c *appCollector) Describe(ch chan<- *prometheus.Desc) {
 
 // Collect implements the prometheus.Collector interface
 func (c *appCollector) Collect(ch chan<- prometheus.Metric) {
-	apps, err := c.store.List(labels.NewSelector())
+	apps, err := c.store.List(context.Background(), labels.NewSelector())
 	if err != nil {
 		log.Warnf("Failed to collect applications: %v", err)
 		return

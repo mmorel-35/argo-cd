@@ -114,7 +114,7 @@ func (c *clusterInfoUpdater) updateClusters() {
 }
 
 func (c *clusterInfoUpdater) updateClusterInfo(ctx context.Context, cluster appv1.Cluster, info *cache.ClusterInfo) error {
-	apps, err := c.appLister.List(labels.Everything())
+	apps, err := c.appLister.List(ctx, labels.Everything())
 	if err != nil {
 		return fmt.Errorf("error while fetching the apps list: %w", err)
 	}
