@@ -256,7 +256,7 @@ func Test_createRBACObject(t *testing.T) {
 
 func TestRepositoryServer(t *testing.T) {
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 	enforcer := newEnforcer(kubeclientset)
 	appLister, projInformer := newAppAndProjLister(defaultProj)
 	argoDB := db.NewDB("default", settingsMgr, kubeclientset)
@@ -506,7 +506,7 @@ func TestRepositoryServer(t *testing.T) {
 
 func TestRepositoryServerListApps(t *testing.T) {
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	t.Run("Test_WithoutAppCreateUpdatePrivileges", func(t *testing.T) {
 		repoServerClient := mocks.RepoServerServiceClient{}
@@ -593,7 +593,7 @@ func TestRepositoryServerListApps(t *testing.T) {
 
 func TestRepositoryServerGetAppDetails(t *testing.T) {
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	t.Run("Test_WithoutRepoReadPrivileges", func(t *testing.T) {
 		repoServerClient := mocks.RepoServerServiceClient{}
@@ -1132,7 +1132,7 @@ func TestDeleteRepository(t *testing.T) {
 	}
 
 	kubeclientset := fake.NewSimpleClientset(&argocdCM, &argocdSecret)
-	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
+	settingsMgr := settings.NewSettingsManager(kubeclientset, testNamespace)
 
 	for name, repo := range repositories {
 		t.Run(name, func(t *testing.T) {
