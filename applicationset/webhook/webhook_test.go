@@ -229,7 +229,7 @@ func TestWebhookHandler(t *testing.T) {
 				fakeAppWithMergeAndPullRequestGenerator("merge-pull-request-github", namespace, "Codertocat", "Hello-World"),
 				fakeAppWithMergeAndNestedGitGenerator("merge-nested-git-github", namespace, "https://github.com/org/repo"),
 			).Build()
-			set := argosettings.NewSettingsManager(t.Context(), fakeClient, namespace)
+			set := argosettings.NewSettingsManager(fakeClient, namespace)
 			h, err := NewWebhookHandler(webhookParallelism, set, fc, mockGenerators())
 			require.NoError(t, err)
 

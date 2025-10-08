@@ -299,8 +299,8 @@ func initializeDefaultProject(opts ArgoCDServerOpts) error {
 }
 
 // NewServer returns a new instance of the Argo CD API server
-func NewServer(ctx context.Context, opts ArgoCDServerOpts, appsetOpts ApplicationSetOpts) *ArgoCDServer {
-	settingsMgr := settings_util.NewSettingsManager(ctx, opts.KubeClientset, opts.Namespace)
+func NewServer(opts ArgoCDServerOpts, appsetOpts ApplicationSetOpts) *ArgoCDServer {
+	settingsMgr := settings_util.NewSettingsManager(opts.KubeClientset, opts.Namespace)
 	settings, err := settingsMgr.InitializeSettings(opts.Insecure)
 	errorsutil.CheckError(err)
 	err = initializeDefaultProject(opts)
@@ -453,13 +453,14 @@ func (l *Listeners) Close() error {
 
 // logInClusterWarnings checks the in-cluster configuration and prints out any warnings.
 func (server *ArgoCDServer) logInClusterWarnings() error {
+	ctx := context.Background()
 	labelSelector := labels.NewSelector()
 	req, err := labels.NewRequirement(common.LabelKeySecretType, selection.Equals, []string{common.LabelValueSecretTypeCluster})
 	if err != nil {
 		return fmt.Errorf("failed to construct cluster-type label selector: %w", err)
 	}
 	labelSelector = labelSelector.Add(*req)
-	secretsLister, err := server.settingsMgr.GetSecretsLister()
+	secretsLister, err := server.settingsMgr.GetSecretsLister(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get secrets lister: %w", err)
 	}
@@ -1261,7 +1262,7 @@ func (server *ArgoCDServer) newHTTPServer(ctx context.Context, port int, grpcWeb
 
 	// Webhook handler for git events (Note: cache timeouts are hardcoded because API server does not write to cache and not really using them)
 	argoDB := db.NewDB(server.Namespace, server.settingsMgr, server.KubeClientset)
-	acdWebhookHandler := webhook.NewHandler(server.Namespace, server.ApplicationNamespaces, server.WebhookParallelism, server.AppClientset, server.appLister, server.settings, server.settingsMgr, server.RepoServerCache, server.Cache, argoDB, server.settingsMgr.GetMaxWebhookPayloadSize())
+	acdWebhookHandler := webhook.NewHandler(server.Namespace, server.ApplicationNamespaces, server.WebhookParallelism, server.AppClientset, server.appLister, server.settings, server.settingsMgr, server.RepoServerCache, server.Cache, argoDB, server.settingsMgr.GetMaxWebhookPayloadSize(ctx))
 
 	mux.HandleFunc("/api/webhook", acdWebhookHandler.Handler)
 

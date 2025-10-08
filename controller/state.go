@@ -166,18 +166,18 @@ func (m *appStateManager) GetRepoObjs(ctx context.Context, app *v1alpha1.Applica
 		return nil, nil, false, fmt.Errorf("failed to get permitted OCI credentials for project %q: %w", proj.Name, err)
 	}
 
-	enabledSourceTypes, err := m.settingsMgr.GetEnabledSourceTypes()
+	enabledSourceTypes, err := m.settingsMgr.GetEnabledSourceTypes(ctx)
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to get enabled source types: %w", err)
 	}
 	ts.AddCheckpoint("plugins_ms")
 
-	kustomizeSettings, err := m.settingsMgr.GetKustomizeSettings()
+	kustomizeSettings, err := m.settingsMgr.GetKustomizeSettings(ctx)
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to get Kustomize settings: %w", err)
 	}
 
-	helmOptions, err := m.settingsMgr.GetHelmSettings()
+	helmOptions, err := m.settingsMgr.GetHelmSettings(ctx)
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to get Helm settings: %w", err)
 	}
@@ -459,8 +459,8 @@ func normalizeClusterScopeTracking(targetObjs []*unstructured.Unstructured, info
 
 // getComparisonSettings will return the system level settings related to the
 // diff/normalization process.
-func (m *appStateManager) getComparisonSettings() (string, map[string]v1alpha1.ResourceOverride, *settings.ResourcesFilter, string, string, error) {
-	resourceOverrides, err := m.settingsMgr.GetResourceOverrides()
+func (m *appStateManager) getComparisonSettings(ctx context.Context) (string, map[string]v1alpha1.ResourceOverride, *settings.ResourcesFilter, string, string, error) {
+	resourceOverrides, err := m.settingsMgr.GetResourceOverrides(ctx)
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
@@ -468,7 +468,7 @@ func (m *appStateManager) getComparisonSettings() (string, map[string]v1alpha1.R
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
-	resFilter, err := m.settingsMgr.GetResourcesFilter()
+	resFilter, err := m.settingsMgr.GetResourcesFilter(ctx)
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
@@ -530,6 +530,7 @@ func isManagedNamespace(ns *unstructured.Unstructured, app *v1alpha1.Application
 // revision and supplied source. If revision or overrides are empty, then compares against
 // revision and overrides in the app spec.
 func (m *appStateManager) CompareAppState(app *v1alpha1.Application, project *v1alpha1.AppProject, revisions []string, sources []v1alpha1.ApplicationSource, noCache bool, noRevisionCache bool, localManifests []string, hasMultipleSources bool) (*comparisonResult, error) {
+	ctx := context.Background()
 	ts := stats.NewTimingStats()
 	logCtx := log.WithFields(applog.GetAppLogFields(app))
 
@@ -555,7 +556,7 @@ func (m *appStateManager) CompareAppState(app *v1alpha1.Application, project *v1
 		}
 	}
 
-	appLabelKey, resourceOverrides, resFilter, installationID, trackingMethod, err := m.getComparisonSettings()
+	appLabelKey, resourceOverrides, resFilter, installationID, trackingMethod, err := m.getComparisonSettings(ctx)
 	ts.AddCheckpoint("settings_ms")
 	if err != nil {
 		log.Infof("Basic comparison settings cannot be loaded, using unknown comparison: %s", err.Error())
@@ -763,7 +764,7 @@ func (m *appStateManager) CompareAppState(app *v1alpha1.Application, project *v1
 	reconciliation := sync.Reconcile(targetObjs, liveObjByKey, app.Spec.Destination.Namespace, infoProvider)
 	ts.AddCheckpoint("live_ms")
 
-	compareOptions, err := m.settingsMgr.GetResourceCompareOptions()
+	compareOptions, err := m.settingsMgr.GetResourceCompareOptions(ctx)
 	if err != nil {
 		log.Warnf("Could not get compare options from ConfigMap (assuming defaults): %v", err)
 		compareOptions = settings.GetDefaultDiffOptions()

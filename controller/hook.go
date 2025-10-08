@@ -86,7 +86,7 @@ func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Applicat
 		logCtx.Infof("Created %d post-delete hooks", createdCnt)
 		return false, nil
 	}
-	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides()
+	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(context.Background())
 	if err != nil {
 		return false, err
 	}
@@ -123,7 +123,7 @@ func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Applicat
 }
 
 func (ctrl *ApplicationController) cleanupPostDeleteHooks(liveObjs map[kube.ResourceKey]*unstructured.Unstructured, config *rest.Config, logCtx *log.Entry) (bool, error) {
-	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides()
+	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(context.Background())
 	if err != nil {
 		return false, err
 	}

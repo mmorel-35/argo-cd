@@ -131,7 +131,7 @@ func (db *db) CreateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Clust
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "could not unmarshal cluster secret %s", clusterSecret.Name)
 	}
-	return cluster, db.settingsMgr.ResyncInformers()
+	return cluster, db.settingsMgr.ResyncInformers(ctx)
 }
 
 // ClusterEvent contains information about cluster event
@@ -227,7 +227,7 @@ func (db *db) getClusterSecret(server string) (*corev1.Secret, error) {
 }
 
 // GetCluster returns a cluster from a query
-func (db *db) GetCluster(_ context.Context, server string) (*appv1.Cluster, error) {
+func (db *db) GetCluster(ctx context.Context, server string) (*appv1.Cluster, error) {
 	if server == appv1.KubernetesInternalAPIServerAddr {
 		argoSettings, err := db.settingsMgr.GetSettings()
 		if err != nil {
@@ -238,7 +238,7 @@ func (db *db) GetCluster(_ context.Context, server string) (*appv1.Cluster, erro
 		}
 	}
 
-	informer, err := db.settingsMgr.GetSecretsInformer()
+	informer, err := db.settingsMgr.GetSecretsInformer(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -258,8 +258,8 @@ func (db *db) GetCluster(_ context.Context, server string) (*appv1.Cluster, erro
 }
 
 // GetProjectClusters return project scoped clusters by given project name
-func (db *db) GetProjectClusters(_ context.Context, project string) ([]*appv1.Cluster, error) {
-	informer, err := db.settingsMgr.GetSecretsInformer()
+func (db *db) GetProjectClusters(ctx context.Context, project string) ([]*appv1.Cluster, error) {
+	informer, err := db.settingsMgr.GetSecretsInformer(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get secrets informer: %w", err)
 	}
@@ -278,12 +278,12 @@ func (db *db) GetProjectClusters(_ context.Context, project string) ([]*appv1.Cl
 	return res, nil
 }
 
-func (db *db) GetClusterServersByName(_ context.Context, name string) ([]string, error) {
+func (db *db) GetClusterServersByName(ctx context.Context, name string) ([]string, error) {
 	argoSettings, err := db.settingsMgr.GetSettings()
 	if err != nil {
 		return nil, err
 	}
-	informer, err := db.settingsMgr.GetSecretsInformer()
+	informer, err := db.settingsMgr.GetSecretsInformer(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -336,7 +336,7 @@ func (db *db) UpdateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Clust
 		log.Errorf("could not unmarshal cluster secret %s", clusterSecret.Name)
 		return nil, err
 	}
-	return cluster, db.settingsMgr.ResyncInformers()
+	return cluster, db.settingsMgr.ResyncInformers(ctx)
 }
 
 // DeleteCluster deletes a cluster by name
@@ -351,7 +351,7 @@ func (db *db) DeleteCluster(ctx context.Context, server string) error {
 		return err
 	}
 
-	return db.settingsMgr.ResyncInformers()
+	return db.settingsMgr.ResyncInformers(ctx)
 }
 
 // clusterToSecret converts a cluster object to string data for serialization to a secret

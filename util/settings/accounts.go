@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -103,8 +104,8 @@ func (mgr *SettingsManager) saveAccount(name string, account Account) error {
 }
 
 // AddAccount save an account with the given name and properties.
-func (mgr *SettingsManager) AddAccount(name string, account Account) error {
-	accounts, err := mgr.GetAccounts()
+func (mgr *SettingsManager) AddAccount(ctx context.Context, name string, account Account) error {
+	accounts, err := mgr.GetAccounts(ctx)
 	if err != nil {
 		return fmt.Errorf("error getting accounts: %w", err)
 	}
@@ -115,8 +116,8 @@ func (mgr *SettingsManager) AddAccount(name string, account Account) error {
 }
 
 // GetAccount return an account info by the specified name.
-func (mgr *SettingsManager) GetAccount(name string) (*Account, error) {
-	accounts, err := mgr.GetAccounts()
+func (mgr *SettingsManager) GetAccount(ctx context.Context, name string) (*Account, error) {
+	accounts, err := mgr.GetAccounts(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +132,7 @@ func (mgr *SettingsManager) GetAccount(name string) (*Account, error) {
 // and persist changes applied by the callback.
 func (mgr *SettingsManager) UpdateAccount(name string, callback func(account *Account) error) error {
 	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-		account, err := mgr.GetAccount(name)
+		account, err := mgr.GetAccount(context.Background(), name)
 		if err != nil {
 			return err
 		}
@@ -144,12 +145,12 @@ func (mgr *SettingsManager) UpdateAccount(name string, callback func(account *Ac
 }
 
 // GetAccounts returns list of configured accounts
-func (mgr *SettingsManager) GetAccounts() (map[string]Account, error) {
-	cm, err := mgr.getConfigMap()
+func (mgr *SettingsManager) GetAccounts(ctx context.Context) (map[string]Account, error) {
+	cm, err := mgr.getConfigMap(ctx)
 	if err != nil {
 		return nil, err
 	}
-	secret, err := mgr.getSecret()
+	secret, err := mgr.getSecret(ctx)
 	if err != nil {
 		return nil, err
 	}

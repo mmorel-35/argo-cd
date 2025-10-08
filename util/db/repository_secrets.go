@@ -52,7 +52,7 @@ func (s *secretsRepositoryBackend) CreateRepository(ctx context.Context, reposit
 		return nil, err
 	}
 
-	return repository, s.db.settingsMgr.ResyncInformers()
+	return repository, s.db.settingsMgr.ResyncInformers(ctx)
 }
 
 // hasRepoTypeLabel will verify if a secret with the given name exists. If so it will check if
@@ -149,7 +149,7 @@ func (s *secretsRepositoryBackend) UpdateRepository(ctx context.Context, reposit
 		return nil, err
 	}
 
-	return repository, s.db.settingsMgr.ResyncInformers()
+	return repository, s.db.settingsMgr.ResyncInformers(ctx)
 }
 
 func (s *secretsRepositoryBackend) DeleteRepository(ctx context.Context, repoURL, project string) error {
@@ -162,7 +162,7 @@ func (s *secretsRepositoryBackend) DeleteRepository(ctx context.Context, repoURL
 		return err
 	}
 
-	return s.db.settingsMgr.ResyncInformers()
+	return s.db.settingsMgr.ResyncInformers(ctx)
 }
 
 func (s *secretsRepositoryBackend) RepositoryExists(_ context.Context, repoURL, project string, allowFallback bool) (bool, error) {
@@ -197,7 +197,7 @@ func (s *secretsRepositoryBackend) CreateRepoCreds(ctx context.Context, repoCred
 		return nil, err
 	}
 
-	return repoCreds, s.db.settingsMgr.ResyncInformers()
+	return repoCreds, s.db.settingsMgr.ResyncInformers(ctx)
 }
 
 func (s *secretsRepositoryBackend) GetRepoCreds(_ context.Context, repoURL string) (*appsv1.RepoCreds, error) {
@@ -249,7 +249,7 @@ func (s *secretsRepositoryBackend) UpdateRepoCreds(ctx context.Context, repoCred
 		return nil, err
 	}
 
-	return updatedRepoCreds, s.db.settingsMgr.ResyncInformers()
+	return updatedRepoCreds, s.db.settingsMgr.ResyncInformers(ctx)
 }
 
 func (s *secretsRepositoryBackend) DeleteRepoCreds(ctx context.Context, name string) error {
@@ -262,7 +262,7 @@ func (s *secretsRepositoryBackend) DeleteRepoCreds(ctx context.Context, name str
 		return err
 	}
 
-	return s.db.settingsMgr.ResyncInformers()
+	return s.db.settingsMgr.ResyncInformers(ctx)
 }
 
 func (s *secretsRepositoryBackend) RepoCredsExists(_ context.Context, repoURL string) (bool, error) {

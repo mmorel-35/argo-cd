@@ -780,7 +780,7 @@ func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *ap
 			return resourcesInfo[i].ResourceName < resourcesInfo[j].ResourceName
 		})
 
-		allowedNodeLabels := ctrl.settingsMgr.GetAllowedNodeLabels()
+		allowedNodeLabels := ctrl.settingsMgr.GetAllowedNodeLabels(context.Background())
 		nodeLabels := make(map[string]string)
 		for _, label := range allowedNodeLabels {
 			if val, ok := node.Labels[label]; ok {
@@ -812,15 +812,15 @@ func (ctrl *ApplicationController) hideSecretData(destCluster *appv1.Cluster, ap
 		resDiff := res.Diff
 		if res.Kind == kube.SecretKind && res.Group == "" {
 			var err error
-			target, live, err = diff.HideSecretData(res.Target, res.Live, ctrl.settingsMgr.GetSensitiveAnnotations())
+			target, live, err = diff.HideSecretData(res.Target, res.Live, ctrl.settingsMgr.GetSensitiveAnnotations(context.Background()))
 			if err != nil {
 				return nil, fmt.Errorf("error hiding secret data: %w", err)
 			}
-			compareOptions, err := ctrl.settingsMgr.GetResourceCompareOptions()
+			compareOptions, err := ctrl.settingsMgr.GetResourceCompareOptions(context.Background())
 			if err != nil {
 				return nil, fmt.Errorf("error getting resource compare options: %w", err)
 			}
-			resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides()
+			resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(context.Background())
 			if err != nil {
 				return nil, fmt.Errorf("error getting resource overrides: %w", err)
 			}
@@ -2623,7 +2623,7 @@ func (ctrl *ApplicationController) logAppEvent(ctx context.Context, a *appv1.App
 }
 
 func (ctrl *ApplicationController) applyImpersonationConfig(config *rest.Config, proj *appv1.AppProject, app *appv1.Application, destCluster *appv1.Cluster) error {
-	impersonationEnabled, err := ctrl.settingsMgr.IsImpersonationEnabled()
+	impersonationEnabled, err := ctrl.settingsMgr.IsImpersonationEnabled(context.Background())
 	if err != nil {
 		return fmt.Errorf("error getting impersonation setting: %w", err)
 	}
