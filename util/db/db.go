@@ -143,7 +143,8 @@ func NewDB(namespace string, settingsMgr *settings.SettingsManager, kubeclientse
 
 func (db *db) getSecret(name string, cache map[string]*corev1.Secret) (*corev1.Secret, error) {
 	if _, ok := cache[name]; !ok {
-		secret, err := db.settingsMgr.GetSecretByName(name)
+		ctx := context.Background()
+		secret, err := db.settingsMgr.GetSecretByName(ctx, name)
 		if err != nil {
 			return nil, err
 		}

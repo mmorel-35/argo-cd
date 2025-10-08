@@ -319,7 +319,7 @@ func ValidateRepo(
 	}
 	defer utilio.Close(conn)
 
-	helmOptions, err := settingsMgr.GetHelmSettings()
+	helmOptions, err := settingsMgr.GetHelmSettings(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting helm settings: %w", err)
 	}
@@ -378,7 +378,7 @@ func ValidateRepo(
 	if err != nil {
 		return nil, fmt.Errorf("error getting API resources: %w", err)
 	}
-	enabledSourceTypes, err := settingsMgr.GetEnabledSourceTypes()
+	enabledSourceTypes, err := settingsMgr.GetEnabledSourceTypes(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting enabled source types: %w", err)
 	}
@@ -769,7 +769,7 @@ func verifyGenerateManifests(
 ) []argoappv1.ApplicationCondition {
 	var conditions []argoappv1.ApplicationCondition
 	// If source is Kustomize add build options
-	kustomizeSettings, err := settingsMgr.GetKustomizeSettings()
+	kustomizeSettings, err := settingsMgr.GetKustomizeSettings(ctx)
 	if err != nil {
 		conditions = append(conditions, argoappv1.ApplicationCondition{
 			Type:    argoappv1.ApplicationConditionInvalidSpecError,
@@ -1062,7 +1062,7 @@ func GetDestinationCluster(ctx context.Context, destination argoappv1.Applicatio
 }
 
 func GetGlobalProjects(proj *argoappv1.AppProject, projLister applicationsv1.AppProjectLister, settingsManager *settings.SettingsManager) []*argoappv1.AppProject {
-	gps, err := settingsManager.GetGlobalProjectsSettings()
+	gps, err := settingsManager.GetGlobalProjectsSettings(context.Background())
 	globalProjects := make([]*argoappv1.AppProject, 0)
 
 	if err != nil {
@@ -1264,7 +1264,7 @@ func GetAppEventLabels(ctx context.Context, app *argoappv1.Application, projList
 	}
 
 	// Filter out event labels to include
-	inKeys := settingsManager.GetIncludeEventLabelKeys()
+	inKeys := settingsManager.GetIncludeEventLabelKeys(ctx)
 	for k, v := range labels {
 		found := glob.MatchStringInList(inKeys, k, glob.GLOB)
 		if found {
@@ -1273,7 +1273,7 @@ func GetAppEventLabels(ctx context.Context, app *argoappv1.Application, projList
 	}
 
 	// Remove excluded event labels
-	exKeys := settingsManager.GetExcludeEventLabelKeys()
+	exKeys := settingsManager.GetExcludeEventLabelKeys(ctx)
 	for k := range eventLabels {
 		found := glob.MatchStringInList(exKeys, k, glob.GLOB)
 		if found {

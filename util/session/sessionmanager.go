@@ -262,7 +262,7 @@ func (mgr *SessionManager) Parse(tokenString string) (jwt.Claims, string, error)
 	subject, capability := GetSubjectAccountAndCapability(subject)
 	claims["sub"] = subject
 
-	account, err := mgr.settingsMgr.GetAccount(subject)
+	account, err := mgr.settingsMgr.GetAccount(context.Background(), subject)
 	if err != nil {
 		return nil, "", err
 	}
@@ -448,7 +448,7 @@ func (mgr *SessionManager) VerifyUsernamePassword(username string, password stri
 		return InvalidLoginErr
 	}
 
-	account, err := mgr.settingsMgr.GetAccount(username)
+	account, err := mgr.settingsMgr.GetAccount(context.Background(), username)
 	if err != nil {
 		if errStatus, ok := status.FromError(err); ok && errStatus.Code() == codes.NotFound {
 			mgr.updateFailureCount(username, true)

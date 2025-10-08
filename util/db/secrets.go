@@ -24,6 +24,7 @@ import (
 )
 
 func (db *db) listSecretsByType(types ...string) ([]*corev1.Secret, error) {
+	ctx := context.Background()
 	labelSelector := labels.NewSelector()
 	req, err := labels.NewRequirement(common.LabelKeySecretType, selection.Equals, types)
 	if err != nil {
@@ -31,7 +32,7 @@ func (db *db) listSecretsByType(types ...string) ([]*corev1.Secret, error) {
 	}
 	labelSelector = labelSelector.Add(*req)
 
-	secretsLister, err := db.settingsMgr.GetSecretsLister()
+	secretsLister, err := db.settingsMgr.GetSecretsLister(ctx)
 	if err != nil {
 		return nil, err
 	}

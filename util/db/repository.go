@@ -115,7 +115,8 @@ func (db *db) GetProjectWriteRepositories(project string) ([]*v1alpha1.Repositor
 }
 
 func (db *db) getRepositories(indexer, project string) ([]*v1alpha1.Repository, error) {
-	informer, err := db.settingsMgr.GetSecretsInformer()
+	ctx := context.Background()
+	informer, err := db.settingsMgr.GetSecretsInformer(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -119,6 +119,7 @@ func newSyncOperationResult(app *v1alpha1.Application, op v1alpha1.SyncOperation
 }
 
 func (m *appStateManager) SyncAppState(app *v1alpha1.Application, project *v1alpha1.AppProject, state *v1alpha1.OperationState) {
+	ctx := context.Background()
 	syncId, err := syncid.Generate()
 	if err != nil {
 		state.Phase = common.OperationError
@@ -211,7 +212,7 @@ func (m *appStateManager) SyncAppState(app *v1alpha1.Application, project *v1alp
 	}
 	restConfig := metrics.AddMetricsTransportWrapper(m.metricsServer, app, clusterRESTConfig)
 
-	resourceOverrides, err := m.settingsMgr.GetResourceOverrides()
+	resourceOverrides, err := m.settingsMgr.GetResourceOverrides(ctx)
 	if err != nil {
 		state.Phase = common.OperationError
 		state.Message = fmt.Sprintf("Failed to load resource overrides: %v", err)
@@ -283,7 +284,7 @@ func (m *appStateManager) SyncAppState(app *v1alpha1.Application, project *v1alp
 		return
 	}
 
-	impersonationEnabled, err := m.settingsMgr.IsImpersonationEnabled()
+	impersonationEnabled, err := m.settingsMgr.IsImpersonationEnabled(ctx)
 	if err != nil {
 		log.Errorf("could not get impersonation feature flag: %v", err)
 		return

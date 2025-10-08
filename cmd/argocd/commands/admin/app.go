@@ -367,7 +367,7 @@ func reconcileApplications(
 	serverSideDiff bool,
 	ignoreNormalizerOpts normalizers.IgnoreNormalizerOpts,
 ) ([]appReconcileResult, error) {
-	settingsMgr := settings.NewSettingsManager(ctx, kubeClientset, namespace)
+	settingsMgr := settings.NewSettingsManager(kubeClientset, namespace)
 	argoDB := db.NewDB(namespace, settingsMgr, kubeClientset)
 	appInformerFactory := appinformers.NewSharedInformerFactoryWithOptions(
 		appClientset,
