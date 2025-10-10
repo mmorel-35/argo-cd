@@ -301,7 +301,7 @@ func initializeDefaultProject(opts ArgoCDServerOpts) error {
 // NewServer returns a new instance of the Argo CD API server
 func NewServer(opts ArgoCDServerOpts, appsetOpts ApplicationSetOpts) *ArgoCDServer {
 	settingsMgr := settings_util.NewSettingsManager(opts.KubeClientset, opts.Namespace)
-	settings, err := settingsMgr.InitializeSettings(opts.Insecure)
+	settings, err := settingsMgr.InitializeSettings(context.Background(), opts.Insecure)
 	errorsutil.CheckError(err)
 	err = initializeDefaultProject(opts)
 	errorsutil.CheckError(err)
@@ -480,7 +480,7 @@ func (server *ArgoCDServer) logInClusterWarnings() error {
 	}
 	if len(inClusterSecrets) > 0 {
 		// Don't make this call unless we actually have in-cluster secrets, to save time.
-		dbSettings, err := server.settingsMgr.GetSettings()
+		dbSettings, err := server.settingsMgr.GetSettings(ctx)
 		if err != nil {
 			return fmt.Errorf("could not get DB settings: %w", err)
 		}
@@ -1082,7 +1082,7 @@ func newArgoCDServiceSet(a *ArgoCDServer) *ArgoCDServiceSet {
 		if a.DisableAuth {
 			return true, nil
 		}
-		sett, err := a.settingsMgr.GetSettings()
+		sett, err := a.settingsMgr.GetSettings(context.Background())
 		if err != nil {
 			return false, err
 		}
@@ -1553,7 +1553,7 @@ func (server *ArgoCDServer) Authenticate(ctx context.Context) (context.Context, 
 	}
 
 	if claimsErr != nil {
-		argoCDSettings, err := server.settingsMgr.GetSettings()
+		argoCDSettings, err := server.settingsMgr.GetSettings(ctx)
 		if err != nil {
 			return ctx, status.Errorf(codes.Internal, "unable to load settings: %v", err)
 		}

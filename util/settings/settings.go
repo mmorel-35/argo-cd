@@ -661,8 +661,7 @@ func (mgr *SettingsManager) GetSecretsInformer(ctx context.Context) (cache.Share
 	return mgr.secretsInformer, nil
 }
 
-func (mgr *SettingsManager) updateSecret(callback func(*corev1.Secret) error) error {
-	ctx := context.Background()
+func (mgr *SettingsManager) updateSecret(ctx context.Context, callback func(*corev1.Secret) error) error {
 	argoCDSecret, err := mgr.getSecret(ctx)
 	createSecret := false
 	if err != nil {
@@ -689,9 +688,9 @@ func (mgr *SettingsManager) updateSecret(callback func(*corev1.Secret) error) er
 	}
 
 	if createSecret {
-		_, err = mgr.clientset.CoreV1().Secrets(mgr.namespace).Create(context.Background(), argoCDSecret, metav1.CreateOptions{})
+		_, err = mgr.clientset.CoreV1().Secrets(mgr.namespace).Create(ctx, argoCDSecret, metav1.CreateOptions{})
 	} else {
-		_, err = mgr.clientset.CoreV1().Secrets(mgr.namespace).Update(context.Background(), argoCDSecret, metav1.UpdateOptions{})
+		_, err = mgr.clientset.CoreV1().Secrets(mgr.namespace).Update(ctx, argoCDSecret, metav1.UpdateOptions{})
 	}
 	if err != nil {
 		return err
@@ -700,8 +699,7 @@ func (mgr *SettingsManager) updateSecret(callback func(*corev1.Secret) error) er
 	return mgr.ResyncInformers(ctx)
 }
 
-func (mgr *SettingsManager) updateConfigMap(callback func(*corev1.ConfigMap) error) error {
-	ctx := context.Background()
+func (mgr *SettingsManager) updateConfigMap(ctx context.Context, callback func(*corev1.ConfigMap) error) error {
 	argoCDCM, err := mgr.getConfigMap(ctx)
 	createCM := false
 	if err != nil {
@@ -727,9 +725,9 @@ func (mgr *SettingsManager) updateConfigMap(callback func(*corev1.ConfigMap) err
 	}
 
 	if createCM {
-		_, err = mgr.clientset.CoreV1().ConfigMaps(mgr.namespace).Create(context.Background(), argoCDCM, metav1.CreateOptions{})
+		_, err = mgr.clientset.CoreV1().ConfigMaps(mgr.namespace).Create(ctx, argoCDCM, metav1.CreateOptions{})
 	} else {
-		_, err = mgr.clientset.CoreV1().ConfigMaps(mgr.namespace).Update(context.Background(), argoCDCM, metav1.UpdateOptions{})
+		_, err = mgr.clientset.CoreV1().ConfigMaps(mgr.namespace).Update(ctx, argoCDCM, metav1.UpdateOptions{})
 	}
 
 	if err != nil {
@@ -830,8 +828,8 @@ func (mgr *SettingsManager) GetResourcesFilter(ctx context.Context) (*ResourcesF
 	return rf, nil
 }
 
-func (mgr *SettingsManager) GetAppInstanceLabelKey() (string, error) {
-	argoCDCM, err := mgr.getConfigMap(context.Background())
+func (mgr *SettingsManager) GetAppInstanceLabelKey(ctx context.Context) (string, error) {
+	argoCDCM, err := mgr.getConfigMap(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -842,8 +840,8 @@ func (mgr *SettingsManager) GetAppInstanceLabelKey() (string, error) {
 	return label, nil
 }
 
-func (mgr *SettingsManager) GetTrackingMethod() (string, error) {
-	argoCDCM, err := mgr.getConfigMap(context.Background())
+func (mgr *SettingsManager) GetTrackingMethod(ctx context.Context) (string, error) {
+	argoCDCM, err := mgr.getConfigMap(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -854,8 +852,8 @@ func (mgr *SettingsManager) GetTrackingMethod() (string, error) {
 	return tm, nil
 }
 
-func (mgr *SettingsManager) GetInstallationID() (string, error) {
-	argoCDCM, err := mgr.getConfigMap(context.Background())
+func (mgr *SettingsManager) GetInstallationID(ctx context.Context) (string, error) {
+	argoCDCM, err := mgr.getConfigMap(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -1296,8 +1294,7 @@ func (mgr *SettingsManager) RequireOverridePrivilegeForRevisionSync(ctx context.
 }
 
 // GetSettings retrieves settings from the ArgoCDConfigMap and secret.
-func (mgr *SettingsManager) GetSettings() (*ArgoCDSettings, error) {
-	ctx := context.Background()
+func (mgr *SettingsManager) GetSettings(ctx context.Context) (*ArgoCDSettings, error) {
 	argoCDCM, err := mgr.getConfigMap(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving argocd-cm: %w", err)
@@ -1377,7 +1374,7 @@ func (mgr *SettingsManager) initialize(ctx context.Context) error {
 	log.Info("Configmap/secret informer synced")
 
 	tryNotify := func() {
-		newSettings, err := mgr.GetSettings()
+		newSettings, err := mgr.GetSettings(ctx)
 		if err != nil {
 			log.Warnf("Unable to parse updated settings: %v", err)
 		} else {
@@ -1633,8 +1630,8 @@ func (mgr *SettingsManager) loadTLSCertificateFromSecret(secret *corev1.Secret) 
 }
 
 // saveSignatureAndCertificate serializes the server Signature and Certificate ArgoCDSettings and upserts it into the secret
-func (mgr *SettingsManager) saveSignatureAndCertificate(settings *ArgoCDSettings) error {
-	return mgr.updateSecret(func(argoCDSecret *corev1.Secret) error {
+func (mgr *SettingsManager) saveSignatureAndCertificate(ctx context.Context, settings *ArgoCDSettings) error {
+	return mgr.updateSecret(ctx, func(argoCDSecret *corev1.Secret) error {
 		argoCDSecret.Data[settingServerSignatureKey] = settings.ServerSignature
 		// we only write the certificate to the secret if it's not externally
 		// managed.
@@ -2092,8 +2089,7 @@ func isIncompleteSettingsError(err error) bool {
 }
 
 // InitializeSettings is used to initialize empty admin password, signature, certificate etc if missing
-func (mgr *SettingsManager) InitializeSettings(insecureModeEnabled bool) (*ArgoCDSettings, error) {
-	ctx := context.Background()
+func (mgr *SettingsManager) InitializeSettings(ctx context.Context, insecureModeEnabled bool) (*ArgoCDSettings, error) {
 	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
 	err := mgr.UpdateAccount(common.ArgoCDAdminUsername, func(adminAccount *Account) error {
 		if adminAccount.Enabled {
@@ -2135,7 +2131,7 @@ func (mgr *SettingsManager) InitializeSettings(insecureModeEnabled bool) (*ArgoC
 		return nil, err
 	}
 
-	cdSettings, err := mgr.GetSettings()
+	cdSettings, err := mgr.GetSettings(ctx)
 	if err != nil && !isIncompleteSettingsError(err) {
 		return nil, err
 	}
@@ -2174,11 +2170,11 @@ func (mgr *SettingsManager) InitializeSettings(insecureModeEnabled bool) (*ArgoC
 		log.Info("Initialized TLS certificate")
 	}
 
-	err = mgr.saveSignatureAndCertificate(cdSettings)
+	err = mgr.saveSignatureAndCertificate(ctx, cdSettings)
 	if apierrors.IsConflict(err) {
 		// assume settings are initialized by another instance of api server
 		log.Warnf("conflict when initializing settings. assuming updated by another replica")
-		return mgr.GetSettings()
+		return mgr.GetSettings(ctx)
 	}
 	return cdSettings, nil
 }

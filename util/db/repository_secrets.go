@@ -39,7 +39,7 @@ func (s *secretsRepositoryBackend) CreateRepository(ctx context.Context, reposit
 	_, err := s.db.createSecret(ctx, updatedSecret)
 	if err != nil {
 		if apierrors.IsAlreadyExists(err) {
-			hasLabel, err := s.hasRepoTypeLabel(secName)
+			hasLabel, err := s.hasRepoTypeLabel(ctx, secName)
 			if err != nil {
 				return nil, status.Error(codes.Internal, err.Error())
 			}
@@ -59,9 +59,9 @@ func (s *secretsRepositoryBackend) CreateRepository(ctx context.Context, reposit
 // the secret has the proper label argocd.argoproj.io/secret-type defined. Will return true if
 // the label is found and false otherwise. Will return false if no secret is found with the given
 // name.
-func (s *secretsRepositoryBackend) hasRepoTypeLabel(secretName string) (bool, error) {
+func (s *secretsRepositoryBackend) hasRepoTypeLabel(ctx context.Context, secretName string) (bool, error) {
 	noCache := make(map[string]*corev1.Secret)
-	sec, err := s.db.getSecret(secretName, noCache)
+	sec, err := s.db.getSecret(ctx, secretName, noCache)
 	if err != nil {
 		if apierrors.IsNotFound(err) {
 			return false, nil
@@ -75,16 +75,16 @@ func (s *secretsRepositoryBackend) hasRepoTypeLabel(secretName string) (bool, er
 	return false, nil
 }
 
-func (s *secretsRepositoryBackend) GetRepoCredsBySecretName(_ context.Context, name string) (*appsv1.RepoCreds, error) {
-	secret, err := s.db.getSecret(name, map[string]*corev1.Secret{})
+func (s *secretsRepositoryBackend) GetRepoCredsBySecretName(ctx context.Context, name string) (*appsv1.RepoCreds, error) {
+	secret, err := s.db.getSecret(ctx, name, map[string]*corev1.Secret{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get secret %s: %w", name, err)
 	}
 	return s.secretToRepoCred(secret)
 }
 
-func (s *secretsRepositoryBackend) GetRepository(_ context.Context, repoURL, project string) (*appsv1.Repository, error) {
-	secret, err := s.getRepositorySecret(repoURL, project, true)
+func (s *secretsRepositoryBackend) GetRepository(ctx context.Context, repoURL, project string) (*appsv1.Repository, error) {
+	secret, err := s.getRepositorySecret(ctx, repoURL, project, true)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return &appsv1.Repository{Repo: repoURL}, nil
@@ -101,10 +101,10 @@ func (s *secretsRepositoryBackend) GetRepository(_ context.Context, repoURL, pro
 	return repository, err
 }
 
-func (s *secretsRepositoryBackend) ListRepositories(_ context.Context, repoType *string) ([]*appsv1.Repository, error) {
+func (s *secretsRepositoryBackend) ListRepositories(ctx context.Context, repoType *string) ([]*appsv1.Repository, error) {
 	var repos []*appsv1.Repository
 
-	secrets, err := s.db.listSecretsByType(s.getSecretType())
+	secrets, err := s.db.listSecretsByType(ctx, s.getSecretType())
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func (s *secretsRepositoryBackend) ListRepositories(_ context.Context, repoType 
 }
 
 func (s *secretsRepositoryBackend) UpdateRepository(ctx context.Context, repository *appsv1.Repository) (*appsv1.Repository, error) {
-	repositorySecret, err := s.getRepositorySecret(repository.Repo, repository.Project, false)
+	repositorySecret, err := s.getRepositorySecret(ctx, repository.Repo, repository.Project, false)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return s.CreateRepository(ctx, repository)
@@ -153,7 +153,7 @@ func (s *secretsRepositoryBackend) UpdateRepository(ctx context.Context, reposit
 }
 
 func (s *secretsRepositoryBackend) DeleteRepository(ctx context.Context, repoURL, project string) error {
-	secret, err := s.getRepositorySecret(repoURL, project, false)
+	secret, err := s.getRepositorySecret(ctx, repoURL, project, false)
 	if err != nil {
 		return err
 	}
@@ -165,8 +165,8 @@ func (s *secretsRepositoryBackend) DeleteRepository(ctx context.Context, repoURL
 	return s.db.settingsMgr.ResyncInformers(ctx)
 }
 
-func (s *secretsRepositoryBackend) RepositoryExists(_ context.Context, repoURL, project string, allowFallback bool) (bool, error) {
-	secret, err := s.getRepositorySecret(repoURL, project, allowFallback)
+func (s *secretsRepositoryBackend) RepositoryExists(ctx context.Context, repoURL, project string, allowFallback bool) (bool, error) {
+	secret, err := s.getRepositorySecret(ctx, repoURL, project, allowFallback)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return false, nil
@@ -200,8 +200,8 @@ func (s *secretsRepositoryBackend) CreateRepoCreds(ctx context.Context, repoCred
 	return repoCreds, s.db.settingsMgr.ResyncInformers(ctx)
 }
 
-func (s *secretsRepositoryBackend) GetRepoCreds(_ context.Context, repoURL string) (*appsv1.RepoCreds, error) {
-	secret, err := s.getRepoCredsSecret(repoURL)
+func (s *secretsRepositoryBackend) GetRepoCreds(ctx context.Context, repoURL string) (*appsv1.RepoCreds, error) {
+	secret, err := s.getRepoCredsSecret(ctx, repoURL)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return nil, nil
@@ -213,10 +213,10 @@ func (s *secretsRepositoryBackend) GetRepoCreds(_ context.Context, repoURL strin
 	return s.secretToRepoCred(secret)
 }
 
-func (s *secretsRepositoryBackend) ListRepoCreds(_ context.Context) ([]string, error) {
+func (s *secretsRepositoryBackend) ListRepoCreds(ctx context.Context) ([]string, error) {
 	var repoURLs []string
 
-	secrets, err := s.db.listSecretsByType(common.LabelValueSecretTypeRepoCreds)
+	secrets, err := s.db.listSecretsByType(ctx, common.LabelValueSecretTypeRepoCreds)
 	if err != nil {
 		return nil, err
 	}
@@ -229,7 +229,7 @@ func (s *secretsRepositoryBackend) ListRepoCreds(_ context.Context) ([]string, e
 }
 
 func (s *secretsRepositoryBackend) UpdateRepoCreds(ctx context.Context, repoCreds *appsv1.RepoCreds) (*appsv1.RepoCreds, error) {
-	repoCredsSecret, err := s.getRepoCredsSecret(repoCreds.URL)
+	repoCredsSecret, err := s.getRepoCredsSecret(ctx, repoCreds.URL)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return s.CreateRepoCreds(ctx, repoCreds)
@@ -253,7 +253,7 @@ func (s *secretsRepositoryBackend) UpdateRepoCreds(ctx context.Context, repoCred
 }
 
 func (s *secretsRepositoryBackend) DeleteRepoCreds(ctx context.Context, name string) error {
-	secret, err := s.getRepoCredsSecret(name)
+	secret, err := s.getRepoCredsSecret(ctx, name)
 	if err != nil {
 		return err
 	}
@@ -265,8 +265,8 @@ func (s *secretsRepositoryBackend) DeleteRepoCreds(ctx context.Context, name str
 	return s.db.settingsMgr.ResyncInformers(ctx)
 }
 
-func (s *secretsRepositoryBackend) RepoCredsExists(_ context.Context, repoURL string) (bool, error) {
-	_, err := s.getRepoCredsSecret(repoURL)
+func (s *secretsRepositoryBackend) RepoCredsExists(ctx context.Context, repoURL string) (bool, error) {
+	_, err := s.getRepoCredsSecret(ctx, repoURL)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return false, nil
@@ -278,10 +278,10 @@ func (s *secretsRepositoryBackend) RepoCredsExists(_ context.Context, repoURL st
 	return true, nil
 }
 
-func (s *secretsRepositoryBackend) GetAllHelmRepoCreds(_ context.Context) ([]*appsv1.RepoCreds, error) {
+func (s *secretsRepositoryBackend) GetAllHelmRepoCreds(ctx context.Context) ([]*appsv1.RepoCreds, error) {
 	var helmRepoCreds []*appsv1.RepoCreds
 
-	secrets, err := s.db.listSecretsByType(common.LabelValueSecretTypeRepoCreds)
+	secrets, err := s.db.listSecretsByType(ctx, common.LabelValueSecretTypeRepoCreds)
 	if err != nil {
 		return nil, err
 	}
@@ -300,10 +300,10 @@ func (s *secretsRepositoryBackend) GetAllHelmRepoCreds(_ context.Context) ([]*ap
 	return helmRepoCreds, nil
 }
 
-func (s *secretsRepositoryBackend) GetAllOCIRepoCreds(_ context.Context) ([]*appsv1.RepoCreds, error) {
+func (s *secretsRepositoryBackend) GetAllOCIRepoCreds(ctx context.Context) ([]*appsv1.RepoCreds, error) {
 	var ociRepoCreds []*appsv1.RepoCreds
 
-	secrets, err := s.db.listSecretsByType(common.LabelValueSecretTypeRepoCreds)
+	secrets, err := s.db.listSecretsByType(ctx, common.LabelValueSecretTypeRepoCreds)
 	if err != nil {
 		return nil, err
 	}
@@ -525,8 +525,8 @@ func (s *secretsRepositoryBackend) repoCredsToSecret(repoCreds *appsv1.RepoCreds
 	return secretCopy
 }
 
-func (s *secretsRepositoryBackend) getRepositorySecret(repoURL, project string, allowFallback bool) (*corev1.Secret, error) {
-	secrets, err := s.db.listSecretsByType(s.getSecretType())
+func (s *secretsRepositoryBackend) getRepositorySecret(ctx context.Context, repoURL, project string, allowFallback bool) (*corev1.Secret, error) {
+	secrets, err := s.db.listSecretsByType(ctx, s.getSecretType())
 	if err != nil {
 		return nil, fmt.Errorf("failed to list repository secrets: %w", err)
 	}
@@ -560,8 +560,8 @@ func (s *secretsRepositoryBackend) getRepositorySecret(repoURL, project string, 
 	return nil, status.Errorf(codes.NotFound, "repository %q not found", repoURL)
 }
 
-func (s *secretsRepositoryBackend) getRepoCredsSecret(repoURL string) (*corev1.Secret, error) {
-	secrets, err := s.db.listSecretsByType(s.getRepoCredSecretType())
+func (s *secretsRepositoryBackend) getRepoCredsSecret(ctx context.Context, repoURL string) (*corev1.Secret, error) {
+	secrets, err := s.db.listSecretsByType(ctx, s.getRepoCredSecretType())
 	if err != nil {
 		return nil, err
 	}

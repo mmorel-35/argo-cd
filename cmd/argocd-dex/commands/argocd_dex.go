@@ -100,7 +100,7 @@ func NewRunDexCommand() *cobra.Command {
 			}
 
 			settingsMgr := settings.NewSettingsManager(kubeClientset, namespace)
-			prevSettings, err := settingsMgr.GetSettings()
+			prevSettings, err := settingsMgr.GetSettings(ctx)
 			errors.CheckError(err)
 			updateCh := make(chan *settings.ArgoCDSettings, 1)
 			settingsMgr.Subscribe(updateCh)
@@ -160,7 +160,8 @@ func NewGenDexConfigCommand() *cobra.Command {
 	command := cobra.Command{
 		Use:   "gendexcfg",
 		Short: "Generates a dex config from Argo CD settings",
-		RunE: func(_ *cobra.Command, _ []string) error {
+		RunE: func(c *cobra.Command, _ []string) error {
+			ctx := c.Context()
 			cli.SetLogFormat(cmdutil.LogFormat)
 			cli.SetLogLevel(cmdutil.LogLevel)
 
@@ -170,7 +171,7 @@ func NewGenDexConfigCommand() *cobra.Command {
 			errors.CheckError(err)
 			kubeClientset := kubernetes.NewForConfigOrDie(config)
 			settingsMgr := settings.NewSettingsManager(kubeClientset, namespace)
-			settings, err := settingsMgr.GetSettings()
+			settings, err := settingsMgr.GetSettings(ctx)
 			errors.CheckError(err)
 			dexCfgBytes, err := dex.GenerateDexConfigYAML(settings, disableTLS)
 			errors.CheckError(err)

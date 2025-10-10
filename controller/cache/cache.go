@@ -233,17 +233,16 @@ type liveStateCache struct {
 	lock          sync.RWMutex
 }
 
-func (c *liveStateCache) loadCacheSettings() (*cacheSettings, error) {
-	ctx := context.Background()
-	appInstanceLabelKey, err := c.settingsMgr.GetAppInstanceLabelKey()
+func (c *liveStateCache) loadCacheSettings(ctx context.Context) (*cacheSettings, error) {
+	appInstanceLabelKey, err := c.settingsMgr.GetAppInstanceLabelKey(ctx)
 	if err != nil {
 		return nil, err
 	}
-	trackingMethod, err := c.settingsMgr.GetTrackingMethod()
+	trackingMethod, err := c.settingsMgr.GetTrackingMethod(ctx)
 	if err != nil {
 		return nil, err
 	}
-	installationID, err := c.settingsMgr.GetInstallationID()
+	installationID, err := c.settingsMgr.GetInstallationID(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -750,7 +749,7 @@ func (c *liveStateCache) watchSettings(ctx context.Context) {
 	for !done {
 		select {
 		case <-updateCh:
-			nextCacheSettings, err := c.loadCacheSettings()
+			nextCacheSettings, err := c.loadCacheSettings(ctx)
 			if err != nil {
 				log.Warnf("Failed to read updated settings: %v", err)
 				continue
@@ -776,7 +775,7 @@ func (c *liveStateCache) watchSettings(ctx context.Context) {
 }
 
 func (c *liveStateCache) Init() error {
-	cacheSettings, err := c.loadCacheSettings()
+	cacheSettings, err := c.loadCacheSettings(context.Background())
 	if err != nil {
 		return fmt.Errorf("error loading cache settings: %w", err)
 	}

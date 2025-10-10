@@ -489,7 +489,7 @@ func (s *Server) GetManifests(ctx context.Context, q *application.ApplicationMan
 	err = s.queryRepoServer(ctx, proj, func(
 		client apiclient.RepoServerServiceClient, helmRepos []*v1alpha1.Repository, helmCreds []*v1alpha1.RepoCreds, ociRepos []*v1alpha1.Repository, ociCreds []*v1alpha1.RepoCreds, helmOptions *v1alpha1.HelmOptions, enableGenerateManifests map[string]bool,
 	) error {
-		appInstanceLabelKey, err := s.settingsMgr.GetAppInstanceLabelKey()
+		appInstanceLabelKey, err := s.settingsMgr.GetAppInstanceLabelKey(ctx)
 		if err != nil {
 			return fmt.Errorf("error getting app instance label key from settings: %w", err)
 		}
@@ -545,11 +545,11 @@ func (s *Server) GetManifests(ctx context.Context, q *application.ApplicationMan
 				return fmt.Errorf("error getting kustomize settings: %w", err)
 			}
 
-			installationID, err := s.settingsMgr.GetInstallationID()
+			installationID, err := s.settingsMgr.GetInstallationID(ctx)
 			if err != nil {
 				return fmt.Errorf("error getting installation ID: %w", err)
 			}
-			trackingMethod, err := s.settingsMgr.GetTrackingMethod()
+			trackingMethod, err := s.settingsMgr.GetTrackingMethod(ctx)
 			if err != nil {
 				return fmt.Errorf("error getting trackingMethod from settings: %w", err)
 			}
@@ -646,12 +646,12 @@ func (s *Server) GetManifestsWithFiles(stream application.ApplicationService_Get
 	err = s.queryRepoServer(ctx, proj, func(
 		client apiclient.RepoServerServiceClient, helmRepos []*v1alpha1.Repository, helmCreds []*v1alpha1.RepoCreds, _ []*v1alpha1.Repository, _ []*v1alpha1.RepoCreds, helmOptions *v1alpha1.HelmOptions, enableGenerateManifests map[string]bool,
 	) error {
-		appInstanceLabelKey, err := s.settingsMgr.GetAppInstanceLabelKey()
+		appInstanceLabelKey, err := s.settingsMgr.GetAppInstanceLabelKey(ctx)
 		if err != nil {
 			return fmt.Errorf("error getting app instance label key from settings: %w", err)
 		}
 
-		trackingMethod, err := s.settingsMgr.GetTrackingMethod()
+		trackingMethod, err := s.settingsMgr.GetTrackingMethod(ctx)
 		if err != nil {
 			return fmt.Errorf("error getting trackingMethod from settings: %w", err)
 		}
@@ -817,7 +817,7 @@ func (s *Server) Get(ctx context.Context, q *application.ApplicationQuery) (*v1a
 			if err != nil {
 				return fmt.Errorf("error getting kustomize settings: %w", err)
 			}
-			trackingMethod, err := s.settingsMgr.GetTrackingMethod()
+			trackingMethod, err := s.settingsMgr.GetTrackingMethod(ctx)
 			if err != nil {
 				return fmt.Errorf("error getting trackingMethod from settings: %w", err)
 			}
@@ -2881,7 +2881,7 @@ func (s *Server) ServerSideDiff(ctx context.Context, q *application.ApplicationS
 		return nil, fmt.Errorf("error getting application: %w", err)
 	}
 
-	argoSettings, err := s.settingsMgr.GetSettings()
+	argoSettings, err := s.settingsMgr.GetSettings(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting ArgoCD settings: %w", err)
 	}
@@ -2924,7 +2924,7 @@ func (s *Server) ServerSideDiff(ctx context.Context, q *application.ApplicationS
 
 	dryRunner := diff.NewK8sServerSideDryRunner(applier)
 
-	appLabelKey, err := s.settingsMgr.GetAppInstanceLabelKey()
+	appLabelKey, err := s.settingsMgr.GetAppInstanceLabelKey(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting app instance label key: %w", err)
 	}

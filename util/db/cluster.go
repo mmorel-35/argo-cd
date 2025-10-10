@@ -57,15 +57,15 @@ func (db *db) getLocalCluster() *appv1.Cluster {
 }
 
 // ListClusters returns list of clusters
-func (db *db) ListClusters(_ context.Context) (*appv1.ClusterList, error) {
-	clusterSecrets, err := db.listSecretsByType(common.LabelValueSecretTypeCluster)
+func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
+	clusterSecrets, err := db.listSecretsByType(ctx, common.LabelValueSecretTypeCluster)
 	if err != nil {
 		return nil, err
 	}
 	clusterList := appv1.ClusterList{
 		Items: make([]appv1.Cluster, 0),
 	}
-	settings, err := db.settingsMgr.GetSettings()
+	settings, err := db.settingsMgr.GetSettings(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (db *db) ListClusters(_ context.Context) (*appv1.ClusterList, error) {
 // CreateCluster creates a cluster
 func (db *db) CreateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Cluster, error) {
 	if c.Server == appv1.KubernetesInternalAPIServerAddr {
-		settings, err := db.settingsMgr.GetSettings()
+		settings, err := db.settingsMgr.GetSettings(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -145,7 +145,7 @@ func (db *db) WatchClusters(ctx context.Context,
 	handleModEvent func(oldCluster *appv1.Cluster, newCluster *appv1.Cluster),
 	handleDeleteEvent func(clusterServer string),
 ) error {
-	argoSettings, err := db.settingsMgr.GetSettings()
+	argoSettings, err := db.settingsMgr.GetSettings(ctx)
 	if err != nil {
 		return err
 	}
@@ -212,8 +212,8 @@ func (db *db) WatchClusters(ctx context.Context,
 	return err
 }
 
-func (db *db) getClusterSecret(server string) (*corev1.Secret, error) {
-	clusterSecrets, err := db.listSecretsByType(common.LabelValueSecretTypeCluster)
+func (db *db) getClusterSecret(ctx context.Context, server string) (*corev1.Secret, error) {
+	clusterSecrets, err := db.listSecretsByType(ctx, common.LabelValueSecretTypeCluster)
 	if err != nil {
 		return nil, err
 	}
@@ -229,7 +229,7 @@ func (db *db) getClusterSecret(server string) (*corev1.Secret, error) {
 // GetCluster returns a cluster from a query
 func (db *db) GetCluster(ctx context.Context, server string) (*appv1.Cluster, error) {
 	if server == appv1.KubernetesInternalAPIServerAddr {
-		argoSettings, err := db.settingsMgr.GetSettings()
+		argoSettings, err := db.settingsMgr.GetSettings(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -279,7 +279,7 @@ func (db *db) GetProjectClusters(ctx context.Context, project string) ([]*appv1.
 }
 
 func (db *db) GetClusterServersByName(ctx context.Context, name string) ([]string, error) {
-	argoSettings, err := db.settingsMgr.GetSettings()
+	argoSettings, err := db.settingsMgr.GetSettings(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -316,7 +316,7 @@ func (db *db) GetClusterServersByName(ctx context.Context, name string) ([]strin
 
 // UpdateCluster updates a cluster
 func (db *db) UpdateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Cluster, error) {
-	clusterSecret, err := db.getClusterSecret(c.Server)
+	clusterSecret, err := db.getClusterSecret(ctx, c.Server)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return db.CreateCluster(ctx, c)
@@ -341,7 +341,7 @@ func (db *db) UpdateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Clust
 
 // DeleteCluster deletes a cluster by name
 func (db *db) DeleteCluster(ctx context.Context, server string) error {
-	secret, err := db.getClusterSecret(server)
+	secret, err := db.getClusterSecret(ctx, server)
 	if err != nil {
 		return err
 	}

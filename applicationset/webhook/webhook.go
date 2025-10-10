@@ -74,7 +74,7 @@ type prGeneratorGitlabInfo struct {
 
 func NewWebhookHandler(webhookParallelism int, argocdSettingsMgr *argosettings.SettingsManager, client client.Client, generators map[string]generators.Generator) (*WebhookHandler, error) {
 	// register the webhook secrets stored under "argocd-secret" for verifying incoming payloads
-	argocdSettings, err := argocdSettingsMgr.GetSettings()
+	argocdSettings, err := argocdSettingsMgr.GetSettings(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("failed to get argocd settings: %w", err)
 	}

@@ -95,9 +95,9 @@ func (a *Account) HasCapability(capability AccountCapability) bool {
 	return false
 }
 
-func (mgr *SettingsManager) saveAccount(name string, account Account) error {
-	return mgr.updateSecret(func(secret *corev1.Secret) error {
-		return mgr.updateConfigMap(func(cm *corev1.ConfigMap) error {
+func (mgr *SettingsManager) saveAccount(ctx context.Context, name string, account Account) error {
+	return mgr.updateSecret(ctx, func(secret *corev1.Secret) error {
+		return mgr.updateConfigMap(ctx, func(cm *corev1.ConfigMap) error {
 			return saveAccount(secret, cm, name, account)
 		})
 	})
@@ -112,7 +112,7 @@ func (mgr *SettingsManager) AddAccount(ctx context.Context, name string, account
 	if _, ok := accounts[name]; ok {
 		return status.Errorf(codes.AlreadyExists, "account '%s' already exists", name)
 	}
-	return mgr.saveAccount(name, account)
+	return mgr.saveAccount(ctx, name, account)
 }
 
 // GetAccount return an account info by the specified name.
@@ -140,7 +140,7 @@ func (mgr *SettingsManager) UpdateAccount(name string, callback func(account *Ac
 		if err != nil {
 			return err
 		}
-		return mgr.saveAccount(name, *account)
+		return mgr.saveAccount(context.Background(), name, *account)
 	})
 }
 
