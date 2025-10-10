@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -407,7 +408,7 @@ func Test_GetProjectRepositories(t *testing.T) {
 	clientset := getClientset(repoSecretWithProject, repoSecretWithoutProject)
 	argoDB := NewDB(testNamespace, settings.NewSettingsManager(clientset, testNamespace), clientset)
 
-	repos, err := argoDB.GetProjectRepositories("some-project")
+	repos, err := argoDB.GetProjectRepositories(context.Background(), "some-project")
 	require.NoError(t, err)
 	assert.Len(t, repos, 1)
 	assert.Equal(t, "git@github.com:argoproj/argo-cd", repos[0].Repo)

@@ -698,7 +698,7 @@ func GetAppProjectWithScopedResources(ctx context.Context, name string, projList
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("error getting project clusters: %w", err)
 	}
-	repos, err := db.GetProjectRepositories(name)
+	repos, err := db.GetProjectRepositories(ctx, name)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("error getting project repos: %w", err)
 	}
@@ -712,7 +712,7 @@ func GetAppProjectByName(ctx context.Context, name string, projLister applicatio
 		return nil, fmt.Errorf("error getting app project %q: %w", name, err)
 	}
 	project := projOrig.DeepCopy()
-	repos, err := db.GetProjectRepositories(name)
+	repos, err := db.GetProjectRepositories(ctx, name)
 	if err != nil {
 		return nil, fmt.Errorf("error getting project repositories: %w", err)
 	}
