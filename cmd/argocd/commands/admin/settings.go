@@ -197,7 +197,7 @@ func joinValidators(validators ...settingValidator) settingValidator {
 
 var validatorsByGroup = map[string]settingValidator{
 	"general": joinValidators(func(manager *settings.SettingsManager) (string, error) {
-		general, err := manager.GetSettings()
+		general, err := manager.GetSettings(context.Background())
 		if err != nil {
 			return "", err
 		}
@@ -225,7 +225,7 @@ var validatorsByGroup = map[string]settingValidator{
 		}
 		return summary, nil
 	}, func(manager *settings.SettingsManager) (string, error) {
-		_, err := manager.GetAppInstanceLabelKey()
+		_, err := manager.GetAppInstanceLabelKey(context.Background())
 		return "", err
 	}, func(manager *settings.SettingsManager) (string, error) {
 		_, err := manager.GetHelp(context.Background())

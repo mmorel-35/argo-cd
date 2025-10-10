@@ -100,7 +100,7 @@ func NewRunDexCommand() *cobra.Command {
 			}
 
 			settingsMgr := settings.NewSettingsManager(kubeClientset, namespace)
-			prevSettings, err := settingsMgr.GetSettings()
+			prevSettings, err := settingsMgr.GetSettings(context.Background())
 			errors.CheckError(err)
 			updateCh := make(chan *settings.ArgoCDSettings, 1)
 			settingsMgr.Subscribe(updateCh)
@@ -170,7 +170,7 @@ func NewGenDexConfigCommand() *cobra.Command {
 			errors.CheckError(err)
 			kubeClientset := kubernetes.NewForConfigOrDie(config)
 			settingsMgr := settings.NewSettingsManager(kubeClientset, namespace)
-			settings, err := settingsMgr.GetSettings()
+			settings, err := settingsMgr.GetSettings(context.Background())
 			errors.CheckError(err)
 			dexCfgBytes, err := dex.GenerateDexConfigYAML(settings, disableTLS)
 			errors.CheckError(err)
