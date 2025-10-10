@@ -1,7 +1,6 @@
 package settings
 
 import (
-	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -204,7 +203,7 @@ func TestInClusterServerAddressEnabledByDefault(t *testing.T) {
 		},
 	)
 	settingsManager := NewSettingsManager(kubeClient, "default")
-	settings, err := settingsManager.GetSettings(context.Background())
+	settings, err := settingsManager.GetSettings(t.Context())
 	require.NoError(t, err)
 	assert.True(t, settings.InClusterEnabled)
 }
@@ -214,14 +213,14 @@ func TestGetAppInstanceLabelKey(t *testing.T) {
 		_, settingsManager := fixtures(map[string]string{
 			"application.instanceLabelKey": "testLabel",
 		})
-		label, err := settingsManager.GetAppInstanceLabelKey(context.Background())
+		label, err := settingsManager.GetAppInstanceLabelKey(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, "testLabel", label)
 	})
 
 	t.Run("should get default instanceLabelKey if custom not defined", func(t *testing.T) {
 		_, settingsManager := fixtures(map[string]string{})
-		label, err := settingsManager.GetAppInstanceLabelKey(context.Background())
+		label, err := settingsManager.GetAppInstanceLabelKey(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, common.LabelKeyAppInstance, label)
 	})
@@ -232,14 +231,14 @@ func TestGetTrackingMethod(t *testing.T) {
 		_, settingsManager := fixtures(map[string]string{
 			"application.resourceTrackingMethod": string(v1alpha1.TrackingMethodLabel),
 		})
-		label, err := settingsManager.GetTrackingMethod(context.Background())
+		label, err := settingsManager.GetTrackingMethod(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, string(v1alpha1.TrackingMethodLabel), label)
 	})
 
 	t.Run("should get default trackingMethod if custom not defined", func(t *testing.T) {
 		_, settingsManager := fixtures(map[string]string{})
-		label, err := settingsManager.GetTrackingMethod(context.Background())
+		label, err := settingsManager.GetTrackingMethod(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, string(v1alpha1.TrackingMethodAnnotation), label)
 	})
@@ -249,7 +248,7 @@ func TestGetInstallationID(t *testing.T) {
 	_, settingsManager := fixtures(map[string]string{
 		"installationID": "123456789",
 	})
-	id, err := settingsManager.GetInstallationID(context.Background())
+	id, err := settingsManager.GetInstallationID(t.Context())
 	require.NoError(t, err)
 	assert.Equal(t, "123456789", id)
 }
@@ -949,7 +948,7 @@ func TestSettingsManager_GetSettings(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		s, err := settingsManager.GetSettings(context.Background())
+		s, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, time.Hour*24, s.UserSessionDuration)
 	})
@@ -981,7 +980,7 @@ func TestSettingsManager_GetSettings(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		s, err := settingsManager.GetSettings(context.Background())
+		s, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, time.Hour*24, s.UserSessionDuration)
 	})
@@ -1013,7 +1012,7 @@ func TestSettingsManager_GetSettings(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		s, err := settingsManager.GetSettings(context.Background())
+		s, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, time.Hour*10, s.UserSessionDuration)
 	})
@@ -1048,7 +1047,7 @@ func TestGetOIDCConfig(t *testing.T) {
 		},
 	)
 	settingsManager := NewSettingsManager(kubeClient, "default")
-	settings, err := settingsManager.GetSettings(context.Background())
+	settings, err := settingsManager.GetSettings(t.Context())
 	require.NoError(t, err)
 
 	oidcConfig := settings.OIDCConfig()
@@ -1128,7 +1127,7 @@ func TestGetOIDCSecretTrim(t *testing.T) {
 		},
 	)
 	settingsManager := NewSettingsManager(kubeClient, "default")
-	settings, err := settingsManager.GetSettings(context.Background())
+	settings, err := settingsManager.GetSettings(t.Context())
 	require.NoError(t, err)
 
 	oidcConfig := settings.OIDCConfig()
@@ -1184,7 +1183,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		settings, err := settingsManager.GetSettings(context.Background())
+		settings, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.True(t, settings.CertificateIsExternal)
 		assert.NotNil(t, settings.Certificate)
@@ -1232,7 +1231,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		settings, err := settingsManager.GetSettings(context.Background())
+		settings, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.True(t, settings.CertificateIsExternal)
 		assert.NotNil(t, settings.Certificate)
@@ -1277,7 +1276,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		settings, err := settingsManager.GetSettings(context.Background())
+		settings, err := settingsManager.GetSettings(t.Context())
 		require.ErrorContains(t, err, "failed to find any PEM data in certificate input")
 		assert.NotNil(t, settings)
 	})
@@ -1330,12 +1329,12 @@ func Test_GetTLSConfiguration(t *testing.T) {
 		assert.Equal(t, 0, callCount)
 
 		// should be called by first call to GetSettings
-		_, err := settingsManager.GetSettings(context.Background())
+		_, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, 1, callCount)
 
 		// should not be called by subsequent call to GetSettings
-		_, err = settingsManager.GetSettings(context.Background())
+		_, err = settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, 1, callCount)
 	})
@@ -1385,7 +1384,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 		})
 
 		// should be called by first call to GetSettings
-		settings, err := settingsManager.GetSettings(context.Background())
+		settings, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, 1, callCount)
 		assert.NotNil(t, settings.Certificate)
@@ -1401,7 +1400,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 		time.Sleep(250 * time.Millisecond)
 
 		// should be called again after secret update resolves
-		settings, err = settingsManager.GetSettings(context.Background())
+		settings, err = settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.Equal(t, 2, callCount)
 		assert.NotNil(t, settings.Certificate)
@@ -1436,7 +1435,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		settings, err := settingsManager.GetSettings(context.Background())
+		settings, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		// should have internal cert at this point
 		assert.NotNil(t, settings.Certificate)
@@ -1460,7 +1459,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 		// allow time for the create to resolve to avoid timing issues below
 		time.Sleep(250 * time.Millisecond)
 
-		settings, err = settingsManager.GetSettings(context.Background())
+		settings, err = settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		// should now have an external cert
 		assert.NotNil(t, settings.Certificate)
@@ -1506,7 +1505,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		settings, err := settingsManager.GetSettings(context.Background())
+		settings, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		// should have external cert at this point
 		assert.NotNil(t, settings.Certificate)
@@ -1519,7 +1518,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 		// allow time for the delete to resolve to avoid timing issues below
 		time.Sleep(250 * time.Millisecond)
 
-		settings, err = settingsManager.GetSettings(context.Background())
+		settings, err = settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		// should now have an internal cert
 		assert.NotNil(t, settings.Certificate)
@@ -1557,7 +1556,7 @@ func Test_GetTLSConfiguration(t *testing.T) {
 			},
 		)
 		settingsManager := NewSettingsManager(kubeClient, "default")
-		settings, err := settingsManager.GetSettings(context.Background())
+		settings, err := settingsManager.GetSettings(t.Context())
 		require.NoError(t, err)
 		assert.False(t, settings.CertificateIsExternal)
 		assert.NotNil(t, settings.Certificate)
@@ -1637,7 +1636,7 @@ requestedIDTokenClaims: {"groups": {"essential": true}}`,
 	kubeClient := fake.NewClientset(cm, secret, argocdSecret)
 	settingsManager := NewSettingsManager(kubeClient, "default")
 
-	settings, err := settingsManager.GetSettings(context.Background())
+	settings, err := settingsManager.GetSettings(t.Context())
 	require.NoError(t, err)
 	assert.Equal(t, "mywebhooksecret", settings.GetWebhookGitHubSecret())
 
