@@ -182,12 +182,12 @@ func (m *appStateManager) GetRepoObjs(ctx context.Context, app *v1alpha1.Applica
 		return nil, nil, false, fmt.Errorf("failed to get Helm settings: %w", err)
 	}
 
-	trackingMethod, err := m.settingsMgr.GetTrackingMethod(context.Background())
+	trackingMethod, err := m.settingsMgr.GetTrackingMethod(ctx)
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to get trackingMethod: %w", err)
 	}
 
-	installationID, err := m.settingsMgr.GetInstallationID(context.Background())
+	installationID, err := m.settingsMgr.GetInstallationID(ctx)
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to get installation ID: %w", err)
 	}
@@ -350,14 +350,14 @@ func (m *appStateManager) GetRepoObjs(ctx context.Context, app *v1alpha1.Applica
 }
 
 // ResolveGitRevision will resolve the given revision to a full commit SHA. Only works for git.
-func (m *appStateManager) ResolveGitRevision(repoURL string, revision string) (string, error) {
+func (m *appStateManager) ResolveGitRevision(ctx context.Context, repoURL string, revision string) (string, error) {
 	conn, repoClient, err := m.repoClientset.NewRepoServerClient()
 	if err != nil {
 		return "", fmt.Errorf("failed to connect to repo server: %w", err)
 	}
 	defer utilio.Close(conn)
 
-	repo, err := m.db.GetRepository(context.Background(), repoURL, "")
+	repo, err := m.db.GetRepository(ctx, repoURL, "")
 	if err != nil {
 		return "", fmt.Errorf("failed to get repo %q: %w", repoURL, err)
 	}
@@ -371,7 +371,7 @@ func (m *appStateManager) ResolveGitRevision(repoURL string, revision string) (s
 			},
 		},
 	}
-	resp, err := repoClient.ResolveRevision(context.Background(), &apiclient.ResolveRevisionRequest{
+	resp, err := repoClient.ResolveRevision(ctx, &apiclient.ResolveRevisionRequest{
 		Repo:              repo,
 		App:               app,
 		AmbiguousRevision: revision,
@@ -464,7 +464,7 @@ func (m *appStateManager) getComparisonSettings(ctx context.Context) (string, ma
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
-	appLabelKey, err := m.settingsMgr.GetAppInstanceLabelKey(context.Background())
+	appLabelKey, err := m.settingsMgr.GetAppInstanceLabelKey(ctx)
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
@@ -472,11 +472,11 @@ func (m *appStateManager) getComparisonSettings(ctx context.Context) (string, ma
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
-	installationID, err := m.settingsMgr.GetInstallationID(context.Background())
+	installationID, err := m.settingsMgr.GetInstallationID(ctx)
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
-	trackingMethod, err := m.settingsMgr.GetTrackingMethod(context.Background())
+	trackingMethod, err := m.settingsMgr.GetTrackingMethod(ctx)
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
@@ -569,7 +569,7 @@ func (m *appStateManager) CompareAppState(ctx context.Context, app *v1alpha1.App
 	failedToLoadObjs := false
 	conditions := make([]v1alpha1.ApplicationCondition, 0)
 
-	destCluster, err := argo.GetDestinationCluster(context.Background(), app.Spec.Destination, m.db)
+	destCluster, err := argo.GetDestinationCluster(ctx, app.Spec.Destination, m.db)
 	if err != nil {
 		return nil, err
 	}
@@ -594,7 +594,7 @@ func (m *appStateManager) CompareAppState(ctx context.Context, app *v1alpha1.App
 			}
 		}
 
-		targetObjs, manifestInfos, revisionsMayHaveChanges, err = m.GetRepoObjs(context.Background(), app, sources, appLabelKey, revisions, noCache, noRevisionCache, verifySignature, project, true)
+		targetObjs, manifestInfos, revisionsMayHaveChanges, err = m.GetRepoObjs(ctx, app, sources, appLabelKey, revisions, noCache, noRevisionCache, verifySignature, project, true)
 		if err != nil {
 			targetObjs = make([]*unstructured.Unstructured, 0)
 			msg := "Failed to load target state: " + err.Error()
@@ -691,7 +691,7 @@ func (m *appStateManager) CompareAppState(ctx context.Context, app *v1alpha1.App
 	// filter out all resources which are not permitted in the application project
 	for k, v := range liveObjByKey {
 		permitted, err := project.IsLiveResourcePermitted(v, destCluster, func(project string) ([]*v1alpha1.Cluster, error) {
-			clusters, err := m.db.GetProjectClusters(context.TODO(), project)
+			clusters, err := m.db.GetProjectClusters(ctx, project)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get clusters for project %q: %w", project, err)
 			}
@@ -1054,6 +1054,7 @@ func specEqualsCompareTo(spec v1alpha1.ApplicationSpec, sources []v1alpha1.Appli
 }
 
 func (m *appStateManager) persistRevisionHistory(
+	ctx context.Context,
 	app *v1alpha1.Application,
 	revision string,
 	source v1alpha1.ApplicationSource,
@@ -1098,7 +1099,7 @@ func (m *appStateManager) persistRevisionHistory(
 	if err != nil {
 		return fmt.Errorf("error marshaling revision history patch: %w", err)
 	}
-	_, err = m.appclientset.ArgoprojV1alpha1().Applications(app.Namespace).Patch(context.Background(), app.Name, types.MergePatchType, patch, metav1.PatchOptions{})
+	_, err = m.appclientset.ArgoprojV1alpha1().Applications(app.Namespace).Patch(ctx, app.Name, types.MergePatchType, patch, metav1.PatchOptions{})
 	return err
 }
 
