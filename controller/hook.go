@@ -42,7 +42,8 @@ func isPostDeleteHook(obj *unstructured.Unstructured) bool {
 }
 
 func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Application, proj *v1alpha1.AppProject, liveObjs map[kube.ResourceKey]*unstructured.Unstructured, config *rest.Config, logCtx *log.Entry) (bool, error) {
-	appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(context.Background())
+	ctx := context.Background()
+	appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -51,7 +52,7 @@ func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Applicat
 		revisions = append(revisions, src.TargetRevision)
 	}
 
-	targets, _, _, err := ctrl.appStateManager.GetRepoObjs(context.Background(), app, app.Spec.GetSources(), appLabelKey, revisions, false, false, false, proj, true)
+	targets, _, _, err := ctrl.appStateManager.GetRepoObjs(ctx, app, app.Spec.GetSources(), appLabelKey, revisions, false, false, false, proj, true)
 	if err != nil {
 		return false, err
 	}
@@ -76,7 +77,7 @@ func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Applicat
 	}
 	createdCnt := 0
 	for _, obj := range expectedHook {
-		_, err = ctrl.kubectl.CreateResource(context.Background(), config, obj.GroupVersionKind(), obj.GetName(), obj.GetNamespace(), obj, metav1.CreateOptions{})
+		_, err = ctrl.kubectl.CreateResource(ctx, config, obj.GroupVersionKind(), obj.GetName(), obj.GetNamespace(), obj, metav1.CreateOptions{})
 		if err != nil {
 			return false, err
 		}
@@ -86,7 +87,7 @@ func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Applicat
 		logCtx.Infof("Created %d post-delete hooks", createdCnt)
 		return false, nil
 	}
-	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(context.Background())
+	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -123,7 +124,8 @@ func (ctrl *ApplicationController) executePostDeleteHooks(app *v1alpha1.Applicat
 }
 
 func (ctrl *ApplicationController) cleanupPostDeleteHooks(liveObjs map[kube.ResourceKey]*unstructured.Unstructured, config *rest.Config, logCtx *log.Entry) (bool, error) {
-	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(context.Background())
+	ctx := context.Background()
+	resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -161,7 +163,7 @@ func (ctrl *ApplicationController) cleanupPostDeleteHooks(liveObjs map[kube.Reso
 				continue
 			}
 			logCtx.Infof("Deleting post-delete hook %s/%s", obj.GetNamespace(), obj.GetName())
-			err = ctrl.kubectl.DeleteResource(context.Background(), config, obj.GroupVersionKind(), obj.GetName(), obj.GetNamespace(), metav1.DeleteOptions{})
+			err = ctrl.kubectl.DeleteResource(ctx, config, obj.GroupVersionKind(), obj.GetName(), obj.GetNamespace(), metav1.DeleteOptions{})
 			if err != nil {
 				return false, err
 			}

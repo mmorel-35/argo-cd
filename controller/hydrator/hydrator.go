@@ -344,6 +344,7 @@ func (h *Hydrator) validateApplications(apps []*appv1.Application) (map[string]*
 }
 
 func (h *Hydrator) hydrate(logCtx *log.Entry, apps []*appv1.Application, projects map[string]*appv1.AppProject) (string, string, map[string]error, error) {
+	ctx := context.Background()
 	errors := make(map[string]error)
 	if len(apps) == 0 {
 		return "", "", nil, nil
@@ -360,20 +361,20 @@ func (h *Hydrator) hydrate(logCtx *log.Entry, apps []*appv1.Application, project
 	syncBranch := apps[0].Spec.SourceHydrator.SyncSource.TargetBranch
 
 	// Get a static SHA revision from the first app so that all apps are hydrated from the same revision.
-	targetRevision, pathDetails, err := h.getManifests(context.Background(), apps[0], "", projects[apps[0].Spec.Project])
+	targetRevision, pathDetails, err := h.getManifests(ctx, apps[0], "", projects[apps[0].Spec.Project])
 	if err != nil {
 		errors[apps[0].QualifiedName()] = fmt.Errorf("failed to get manifests: %w", err)
 		return "", "", errors, nil
 	}
 	paths := []*commitclient.PathDetails{pathDetails}
 
-	eg, ctx := errgroup.WithContext(context.Background())
+	eg, egCtx := errgroup.WithContext(ctx)
 	var mu sync.Mutex
 
 	for _, app := range apps[1:] {
 		app := app
 		eg.Go(func() error {
-			_, pathDetails, err = h.getManifests(ctx, app, targetRevision, projects[app.Spec.Project])
+			_, pathDetails, err = h.getManifests(egCtx, app, targetRevision, projects[app.Spec.Project])
 			mu.Lock()
 			defer mu.Unlock()
 			if err != nil {
@@ -399,12 +400,12 @@ func (h *Hydrator) hydrate(logCtx *log.Entry, apps []*appv1.Application, project
 	}
 
 	// Get the commit metadata for the target revision.
-	revisionMetadata, err := h.getRevisionMetadata(context.Background(), repoURL, project, targetRevision)
+	revisionMetadata, err := h.getRevisionMetadata(ctx, repoURL, project, targetRevision)
 	if err != nil {
 		return targetRevision, "", errors, fmt.Errorf("failed to get revision metadata for %q: %w", targetRevision, err)
 	}
 
-	repo, err := h.dependencies.GetWriteCredentials(context.Background(), repoURL, project)
+	repo, err := h.dependencies.GetWriteCredentials(ctx, repoURL, project)
 	if err != nil {
 		return targetRevision, "", errors, fmt.Errorf("failed to get hydrator credentials: %w", err)
 	}
@@ -440,7 +441,7 @@ func (h *Hydrator) hydrate(logCtx *log.Entry, apps []*appv1.Application, project
 		return targetRevision, "", errors, fmt.Errorf("failed to create commit service: %w", err)
 	}
 	defer utilio.Close(closer)
-	resp, err := commitService.CommitHydratedManifests(context.Background(), &manifestsRequest)
+	resp, err := commitService.CommitHydratedManifests(ctx, &manifestsRequest)
 	if err != nil {
 		return targetRevision, "", errors, fmt.Errorf("failed to commit hydrated manifests: %w", err)
 	}
@@ -496,7 +497,7 @@ func (h *Hydrator) getRevisionMetadata(ctx context.Context, repoURL, project, re
 	}
 	defer utilio.Close(closer)
 
-	resp, err := repoService.GetRevisionMetadata(context.Background(), &apiclient.RepoServerRevisionMetadataRequest{
+	resp, err := repoService.GetRevisionMetadata(ctx, &apiclient.RepoServerRevisionMetadataRequest{
 		Repo:     repo,
 		Revision: revision,
 	})
