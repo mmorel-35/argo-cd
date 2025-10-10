@@ -23,8 +23,7 @@ import (
 	"github.com/argoproj/argo-cd/v3/util"
 )
 
-func (db *db) listSecretsByType(types ...string) ([]*corev1.Secret, error) {
-	ctx := context.Background()
+func (db *db) listSecretsByType(ctx context.Context, types ...string) ([]*corev1.Secret, error) {
 	labelSelector := labels.NewSelector()
 	req, err := labels.NewRequirement(common.LabelKeySecretType, selection.Equals, types)
 	if err != nil {

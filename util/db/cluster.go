@@ -58,7 +58,7 @@ func (db *db) getLocalCluster() *appv1.Cluster {
 
 // ListClusters returns list of clusters
 func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
-	clusterSecrets, err := db.listSecretsByType(common.LabelValueSecretTypeCluster)
+	clusterSecrets, err := db.listSecretsByType(ctx, common.LabelValueSecretTypeCluster)
 	if err != nil {
 		return nil, err
 	}
@@ -212,8 +212,8 @@ func (db *db) WatchClusters(ctx context.Context,
 	return err
 }
 
-func (db *db) getClusterSecret(server string) (*corev1.Secret, error) {
-	clusterSecrets, err := db.listSecretsByType(common.LabelValueSecretTypeCluster)
+func (db *db) getClusterSecret(ctx context.Context, server string) (*corev1.Secret, error) {
+	clusterSecrets, err := db.listSecretsByType(ctx, common.LabelValueSecretTypeCluster)
 	if err != nil {
 		return nil, err
 	}
@@ -316,7 +316,7 @@ func (db *db) GetClusterServersByName(ctx context.Context, name string) ([]strin
 
 // UpdateCluster updates a cluster
 func (db *db) UpdateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Cluster, error) {
-	clusterSecret, err := db.getClusterSecret(c.Server)
+	clusterSecret, err := db.getClusterSecret(ctx, c.Server)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return db.CreateCluster(ctx, c)
@@ -341,7 +341,7 @@ func (db *db) UpdateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Clust
 
 // DeleteCluster deletes a cluster by name
 func (db *db) DeleteCluster(ctx context.Context, server string) error {
-	secret, err := db.getClusterSecret(server)
+	secret, err := db.getClusterSecret(ctx, server)
 	if err != nil {
 		return err
 	}
