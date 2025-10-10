@@ -506,7 +506,7 @@ func (ctrl *ApplicationController) setAppManagedResources(destCluster *appv1.Clu
 		logCtx = logCtx.WithField("time_ms", time.Since(ts.StartTime).Milliseconds())
 		logCtx.Debug("Finished setting app managed resources")
 	}()
-	managedResources, err := ctrl.hideSecretData(destCluster, a, comparisonResult)
+	managedResources, err := ctrl.hideSecretData(context.Background(), destCluster, a, comparisonResult)
 	ts.AddCheckpoint("hide_secret_data_ms")
 	if err != nil {
 		return nil, fmt.Errorf("error getting managed resources: %w", err)
@@ -678,7 +678,7 @@ func (ctrl *ApplicationController) getResourceTree(destCluster *appv1.Cluster, a
 	})
 	ts.AddCheckpoint("process_orphaned_resources_ms")
 
-	hosts, err := ctrl.getAppHosts(destCluster, a, nodes)
+	hosts, err := ctrl.getAppHosts(context.Background(), destCluster, a, nodes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get app hosts: %w", err)
 	}
@@ -686,8 +686,7 @@ func (ctrl *ApplicationController) getResourceTree(destCluster *appv1.Cluster, a
 	return &appv1.ApplicationTree{Nodes: nodes, OrphanedNodes: orphanedNodes, Hosts: hosts}, nil
 }
 
-func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *appv1.Application, appNodes []appv1.ResourceNode) ([]appv1.HostInfo, error) {
-	ctx := context.Background()
+func (ctrl *ApplicationController) getAppHosts(ctx context.Context, destCluster *appv1.Cluster, a *appv1.Application, appNodes []appv1.ResourceNode) ([]appv1.HostInfo, error) {
 	ts := stats.NewTimingStats()
 	defer func() {
 		logCtx := log.WithFields(applog.GetAppLogFields(a))
@@ -795,8 +794,7 @@ func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *ap
 	return hosts, nil
 }
 
-func (ctrl *ApplicationController) hideSecretData(destCluster *appv1.Cluster, app *appv1.Application, comparisonResult *comparisonResult) ([]*appv1.ResourceDiff, error) {
-	ctx := context.Background()
+func (ctrl *ApplicationController) hideSecretData(ctx context.Context, destCluster *appv1.Cluster, app *appv1.Application, comparisonResult *comparisonResult) ([]*appv1.ResourceDiff, error) {
 	items := make([]*appv1.ResourceDiff, len(comparisonResult.managedResources))
 	for i := range comparisonResult.managedResources {
 		res := comparisonResult.managedResources[i]
@@ -1296,7 +1294,7 @@ func (ctrl *ApplicationController) finalizeApplicationDeletion(app *appv1.Applic
 			return err
 		}
 
-		done, err := ctrl.executePostDeleteHooks(app, proj, objsMap, config, logCtx)
+		done, err := ctrl.executePostDeleteHooks(context.Background(), app, proj, objsMap, config, logCtx)
 		if err != nil {
 			return err
 		}
@@ -1313,7 +1311,7 @@ func (ctrl *ApplicationController) finalizeApplicationDeletion(app *appv1.Applic
 			return err
 		}
 
-		done, err := ctrl.cleanupPostDeleteHooks(objsMap, config, logCtx)
+		done, err := ctrl.cleanupPostDeleteHooks(context.Background(), objsMap, config, logCtx)
 		if err != nil {
 			return err
 		}
@@ -1466,7 +1464,7 @@ func (ctrl *ApplicationController) processRequestedAppOperation(app *appv1.Appli
 	project, err := ctrl.getAppProj(app)
 	if err == nil {
 		// Start or resume the sync
-		ctrl.appStateManager.SyncAppState(app, project, state)
+		ctrl.appStateManager.SyncAppState(ctx, app, project, state)
 	} else {
 		state.Phase = synccommon.OperationError
 		state.Message = fmt.Sprintf("Failed to load application project: %v", err)
@@ -1781,7 +1779,7 @@ func (ctrl *ApplicationController) processAppRefreshQueueItem() (processNext boo
 		sources = append(sources, app.Spec.GetSource())
 	}
 
-	compareResult, err := ctrl.appStateManager.CompareAppState(app, project, revisions, sources, refreshType == appv1.RefreshTypeHard, comparisonLevel == CompareWithLatestForceResolve, localManifests, hasMultipleSources)
+	compareResult, err := ctrl.appStateManager.CompareAppState(context.Background(), app, project, revisions, sources, refreshType == appv1.RefreshTypeHard, comparisonLevel == CompareWithLatestForceResolve, localManifests, hasMultipleSources)
 
 	ts.AddCheckpoint("compare_app_state_ms")
 

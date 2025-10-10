@@ -118,8 +118,7 @@ func newSyncOperationResult(app *v1alpha1.Application, op v1alpha1.SyncOperation
 	return syncRes
 }
 
-func (m *appStateManager) SyncAppState(app *v1alpha1.Application, project *v1alpha1.AppProject, state *v1alpha1.OperationState) {
-	ctx := context.Background()
+func (m *appStateManager) SyncAppState(ctx context.Context, app *v1alpha1.Application, project *v1alpha1.AppProject, state *v1alpha1.OperationState) {
 	syncId, err := syncid.Generate()
 	if err != nil {
 		state.Phase = common.OperationError
@@ -160,7 +159,7 @@ func (m *appStateManager) SyncAppState(app *v1alpha1.Application, project *v1alp
 	}
 
 	// ignore error if CompareStateRepoError, this shouldn't happen as noRevisionCache is true
-	compareResult, err := m.CompareAppState(app, project, revisions, sources, false, true, syncOp.Manifests, isMultiSourceSync)
+	compareResult, err := m.CompareAppState(ctx, app, project, revisions, sources, false, true, syncOp.Manifests, isMultiSourceSync)
 	if err != nil && !stderrors.Is(err, ErrCompareStateRepo) {
 		state.Phase = common.OperationError
 		state.Message = err.Error()

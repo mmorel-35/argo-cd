@@ -197,7 +197,7 @@ func (h *Hydrator) ProcessHydrationQueueItem(hydrationKey types.HydrationQueueKe
 	}
 
 	// Hydrate all the apps
-	drySHA, hydratedSHA, appErrors, err := h.hydrate(logCtx, apps, projects)
+	drySHA, hydratedSHA, appErrors, err := h.hydrate(context.Background(), logCtx, apps, projects)
 	if err != nil {
 		// If there is a single error, it affects each applications
 		for i := range apps {
@@ -343,8 +343,7 @@ func (h *Hydrator) validateApplications(apps []*appv1.Application) (map[string]*
 	return projects, errors
 }
 
-func (h *Hydrator) hydrate(logCtx *log.Entry, apps []*appv1.Application, projects map[string]*appv1.AppProject) (string, string, map[string]error, error) {
-	ctx := context.Background()
+func (h *Hydrator) hydrate(ctx context.Context, logCtx *log.Entry, apps []*appv1.Application, projects map[string]*appv1.AppProject) (string, string, map[string]error, error) {
 	errors := make(map[string]error)
 	if len(apps) == 0 {
 		return "", "", nil, nil
