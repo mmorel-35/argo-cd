@@ -182,12 +182,12 @@ func (m *appStateManager) GetRepoObjs(ctx context.Context, app *v1alpha1.Applica
 		return nil, nil, false, fmt.Errorf("failed to get Helm settings: %w", err)
 	}
 
-	trackingMethod, err := m.settingsMgr.GetTrackingMethod()
+	trackingMethod, err := m.settingsMgr.GetTrackingMethod(context.Background())
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to get trackingMethod: %w", err)
 	}
 
-	installationID, err := m.settingsMgr.GetInstallationID()
+	installationID, err := m.settingsMgr.GetInstallationID(context.Background())
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to get installation ID: %w", err)
 	}
@@ -464,7 +464,7 @@ func (m *appStateManager) getComparisonSettings(ctx context.Context) (string, ma
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
-	appLabelKey, err := m.settingsMgr.GetAppInstanceLabelKey()
+	appLabelKey, err := m.settingsMgr.GetAppInstanceLabelKey(context.Background())
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
@@ -472,11 +472,11 @@ func (m *appStateManager) getComparisonSettings(ctx context.Context) (string, ma
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
-	installationID, err := m.settingsMgr.GetInstallationID()
+	installationID, err := m.settingsMgr.GetInstallationID(context.Background())
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}
-	trackingMethod, err := m.settingsMgr.GetTrackingMethod()
+	trackingMethod, err := m.settingsMgr.GetTrackingMethod(context.Background())
 	if err != nil {
 		return "", nil, nil, "", "", err
 	}

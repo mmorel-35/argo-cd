@@ -824,11 +824,11 @@ func (ctrl *ApplicationController) hideSecretData(destCluster *appv1.Cluster, ap
 			if err != nil {
 				return nil, fmt.Errorf("error getting resource overrides: %w", err)
 			}
-			appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey()
+			appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(context.Background())
 			if err != nil {
 				return nil, fmt.Errorf("error getting app instance label key: %w", err)
 			}
-			trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod()
+			trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod(context.Background())
 			if err != nil {
 				return nil, fmt.Errorf("error getting tracking method: %w", err)
 			}

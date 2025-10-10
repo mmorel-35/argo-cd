@@ -35,7 +35,7 @@ func (ctrl *ApplicationController) GetRepoObjs(ctx context.Context, origApp *app
 	drySources := []appv1.ApplicationSource{drySource}
 	dryRevisions := []string{revision}
 
-	appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey()
+	appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(context.Background())
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get app instance label key: %w", err)
 	}
@@ -54,7 +54,7 @@ func (ctrl *ApplicationController) GetRepoObjs(ctx context.Context, origApp *app
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get repo objects: %w", err)
 	}
-	trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod()
+	trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod(context.Background())
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get tracking method: %w", err)
 	}

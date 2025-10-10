@@ -235,15 +235,15 @@ type liveStateCache struct {
 
 func (c *liveStateCache) loadCacheSettings() (*cacheSettings, error) {
 	ctx := context.Background()
-	appInstanceLabelKey, err := c.settingsMgr.GetAppInstanceLabelKey()
+	appInstanceLabelKey, err := c.settingsMgr.GetAppInstanceLabelKey(context.Background())
 	if err != nil {
 		return nil, err
 	}
-	trackingMethod, err := c.settingsMgr.GetTrackingMethod()
+	trackingMethod, err := c.settingsMgr.GetTrackingMethod(context.Background())
 	if err != nil {
 		return nil, err
 	}
-	installationID, err := c.settingsMgr.GetInstallationID()
+	installationID, err := c.settingsMgr.GetInstallationID(context.Background())
 	if err != nil {
 		return nil, err
 	}

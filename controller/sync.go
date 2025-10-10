@@ -273,12 +273,12 @@ func (m *appStateManager) SyncAppState(app *v1alpha1.Application, project *v1alp
 		reconciliationResult.Target = patchedTargets
 	}
 
-	installationID, err := m.settingsMgr.GetInstallationID()
+	installationID, err := m.settingsMgr.GetInstallationID(context.Background())
 	if err != nil {
 		log.Errorf("Could not get installation ID: %v", err)
 		return
 	}
-	trackingMethod, err := m.settingsMgr.GetTrackingMethod()
+	trackingMethod, err := m.settingsMgr.GetTrackingMethod(context.Background())
 	if err != nil {
 		log.Errorf("Could not get trackingMethod: %v", err)
 		return
