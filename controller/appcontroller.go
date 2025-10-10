@@ -1054,7 +1054,7 @@ func (ctrl *ApplicationController) processAppOperationQueueItem() (processNext b
 		ctrl.processRequestedAppOperation(app)
 		ts.AddCheckpoint("process_requested_app_operation_ms")
 	} else if app.DeletionTimestamp != nil {
-		if err = ctrl.finalizeApplicationDeletion(app, func(project string) ([]*appv1.Cluster, error) {
+		if err = ctrl.finalizeApplicationDeletion(ctx, app, func(project string) ([]*appv1.Cluster, error) {
 			return ctrl.db.GetProjectClusters(ctx, project)
 		}); err != nil {
 			ctrl.setAppCondition(app, appv1.ApplicationCondition{
@@ -1190,10 +1190,10 @@ func (ctrl *ApplicationController) getPermittedAppLiveObjects(destCluster *appv1
 	return objsMap, nil
 }
 
-func (ctrl *ApplicationController) finalizeApplicationDeletion(app *appv1.Application, projectClusters func(project string) ([]*appv1.Cluster, error)) error {
+func (ctrl *ApplicationController) finalizeApplicationDeletion(ctx context.Context, app *appv1.Application, projectClusters func(project string) ([]*appv1.Cluster, error)) error {
 	logCtx := log.WithFields(applog.GetAppLogFields(app))
 	// Get refreshed application info, since informer app copy might be stale
-	app, err := ctrl.applicationClientset.ArgoprojV1alpha1().Applications(app.Namespace).Get(context.Background(), app.Name, metav1.GetOptions{})
+	app, err := ctrl.applicationClientset.ArgoprojV1alpha1().Applications(app.Namespace).Get(ctx, app.Name, metav1.GetOptions{})
 	if err != nil {
 		if !apierrors.IsNotFound(err) {
 			logCtx.WithError(err).Error("Unable to get refreshed application info prior deleting resources")
@@ -1263,7 +1263,7 @@ func (ctrl *ApplicationController) finalizeApplicationDeletion(app *appv1.Applic
 
 		err = kube.RunAllAsync(len(filteredObjs), func(i int) error {
 			obj := filteredObjs[i]
-			return ctrl.kubectl.DeleteResource(context.Background(), config, obj.GroupVersionKind(), obj.GetName(), obj.GetNamespace(), metav1.DeleteOptions{PropagationPolicy: &propagationPolicy})
+			return ctrl.kubectl.DeleteResource(ctx, config, obj.GroupVersionKind(), obj.GetName(), obj.GetNamespace(), metav1.DeleteOptions{PropagationPolicy: &propagationPolicy})
 		})
 		if err != nil {
 			return err
@@ -1294,7 +1294,7 @@ func (ctrl *ApplicationController) finalizeApplicationDeletion(app *appv1.Applic
 			return err
 		}
 
-		done, err := ctrl.executePostDeleteHooks(context.Background(), app, proj, objsMap, config, logCtx)
+		done, err := ctrl.executePostDeleteHooks(ctx, app, proj, objsMap, config, logCtx)
 		if err != nil {
 			return err
 		}
@@ -1311,7 +1311,7 @@ func (ctrl *ApplicationController) finalizeApplicationDeletion(app *appv1.Applic
 			return err
 		}
 
-		done, err := ctrl.cleanupPostDeleteHooks(context.Background(), objsMap, config, logCtx)
+		done, err := ctrl.cleanupPostDeleteHooks(ctx, objsMap, config, logCtx)
 		if err != nil {
 			return err
 		}
