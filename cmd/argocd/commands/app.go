@@ -448,6 +448,7 @@ func NewApplicationGetCommand(clientOpts *argocdclient.ClientOptions) *cobra.Com
 
 			if ctx.Err() != nil {
 				// Reset context for subsequent requests using command context
+				cancel() // Cancel the old context
 				ctx, cancel = context.WithCancel(c.Context())
 			}
 			if sourceName != "" && sourcePosition != -1 {
