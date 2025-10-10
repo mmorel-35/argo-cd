@@ -1525,6 +1525,7 @@ func (ctrl *ApplicationController) processRequestedAppOperation(app *appv1.Appli
 }
 
 func (ctrl *ApplicationController) setOperationState(app *appv1.Application, state *appv1.OperationState) {
+	ctx := context.Background()
 	logCtx := log.WithFields(applog.GetAppLogFields(app))
 	if state.Phase == "" {
 		// expose any bugs where we neglect to set phase
@@ -1561,8 +1562,8 @@ func (ctrl *ApplicationController) setOperationState(app *appv1.Application, sta
 		}
 	}
 
-	kube.RetryUntilSucceed(context.Background(), updateOperationStateTimeout, "Update application operation state", logutils.NewLogrusLogger(logutils.NewWithCurrentConfig()), func() error {
-		_, err := ctrl.PatchAppWithWriteBack(context.Background(), app.Name, app.Namespace, types.MergePatchType, patchJSON, metav1.PatchOptions{})
+	kube.RetryUntilSucceed(ctx, updateOperationStateTimeout, "Update application operation state", logutils.NewLogrusLogger(logutils.NewWithCurrentConfig()), func() error {
+		_, err := ctrl.PatchAppWithWriteBack(ctx, app.Name, app.Namespace, types.MergePatchType, patchJSON, metav1.PatchOptions{})
 		if err != nil {
 			// Stop retrying updating deleted application
 			if apierrors.IsNotFound(err) {
@@ -1595,9 +1596,9 @@ func (ctrl *ApplicationController) setOperationState(app *appv1.Application, sta
 			eventInfo.Type = corev1.EventTypeWarning
 			messages = append(messages, "failed:", state.Message)
 		}
-		ctrl.logAppEvent(context.TODO(), app, eventInfo, strings.Join(messages, " "))
+		ctrl.logAppEvent(ctx, app, eventInfo, strings.Join(messages, " "))
 
-		destCluster, err := argo.GetDestinationCluster(context.Background(), app.Spec.Destination, ctrl.db)
+		destCluster, err := argo.GetDestinationCluster(ctx, app.Spec.Destination, ctrl.db)
 		if err != nil {
 			logCtx.WithError(err).Warn("Unable to get destination cluster, setting dest_server label to empty string in sync metric")
 		}
@@ -1632,6 +1633,7 @@ func (ctrl *ApplicationController) PatchAppWithWriteBack(ctx context.Context, na
 }
 
 func (ctrl *ApplicationController) processAppRefreshQueueItem() (processNext bool) {
+	ctx := context.Background()
 	patchDuration := time.Duration(0) // time spent in doing patch/update calls
 	setOpDuration := time.Duration(0) // time spent in doing Operation patch calls in autosync
 	appKey, shutdown := ctrl.appRefreshQueue.Get()
@@ -1702,7 +1704,7 @@ func (ctrl *ApplicationController) processAppRefreshQueueItem() (processNext boo
 
 	if comparisonLevel == ComparisonWithNothing {
 		// If the destination cluster is invalid, fallback to the normal reconciliation flow
-		if destCluster, err = argo.GetDestinationCluster(context.Background(), app.Spec.Destination, ctrl.db); err == nil {
+		if destCluster, err = argo.GetDestinationCluster(ctx, app.Spec.Destination, ctrl.db); err == nil {
 			managedResources := make([]*appv1.ResourceDiff, 0)
 			if err := ctrl.cache.GetAppManagedResources(app.InstanceName(ctrl.namespace), &managedResources); err == nil {
 				var tree *appv1.ApplicationTree
@@ -1740,7 +1742,7 @@ func (ctrl *ApplicationController) processAppRefreshQueueItem() (processNext boo
 		return processNext
 	}
 
-	destCluster, err = argo.GetDestinationCluster(context.Background(), app.Spec.Destination, ctrl.db)
+	destCluster, err = argo.GetDestinationCluster(ctx, app.Spec.Destination, ctrl.db)
 	if err != nil {
 		logCtx.WithError(err).Error("Failed to get destination cluster")
 		// exit the reconciliation. ctrl.refreshAppConditions should have caught the error
@@ -1779,7 +1781,7 @@ func (ctrl *ApplicationController) processAppRefreshQueueItem() (processNext boo
 		sources = append(sources, app.Spec.GetSource())
 	}
 
-	compareResult, err := ctrl.appStateManager.CompareAppState(context.Background(), app, project, revisions, sources, refreshType == appv1.RefreshTypeHard, comparisonLevel == CompareWithLatestForceResolve, localManifests, hasMultipleSources)
+	compareResult, err := ctrl.appStateManager.CompareAppState(ctx, app, project, revisions, sources, refreshType == appv1.RefreshTypeHard, comparisonLevel == CompareWithLatestForceResolve, localManifests, hasMultipleSources)
 
 	ts.AddCheckpoint("compare_app_state_ms")
 
@@ -2091,7 +2093,7 @@ func (ctrl *ApplicationController) persistAppStatus(orig *appv1.Application, new
 	defer func() {
 		patchDuration = time.Since(start)
 	}()
-	_, err = ctrl.PatchAppWithWriteBack(context.Background(), orig.Name, orig.Namespace, types.MergePatchType, patch, metav1.PatchOptions{})
+	_, err = ctrl.PatchAppWithWriteBack(ctx, orig.Name, orig.Namespace, types.MergePatchType, patch, metav1.PatchOptions{})
 	if err != nil {
 		logCtx.WithError(err).Warn("Error updating application")
 	} else {
