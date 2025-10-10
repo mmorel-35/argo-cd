@@ -687,6 +687,7 @@ func (ctrl *ApplicationController) getResourceTree(destCluster *appv1.Cluster, a
 }
 
 func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *appv1.Application, appNodes []appv1.ResourceNode) ([]appv1.HostInfo, error) {
+	ctx := context.Background()
 	ts := stats.NewTimingStats()
 	defer func() {
 		logCtx := log.WithFields(applog.GetAppLogFields(a))
@@ -780,7 +781,7 @@ func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *ap
 			return resourcesInfo[i].ResourceName < resourcesInfo[j].ResourceName
 		})
 
-		allowedNodeLabels := ctrl.settingsMgr.GetAllowedNodeLabels(context.Background())
+		allowedNodeLabels := ctrl.settingsMgr.GetAllowedNodeLabels(ctx)
 		nodeLabels := make(map[string]string)
 		for _, label := range allowedNodeLabels {
 			if val, ok := node.Labels[label]; ok {
@@ -795,6 +796,7 @@ func (ctrl *ApplicationController) getAppHosts(destCluster *appv1.Cluster, a *ap
 }
 
 func (ctrl *ApplicationController) hideSecretData(destCluster *appv1.Cluster, app *appv1.Application, comparisonResult *comparisonResult) ([]*appv1.ResourceDiff, error) {
+	ctx := context.Background()
 	items := make([]*appv1.ResourceDiff, len(comparisonResult.managedResources))
 	for i := range comparisonResult.managedResources {
 		res := comparisonResult.managedResources[i]
@@ -812,23 +814,23 @@ func (ctrl *ApplicationController) hideSecretData(destCluster *appv1.Cluster, ap
 		resDiff := res.Diff
 		if res.Kind == kube.SecretKind && res.Group == "" {
 			var err error
-			target, live, err = diff.HideSecretData(res.Target, res.Live, ctrl.settingsMgr.GetSensitiveAnnotations(context.Background()))
+			target, live, err = diff.HideSecretData(res.Target, res.Live, ctrl.settingsMgr.GetSensitiveAnnotations(ctx))
 			if err != nil {
 				return nil, fmt.Errorf("error hiding secret data: %w", err)
 			}
-			compareOptions, err := ctrl.settingsMgr.GetResourceCompareOptions(context.Background())
+			compareOptions, err := ctrl.settingsMgr.GetResourceCompareOptions(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting resource compare options: %w", err)
 			}
-			resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(context.Background())
+			resourceOverrides, err := ctrl.settingsMgr.GetResourceOverrides(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting resource overrides: %w", err)
 			}
-			appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(context.Background())
+			appLabelKey, err := ctrl.settingsMgr.GetAppInstanceLabelKey(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting app instance label key: %w", err)
 			}
-			trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod(context.Background())
+			trackingMethod, err := ctrl.settingsMgr.GetTrackingMethod(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("error getting tracking method: %w", err)
 			}
@@ -998,6 +1000,7 @@ func (ctrl *ApplicationController) isRefreshRequested(appName string) (bool, Com
 }
 
 func (ctrl *ApplicationController) processAppOperationQueueItem() (processNext bool) {
+	ctx := context.Background()
 	appKey, shutdown := ctrl.appOperationQueue.Get()
 	if shutdown {
 		processNext = false
@@ -1040,7 +1043,7 @@ func (ctrl *ApplicationController) processAppOperationQueueItem() (processNext b
 		// If we get here, we are about to process an operation, but we cannot rely on informer since it might have stale data.
 		// So always retrieve the latest version to ensure it is not stale to avoid unnecessary syncing.
 		// We cannot rely on informer since applications might be updated by both application controller and api server.
-		freshApp, err := ctrl.applicationClientset.ArgoprojV1alpha1().Applications(app.ObjectMeta.Namespace).Get(context.Background(), app.Name, metav1.GetOptions{})
+		freshApp, err := ctrl.applicationClientset.ArgoprojV1alpha1().Applications(app.ObjectMeta.Namespace).Get(ctx, app.Name, metav1.GetOptions{})
 		if err != nil {
 			logCtx.WithError(err).Error("Failed to retrieve latest application state")
 			return processNext
@@ -1054,7 +1057,7 @@ func (ctrl *ApplicationController) processAppOperationQueueItem() (processNext b
 		ts.AddCheckpoint("process_requested_app_operation_ms")
 	} else if app.DeletionTimestamp != nil {
 		if err = ctrl.finalizeApplicationDeletion(app, func(project string) ([]*appv1.Cluster, error) {
-			return ctrl.db.GetProjectClusters(context.Background(), project)
+			return ctrl.db.GetProjectClusters(ctx, project)
 		}); err != nil {
 			ctrl.setAppCondition(app, appv1.ApplicationCondition{
 				Type:    appv1.ApplicationConditionDeletionError,
