@@ -98,8 +98,7 @@ func (ctrl *ApplicationController) AddHydrationQueueItem(key types.HydrationQueu
 	ctrl.hydrationQueue.AddRateLimited(key)
 }
 
-func (ctrl *ApplicationController) GetHydratorCommitMessageTemplate() (string, error) {
-	ctx := context.Background()
+func (ctrl *ApplicationController) GetHydratorCommitMessageTemplate(ctx context.Context) (string, error) {
 	sourceHydratorCommitMessageKey, err := ctrl.settingsMgr.GetSourceHydratorCommitMessageTemplate(ctx)
 	if err != nil {
 		return "", fmt.Errorf("failed to get sourceHydrator commit message template key: %w", err)

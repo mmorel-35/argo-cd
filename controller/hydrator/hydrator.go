@@ -68,7 +68,7 @@ type Dependencies interface {
 	AddHydrationQueueItem(key types.HydrationQueueKey)
 
 	// GetHydratorCommitMessageTemplate gets the configured template for rendering commit messages.
-	GetHydratorCommitMessageTemplate() (string, error)
+	GetHydratorCommitMessageTemplate(ctx context.Context) (string, error)
 }
 
 // Hydrator is the main struct that implements the hydration logic. It uses the Dependencies interface to access the
@@ -416,7 +416,7 @@ func (h *Hydrator) hydrate(ctx context.Context, logCtx *log.Entry, apps []*appv1
 		logCtx.Warn("no credentials found for repo, continuing without credentials")
 	}
 	// get the commit message template
-	commitMessageTemplate, err := h.dependencies.GetHydratorCommitMessageTemplate()
+	commitMessageTemplate, err := h.dependencies.GetHydratorCommitMessageTemplate(ctx)
 	if err != nil {
 		return targetRevision, "", errors, fmt.Errorf("failed to get hydrated commit message template: %w", err)
 	}
