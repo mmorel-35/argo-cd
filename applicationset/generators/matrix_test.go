@@ -1,6 +1,7 @@
 package generators
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -149,7 +150,7 @@ func TestMatrixGenerate(t *testing.T) {
 					Git:  g.Git,
 					List: g.List,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
 					{
 						"path":                    "app1",
 						"path.basename":           "app1",
@@ -358,7 +359,7 @@ func TestMatrixGenerateGoTemplate(t *testing.T) {
 					Git:  g.Git,
 					List: g.List,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
 					{
 						"path": map[string]string{
 							"path":               "app1",
@@ -650,7 +651,7 @@ func TestInterpolatedMatrixGenerate(t *testing.T) {
 					Git:      g.Git,
 					Clusters: g.Clusters,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
 					{
 						"path":                    "examples/git-generator-files-discovery/cluster-config/dev/config.json",
 						"path.basename":           "dev",
@@ -833,7 +834,7 @@ func TestInterpolatedMatrixGenerateGoTemplate(t *testing.T) {
 					Git:      g.Git,
 					Clusters: g.Clusters,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{
 					{
 						"path": map[string]string{
 							"path":               "examples/git-generator-files-discovery/cluster-config/dev/config.json",
@@ -984,7 +985,7 @@ func TestMatrixGenerateListElementsYaml(t *testing.T) {
 					Git:  g.Git,
 					List: g.List,
 				}
-				genMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet).Return([]map[string]any{{
+				genMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), appSet, mock.Anything).Return([]map[string]any{{
 					"foo": map[string]any{
 						"bar": []any{
 							map[string]any{
@@ -1047,8 +1048,8 @@ func (g *generatorMock) GetTemplate(appSetGenerator *v1alpha1.ApplicationSetGene
 	return args.Get(0).(*v1alpha1.ApplicationSetTemplate)
 }
 
-func (g *generatorMock) GenerateParams(appSetGenerator *v1alpha1.ApplicationSetGenerator, appSet *v1alpha1.ApplicationSet, _ client.Client) ([]map[string]any, error) {
-	args := g.Called(appSetGenerator, appSet)
+func (g *generatorMock) GenerateParams(ctx context.Context, appSetGenerator *v1alpha1.ApplicationSetGenerator, appSet *v1alpha1.ApplicationSet, client client.Client) ([]map[string]any, error) {
+	args := g.Called(ctx, appSetGenerator, appSet, client)
 
 	return args.Get(0).([]map[string]any), args.Error(1)
 }
@@ -1073,7 +1074,7 @@ func TestGitGenerator_GenerateParams_list_x_git_matrix_generator(t *testing.T) {
 	// of that bug.
 
 	listGeneratorMock := &generatorMock{}
-	listGeneratorMock.On("GenerateParams", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), mock.AnythingOfType("*v1alpha1.ApplicationSet"), mock.Anything).Return([]map[string]any{
+	listGeneratorMock.On("GenerateParams", mock.AnythingOfType("context.Context"), mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator"), mock.AnythingOfType("*v1alpha1.ApplicationSet"), mock.Anything).Return([]map[string]any{
 		{"some": "value"},
 	}, nil)
 	listGeneratorMock.On("GetTemplate", mock.AnythingOfType("*v1alpha1.ApplicationSetGenerator")).Return(&v1alpha1.ApplicationSetTemplate{})

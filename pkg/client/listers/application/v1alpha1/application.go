@@ -32,6 +32,11 @@ func NewApplicationLister(indexer cache.Indexer) ApplicationLister {
 	return &applicationLister{listers.New[*applicationv1alpha1.Application](indexer, applicationv1alpha1.Resource("application"))}
 }
 
+// List lists all Applications in the indexer.
+func (s *applicationLister) List(ctx context.Context, selector labels.Selector) (ret []*applicationv1alpha1.Application, err error) {
+	return s.ResourceIndexer.List(selector)
+}
+
 // Applications returns an object that can list and get Applications.
 func (s *applicationLister) Applications(namespace string) ApplicationNamespaceLister {
 	return applicationNamespaceLister{listers.NewNamespaced[*applicationv1alpha1.Application](s.ResourceIndexer, namespace)}
@@ -53,4 +58,9 @@ type ApplicationNamespaceLister interface {
 // interface.
 type applicationNamespaceLister struct {
 	listers.ResourceIndexer[*applicationv1alpha1.Application]
+}
+
+// List lists all Applications in the indexer for a given namespace.
+func (s applicationNamespaceLister) List(ctx context.Context, selector labels.Selector) (ret []*applicationv1alpha1.Application, err error) {
+	return s.ResourceIndexer.List(selector)
 }
