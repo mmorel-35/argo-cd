@@ -175,7 +175,7 @@ func TestSCMProviderGenerateParams(t *testing.T) {
 				},
 			}
 
-			got, err := scmGenerator.GenerateParams(context.Background(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
+			got, err := scmGenerator.GenerateParams(t.Context(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 
 			if testCaseCopy.expectedError != nil {
 				assert.EqualError(t, err, testCaseCopy.expectedError.Error())
@@ -266,7 +266,7 @@ func TestAllowedSCMProvider(t *testing.T) {
 				},
 			}
 
-			_, err := scmGenerator.GenerateParams(context.Background(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
+			_, err := scmGenerator.GenerateParams(t.Context(), &applicationSetInfo.Spec.Generators[0], &applicationSetInfo, nil)
 
 			require.Error(t, err, "Must return an error")
 			var expectedError ErrDisallowedSCMProvider

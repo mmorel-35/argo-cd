@@ -34,6 +34,11 @@ const payloadQueueSize = 50000
 
 const panicMsgAppSet = "panic while processing applicationset-controller webhook event"
 
+type webhookPayload struct {
+	ctx     context.Context
+	payload any
+}
+
 type WebhookHandler struct {
 	sync.WaitGroup // for testing
 	github         *github.Webhook
@@ -41,7 +46,7 @@ type WebhookHandler struct {
 	azuredevops    *azuredevops.Webhook
 	client         client.Client
 	generators     map[string]generators.Generator
-	queue          chan any
+	queue          chan webhookPayload
 }
 
 type gitGeneratorInfo struct {
@@ -72,9 +77,9 @@ type prGeneratorGitlabInfo struct {
 	APIHostname string
 }
 
-func NewWebhookHandler(webhookParallelism int, argocdSettingsMgr *argosettings.SettingsManager, client client.Client, generators map[string]generators.Generator) (*WebhookHandler, error) {
+func NewWebhookHandler(ctx context.Context, webhookParallelism int, argocdSettingsMgr *argosettings.SettingsManager, client client.Client, generators map[string]generators.Generator) (*WebhookHandler, error) {
 	// register the webhook secrets stored under "argocd-secret" for verifying incoming payloads
-	argocdSettings, err := argocdSettingsMgr.GetSettings(context.Background())
+	argocdSettings, err := argocdSettingsMgr.GetSettings(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get argocd settings: %w", err)
 	}
@@ -97,7 +102,7 @@ func NewWebhookHandler(webhookParallelism int, argocdSettingsMgr *argosettings.S
 		azuredevops: azuredevopsHandler,
 		client:      client,
 		generators:  generators,
-		queue:       make(chan any, payloadQueueSize),
+		queue:       make(chan webhookPayload, payloadQueueSize),
 	}
 
 	webhookHandler.startWorkerPool(webhookParallelism)
@@ -112,18 +117,17 @@ func (h *WebhookHandler) startWorkerPool(webhookParallelism int) {
 		go func() {
 			defer h.Done()
 			for {
-				payload, ok := <-h.queue
+				wp, ok := <-h.queue
 				if !ok {
 					return
 				}
-				guard.RecoverAndLog(func() { h.HandleEvent(payload) }, compLog, panicMsgAppSet)
+				guard.RecoverAndLog(func() { h.HandleEvent(wp.ctx, wp.payload) }, compLog, panicMsgAppSet)
 			}
 		}()
 	}
 }
 
-func (h *WebhookHandler) HandleEvent(payload any) {
-	ctx := context.Background()
+func (h *WebhookHandler) HandleEvent(ctx context.Context, payload any) {
 	gitGenInfo := getGitGeneratorInfo(payload)
 	prGenInfo := getPRGeneratorInfo(payload)
 	if gitGenInfo == nil && prGenInfo == nil {
@@ -151,7 +155,7 @@ func (h *WebhookHandler) HandleEvent(payload any) {
 			}
 		}
 		if shouldRefresh {
-			err := refreshApplicationSet(h.client, &appSet)
+			err := refreshApplicationSet(ctx, h.client, &appSet)
 			if err != nil {
 				log.Errorf("Failed to refresh ApplicationSet '%s' for controller reprocessing", appSet.Name)
 				continue
@@ -189,7 +193,7 @@ func (h *WebhookHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	select {
-	case h.queue <- payload:
+	case h.queue <- webhookPayload{ctx: r.Context(), payload: payload}:
 	default:
 		log.Info("Queue is full, discarding webhook payload")
 		http.Error(w, "Queue is full, discarding webhook payload", http.StatusServiceUnavailable)
@@ -611,10 +615,9 @@ func (h *WebhookHandler) shouldRefreshMergeGenerator(ctx context.Context, gen *v
 	return false
 }
 
-func refreshApplicationSet(c client.Client, appSet *v1alpha1.ApplicationSet) error {
+func refreshApplicationSet(ctx context.Context, c client.Client, appSet *v1alpha1.ApplicationSet) error {
 	// patch the ApplicationSet with the refresh annotation to reconcile
 	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-		ctx := context.Background()
 		err := c.Get(ctx, types.NamespacedName{Name: appSet.Name, Namespace: appSet.Namespace}, appSet)
 		if err != nil {
 			return fmt.Errorf("error getting ApplicationSet: %w", err)

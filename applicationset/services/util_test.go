@@ -12,7 +12,7 @@ import (
 )
 
 func TestSetupBitbucketClient(t *testing.T) {
-	ctx := context.Background()
+	var ctx context.Context = t.Context()
 	cfg := &bitbucketv1.Configuration{}
 
 	// Act
