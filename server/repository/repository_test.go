@@ -540,7 +540,7 @@ func TestRepositoryServerListApps(t *testing.T) {
 		url := "https://test"
 		db := &dbmocks.ArgoDB{}
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		repoServerClient.On("ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
 			Apps: map[string]string{
@@ -571,7 +571,7 @@ func TestRepositoryServerListApps(t *testing.T) {
 		url := "https://test"
 		db := &dbmocks.ArgoDB{}
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		repoServerClient.On("ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
 			Apps: map[string]string{
@@ -671,7 +671,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db := &dbmocks.ArgoDB{}
 		db.On("ListHelmRepositories", t.Context(), mock.Anything).Return(nil, nil)
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
 		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
@@ -696,7 +696,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		url := "https://test"
 		db := &dbmocks.ArgoDB{}
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
 		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
@@ -722,7 +722,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db := &dbmocks.ArgoDB{}
 		db.On("ListHelmRepositories", t.Context(), mock.Anything).Return(nil, nil)
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
 		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
@@ -747,7 +747,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db := &dbmocks.ArgoDB{}
 		db.On("ListHelmRepositories", t.Context(), mock.Anything).Return(helmRepos, nil)
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
 		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
@@ -786,7 +786,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.On("ListHelmRepositories", t.Context(), mock.Anything).Return(helmRepos, nil)
 		db.On("GetRepository", t.Context(), url0, "default").Return(&appsv1.Repository{Repo: url0}, nil)
 		db.On("GetRepository", t.Context(), url1, "default").Return(&appsv1.Repository{Repo: url1}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp0 := apiclient.RepoAppDetailsResponse{Type: "Plugin"}
 		expectedResp1 := apiclient.RepoAppDetailsResponse{Type: "Helm"}
@@ -865,7 +865,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db := &dbmocks.ArgoDB{}
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.On("ListHelmRepositories", t.Context(), mock.Anything).Return(nil, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
 		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
@@ -893,7 +893,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db := &dbmocks.ArgoDB{}
 		db.On("ListHelmRepositories", t.Context(), mock.Anything).Return(helmRepos, nil)
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
 		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
@@ -922,7 +922,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db := &dbmocks.ArgoDB{}
 		db.On("GetRepository", t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.On("ListHelmRepositories", t.Context(), mock.Anything).Return(nil, nil)
-		db.On("GetProjectRepositories", "default").Return(nil, nil)
+		db.On("GetProjectRepositories", t.Context(), "default").Return(nil, nil)
 		db.On("GetProjectClusters", t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
 		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
