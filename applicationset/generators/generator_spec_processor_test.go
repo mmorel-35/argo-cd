@@ -79,7 +79,7 @@ func TestMatchValues(t *testing.T) {
 				},
 			}
 
-			results, err := Transform(argov1alpha1.ApplicationSetGenerator{
+			results, err := Transform(context.Background(), argov1alpha1.ApplicationSetGenerator{
 				Selector: testCase.selector,
 				List: &argov1alpha1.ListGenerator{
 					Elements: testCase.elements,
@@ -163,7 +163,7 @@ func TestMatchValuesGoTemplate(t *testing.T) {
 				},
 			}
 
-			results, err := Transform(argov1alpha1.ApplicationSetGenerator{
+			results, err := Transform(context.Background(), argov1alpha1.ApplicationSetGenerator{
 				Selector: testCase.selector,
 				List: &argov1alpha1.ListGenerator{
 					Elements: testCase.elements,
@@ -233,7 +233,7 @@ func TestTransForm(t *testing.T) {
 				Spec: argov1alpha1.ApplicationSetSpec{},
 			}
 
-			results, err := Transform(
+			results, err := Transform(context.Background(),
 				argov1alpha1.ApplicationSetGenerator{
 					Selector: testCase.selector,
 					Clusters: &argov1alpha1.ClusterGenerator{

@@ -1,6 +1,7 @@
 package template
 
 import (
+	"context"
 	"errors"
 	"maps"
 	"testing"
