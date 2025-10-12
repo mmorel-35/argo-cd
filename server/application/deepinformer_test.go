@@ -40,7 +40,7 @@ func Test_deepCopyAppProjectClient_Get(t *testing.T) {
 			fields: fields{
 				AppProjectInterface: func() clientset.AppProjectInterface {
 					appProject := mocks.NewAppProjectInterface(t)
-					appProject.EXPECT().Get(t.Context(), "appproject2", metav1.GetOptions{}).Return(nil, errors.New("error"))
+					appProject.EXPECT().Get(mock.Anything, "appproject2", metav1.GetOptions{}).Return(nil, errors.New("error")).Maybe()
 					return appProject
 				}(),
 			},
@@ -85,7 +85,7 @@ func Test_deepCopyAppProjectClient_List(t *testing.T) {
 		{name: "Error listing app project", fields: fields{
 			AppProjectInterface: func() clientset.AppProjectInterface {
 				appProject := mocks.NewAppProjectInterface(t)
-				appProject.EXPECT().List(t.Context(), metav1.ListOptions{}).Return(nil, errors.New("error"))
+				appProject.EXPECT().List(mock.Anything, metav1.ListOptions{}).Return(nil, errors.New("error")).Maybe()
 				return appProject
 			}(),
 		}, want: nil, wantErr: assert.Error},
