@@ -1832,13 +1832,9 @@ func TestGetMinRequeueAfter(t *testing.T) {
 		Clusters: &v1alpha1.ClusterGenerator{},
 	}
 
-	generatorMock0 := mocks.NewGenerator(t)
-	generatorMock0.EXPECT().GetRequeueAfter(&generator).
-		Return(generators.NoRequeueAfter)
-
 	generatorMock1 := mocks.NewGenerator(t)
 	generatorMock1.EXPECT().GetRequeueAfter(&generator).
-		Return(time.Duration(1) * time.Second)
+		Return(time.Duration(1) * time.Second).Times(2)
 
 	generatorMock10 := mocks.NewGenerator(t)
 	generatorMock10.EXPECT().GetRequeueAfter(&generator).

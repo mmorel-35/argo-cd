@@ -321,7 +321,7 @@ func TestGenerateAppsUsingPullRequestGenerator(t *testing.T) {
 				Return(cases.params, nil)
 
 			generatorMock.EXPECT().GetTemplate(&generator).
-				Return(&cases.template, nil)
+				Return(&cases.template)
 
 			generators := map[string]generators.Generator{
 				"PullRequest": generatorMock,
