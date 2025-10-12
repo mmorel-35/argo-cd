@@ -324,7 +324,7 @@ func TestGitGenerateParamsFromDirectories(t *testing.T) {
 
 			argoCDServiceMock.EXPECT().GetDirectories(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(testCaseCopy.repoApps, testCaseCopy.repoError)
 
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "")
 			applicationSetInfo := v1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "set",
@@ -625,7 +625,7 @@ func TestGitGenerateParamsFromDirectoriesGoTemplate(t *testing.T) {
 
 			argoCDServiceMock.EXPECT().GetDirectories(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(testCaseCopy.repoApps, testCaseCopy.repoError)
 
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "")
 			applicationSetInfo := v1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "set",
@@ -1000,7 +1000,7 @@ cluster:
 			argoCDServiceMock.EXPECT().GetFiles(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 				Return(testCaseCopy.repoFileContents, testCaseCopy.repoPathsError)
 
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "")
 			applicationSetInfo := v1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "set",
@@ -1344,7 +1344,7 @@ env: testing
 					Return(testCaseCopy.includeFiles, testCaseCopy.repoPathsError)
 			}
 
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "")
 			applicationSetInfo := v1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "set",
@@ -1683,7 +1683,7 @@ env: testing
 					Return(testCaseCopy.includeFiles, testCaseCopy.repoPathsError)
 			}
 
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "")
 			applicationSetInfo := v1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "set",
@@ -1916,7 +1916,7 @@ func TestGitGeneratorParamsFromFilesWithExcludeOptionGoTemplate(t *testing.T) {
 					Return(testCaseCopy.includeFiles, testCaseCopy.repoPathsError)
 			}
 
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "")
 			applicationSetInfo := v1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "set",
@@ -2271,7 +2271,7 @@ cluster:
 			argoCDServiceMock.EXPECT().GetFiles(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 				Return(testCaseCopy.repoFileContents, testCaseCopy.repoPathsError)
 
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "")
 			applicationSetInfo := v1alpha1.ApplicationSet{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "set",
@@ -2481,7 +2481,7 @@ func TestGitGenerator_GenerateParams(t *testing.T) {
 
 				argoCDServiceMock.EXPECT().GetDirectories(mock.Anything, mock.Anything, mock.Anything, project, mock.Anything, mock.Anything).Return(testCase.repoApps, testCase.repoPathsError)
 			}
-			gitGenerator := NewGitGenerator(&argoCDServiceMock, "argocd")
+			gitGenerator := NewGitGenerator(argoCDServiceMock, "argocd")
 
 			scheme := runtime.NewScheme()
 			err := v1alpha1.AddToScheme(scheme)
