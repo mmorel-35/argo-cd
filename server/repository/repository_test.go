@@ -262,8 +262,8 @@ func TestRepositoryServer(t *testing.T) {
 	argoDB := db.NewDB("default", settingsMgr, kubeclientset)
 
 	t.Run("Test_getRepo", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		s := NewServer(&repoServerClientset, argoDB, enforcer, nil, appLister, projInformer, testNamespace, settingsMgr, false)
 		url := "https://test"
@@ -272,9 +272,9 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_validateAccess", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		s := NewServer(&repoServerClientset, argoDB, enforcer, nil, appLister, projInformer, testNamespace, settingsMgr, false)
 		url := "https://test"
@@ -285,12 +285,12 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_Get", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{{Repo: url}}, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().RepositoryExists(t.Context(), url, "").Return(true, nil)
@@ -304,12 +304,12 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_GetInherited", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		testRepo := &appsv1.Repository{
 			Repo:           url,
 			Type:           "git",
@@ -332,11 +332,11 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_GetWithErrorShouldReturn403", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "").Return(nil, errors.New("some error"))
 		db.EXPECT().RepositoryExists(t.Context(), url, "").Return(true, nil)
@@ -350,12 +350,12 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_GetWithNotExistRepoShouldReturn404", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{{Repo: url}}, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().RepositoryExists(t.Context(), url, "").Return(false, nil)
@@ -369,12 +369,12 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_GetRepoIsSanitized", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{{Repo: url, Username: "test", Password: "it's a secret", GitHubAppEnterpriseBaseURL: "https://ghe.example.com/api/v3", GithubAppId: 123456, GithubAppInstallationId: 789}}, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "").Return(&appsv1.Repository{Repo: url, Username: "test", Password: "it's a secret"}, nil)
 		db.EXPECT().RepositoryExists(t.Context(), url, "").Return(true, nil)
@@ -392,12 +392,12 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_GetRepoIsNormalized", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{{Repo: url}}, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "").Return(&appsv1.Repository{Repo: url, Username: "test"}, nil)
 		db.EXPECT().RepositoryExists(t.Context(), url, "").Return(true, nil)
@@ -412,14 +412,14 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_GetRepoHasConnectionState", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{
 			VerifiedRepository: true,
 		}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{{Repo: url}}, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().RepositoryExists(t.Context(), url, "").Return(true, nil)
@@ -434,11 +434,11 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_CreateRepositoryWithoutUpsert", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), "test", "").Return(nil, errors.New("not found"))
 		db.EXPECT().CreateRepository(t.Context(), mock.Anything).Return(&appsv1.Repository{
 			Repo:    "repo",
@@ -457,16 +457,16 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_CreateRepositoryWithUpsert", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		r := &appsv1.Repository{
 			Repo:     "test",
 			Username: "test",
 		}
 
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), "test", "").Return(&appsv1.Repository{
 			Repo:     "test",
 			Username: "test",
@@ -486,13 +486,13 @@ func TestRepositoryServer(t *testing.T) {
 	})
 
 	t.Run("Test_ListRepositories", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "argocd").Return(nil, nil)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{&fakeRepo, &fakeRepo}, nil)
@@ -509,13 +509,13 @@ func TestRepositoryServerListApps(t *testing.T) {
 	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
 
 	t.Run("Test_WithoutAppCreateUpdatePrivileges", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 		enforcer.SetDefaultRole("role:readonly")
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
@@ -531,18 +531,18 @@ func TestRepositoryServerListApps(t *testing.T) {
 	})
 
 	t.Run("Test_WithAppCreateUpdatePrivileges", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 		enforcer.SetDefaultRole("role:admin")
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
-		repoServerClient.On("ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
+		repoServerClient.EXPECT()."ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
 			Apps: map[string]string{
 				"path/to/dir": "Kustomize",
 			},
@@ -562,18 +562,18 @@ func TestRepositoryServerListApps(t *testing.T) {
 	})
 
 	t.Run("Test_WithAppCreateUpdatePrivilegesRepoNotAllowed", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 		enforcer.SetDefaultRole("role:admin")
 		appLister, projLister := newAppAndProjLister(defaultProjNoSources)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
-		repoServerClient.On("ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
+		repoServerClient.EXPECT()."ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
 			Apps: map[string]string{
 				"path/to/dir": "Kustomize",
 			},
@@ -596,13 +596,13 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 	settingsMgr := settings.NewSettingsManager(t.Context(), kubeclientset, testNamespace)
 
 	t.Run("Test_WithoutRepoReadPrivileges", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 		enforcer.SetDefaultRole("")
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
@@ -618,14 +618,14 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		require.Error(t, err, "rpc error: code = PermissionDenied desc = permission denied: repositories, get, https://test")
 	})
 	t.Run("Test_WithoutAppReadPrivileges", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 		_ = enforcer.SetUserPolicy("p, role:readrepos, repositories, get, *, allow")
 		enforcer.SetDefaultRole("role:readrepos")
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
@@ -641,13 +641,13 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		require.Error(t, err, "rpc error: code = PermissionDenied desc = permission denied: applications, get, default/newapp")
 	})
 	t.Run("Test_WithoutCreatePrivileges", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 		enforcer.SetDefaultRole("role:readonly")
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
@@ -663,18 +663,18 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		require.Error(t, err, "rpc error: code = PermissionDenied desc = permission denied: applications, create, default/newapp")
 	})
 	t.Run("Test_WithCreatePrivileges", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -689,17 +689,17 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Equal(t, expectedResp, *resp)
 	})
 	t.Run("Test_RepoNotPermitted", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProjNoSources)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -714,18 +714,18 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Nil(t, resp)
 	})
 	t.Run("Test_ExistingApp", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -738,19 +738,19 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Equal(t, expectedResp, *resp)
 	})
 	t.Run("Test_ExistingMultiSourceApp001", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://helm.elastic.co"
 		helmRepos := []*appsv1.Repository{{Repo: url}, {Repo: url}}
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(helmRepos, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -775,14 +775,14 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Equal(t, "Helm", resp.Type)
 	})
 	t.Run("Test_ExistingMultiSourceApp002", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url0 := "https://github.com/argoproj/argocd-example-apps.git"
 		url1 := "https://helm.elastic.co"
 		helmRepos := []*appsv1.Repository{{Repo: url0}, {Repo: url1}}
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(helmRepos, nil)
 		db.EXPECT().GetRepository(t.Context(), url0, "default").Return(&appsv1.Repository{Repo: url0}, nil)
 		db.EXPECT().GetRepository(t.Context(), url1, "default").Return(&appsv1.Repository{Repo: url1}, nil)
@@ -790,8 +790,8 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp0 := apiclient.RepoAppDetailsResponse{Type: "Plugin"}
 		expectedResp1 := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url0 })).Return(&expectedResp0, nil)
-		repoServerClient.On("GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url1 })).Return(&expectedResp1, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url0 })).Return(&expectedResp0, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url1 })).Return(&expectedResp1, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp002)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -817,12 +817,12 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Equal(t, "Helm", resp.Type)
 	})
 	t.Run("Test_ExistingAppMismatchedProjectName", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "mismatch").Return(&appsv1.Repository{Repo: url}, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 
@@ -836,12 +836,12 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Nil(t, resp)
 	})
 	t.Run("Test_ExistingAppSourceNotInHistory", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 		differentSource := guestbookApp.Spec.Source.DeepCopy()
@@ -857,18 +857,18 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Nil(t, resp)
 	})
 	t.Run("Test_ExistingAppSourceInHistory", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://test"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 		previousSource := guestbookApp.Status.History[0].Source.DeepCopy()
 		previousSource.TargetRevision = guestbookApp.Status.History[0].Revision
@@ -884,19 +884,19 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 	})
 
 	t.Run("Test_ExistingAppMultiSourceNotInHistory", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://helm.elastic.co"
 		helmRepos := []*appsv1.Repository{{Repo: url}, {Repo: url}}
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(helmRepos, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 
 		differentSource := multiSourceApp001.Spec.Sources[0].DeepCopy()
@@ -914,18 +914,18 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		assert.Nil(t, resp)
 	})
 	t.Run("Test_ExistingAppMultiSourceInHistory", func(t *testing.T) {
-		repoServerClient := mocks.RepoServerServiceClient{}
-		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+		repoServerClient := mocks.NewRepoServerServiceClient(t)
+		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
 		url := "https://helm.elastic.co"
-		db := &dbmocks.ArgoDB{}
+		db := dbmocks.NewArgoDB(t)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.On("GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 		previousSource := multiSourceApp001.Status.History[0].Sources[0].DeepCopy()
 		previousSource.TargetRevision = multiSourceApp001.Status.History[0].Revisions[0]
@@ -1136,13 +1136,13 @@ func TestDeleteRepository(t *testing.T) {
 
 	for name, repo := range repositories {
 		t.Run(name, func(t *testing.T) {
-			repoServerClient := mocks.RepoServerServiceClient{}
-			repoServerClient.On("TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+			repoServerClient := mocks.NewRepoServerServiceClient(t)
+			repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 
-			repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+			repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 			enforcer := newEnforcer(kubeclientset)
 
-			db := &dbmocks.ArgoDB{}
+			db := dbmocks.NewArgoDB(t)
 			db.EXPECT().DeleteRepository(t.Context(), repo, "default").Return(nil)
 			db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{{Repo: repo, Project: "default"}}, nil)
 			db.EXPECT().GetRepository(t.Context(), repo, "default").Return(&appsv1.Repository{Repo: repo, Project: "default"}, nil)
