@@ -108,11 +108,11 @@ func TestGetReconcileResults_Refresh(t *testing.T) {
 	clusterCache := clustermocks.ClusterCache{}
 	clusterCache.On("IsNamespaced", mock.Anything).Return(true, nil)
 	clusterCache.On("GetGVKParser", mock.Anything).Return(nil)
-	repoServerClient := mocks.RepoServerServiceClient{}
-	repoServerClient.On("GenerateManifest", mock.Anything, mock.Anything).Return(&argocdclient.ManifestResponse{
+	repoServerClient := mocks.NewRepoServerServiceClient(t)
+	repoServerClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(&argocdclient.ManifestResponse{
 		Manifests: []string{test.DeploymentManifest},
-	}, nil)
-	repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
+	}, nil).Maybe()
+	repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 	liveStateCache := cachemocks.LiveStateCache{}
 	liveStateCache.On("GetManagedLiveObjs", mock.Anything, mock.Anything, mock.Anything).Return(map[kube.ResourceKey]*unstructured.Unstructured{
 		kube.GetResourceKey(deployment): deployment,
