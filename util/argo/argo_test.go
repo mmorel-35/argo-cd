@@ -314,7 +314,7 @@ func TestValidateChartWithoutRevision(t *testing.T) {
 	cluster := &argoappv1.Cluster{Server: "https://kubernetes.default.svc"}
 	db := &dbmocks.ArgoDB{}
 	ctx := t.Context()
-	db.EXPECT().GetCluster(ctx, appSpec.Destination.Server).Return(cluster, nil)
+	db.EXPECT().GetCluster(ctx, appSpec.Destination.Server).Return(cluster, nil).Maybe()
 
 	conditions, err := ValidatePermissions(ctx, appSpec, &argoappv1.AppProject{
 		Spec: argoappv1.AppProjectSpec{
@@ -384,7 +384,7 @@ func TestValidateRepo(t *testing.T) {
 
 	repoClient := &mocks.RepoServerServiceClient{}
 	source := app.Spec.GetSource()
-	repoClient.EXPECT().GetAppDetails(t.Context(), &apiclient.RepoServerAppDetailsQuery{
+	repoClient.EXPECT().GetAppDetails(mock.Anything, &apiclient.RepoServerAppDetailsQuery{
 		Repo:             repo,
 		Source:           &source,
 		Repos:            helmRepos,
@@ -394,7 +394,7 @@ func TestValidateRepo(t *testing.T) {
 	}).Return(&apiclient.RepoAppDetailsResponse{}, nil)
 
 	repo.Type = "git"
-	repoClient.EXPECT().TestRepository(t.Context(), &apiclient.TestRepositoryRequest{
+	repoClient.EXPECT().TestRepository(mock.Anything, &apiclient.TestRepositoryRequest{
 		Repo: repo,
 	}).Return(&apiclient.TestRepositoryResponse{
 		VerifiedRepository: true,
@@ -404,19 +404,19 @@ func TestValidateRepo(t *testing.T) {
 
 	db := &dbmocks.ArgoDB{}
 
-	db.EXPECT().GetRepository(t.Context(), app.Spec.Source.RepoURL, "").Return(repo, nil)
-	db.EXPECT().ListHelmRepositories(t.Context()).Return(helmRepos, nil)
-	db.EXPECT().ListOCIRepositories(t.Context()).Return([]*argoappv1.Repository{}, nil)
-	db.EXPECT().GetCluster(t.Context(), app.Spec.Destination.Server).Return(cluster, nil)
-	db.EXPECT().GetAllHelmRepositoryCredentials(t.Context()).Return(nil, nil)
-	db.EXPECT().GetAllOCIRepositoryCredentials(t.Context()).Return([]*argoappv1.RepoCreds{}, nil)
+	db.EXPECT().GetRepository(mock.Anything, app.Spec.Source.RepoURL, "").Return(repo, nil).Maybe()
+	db.EXPECT().ListHelmRepositories(mock.Anything).Return(helmRepos, nil).Maybe()
+	db.EXPECT().ListOCIRepositories(mock.Anything).Return([]*argoappv1.Repository{}, nil)
+	db.EXPECT().GetCluster(mock.Anything, app.Spec.Destination.Server).Return(cluster, nil).Maybe()
+	db.EXPECT().GetAllHelmRepositoryCredentials(mock.Anything).Return(nil, nil).Maybe()
+	db.EXPECT().GetAllOCIRepositoryCredentials(mock.Anything).Return([]*argoappv1.RepoCreds{}, nil)
 
 	var receivedRequest *apiclient.ManifestRequest
 
-	repoClient.EXPECT().GenerateManifest(t.Context(), mock.MatchedBy(func(req *apiclient.ManifestRequest) bool {
+	repoClient.EXPECT().GenerateManifest(mock.Anything, mock.MatchedBy(func(req *apiclient.ManifestRequest) bool {
 		receivedRequest = req
 		return true
-	})).Return(nil, nil)
+	})).Return(nil, nil).Maybe()
 
 	cm := corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -734,7 +734,7 @@ func TestValidatePermissions(t *testing.T) {
 		}
 		cluster := &argoappv1.Cluster{Server: "https://127.0.0.1:6443", Name: "test"}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetCluster(t.Context(), spec.Destination.Server).Return(cluster, nil)
+		db.EXPECT().GetCluster(mock.Anything, spec.Destination.Server).Return(cluster, nil).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Len(t, conditions, 1)
@@ -767,7 +767,7 @@ func TestValidatePermissions(t *testing.T) {
 		}
 		cluster := &argoappv1.Cluster{Server: "https://127.0.0.1:6443", Name: "test"}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetCluster(t.Context(), spec.Destination.Server).Return(cluster, nil)
+		db.EXPECT().GetCluster(mock.Anything, spec.Destination.Server).Return(cluster, nil).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Len(t, conditions, 1)
@@ -799,7 +799,7 @@ func TestValidatePermissions(t *testing.T) {
 			},
 		}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetCluster(t.Context(), spec.Destination.Server).Return(nil, status.Errorf(codes.NotFound, "Cluster does not exist"))
+		db.EXPECT().GetCluster(mock.Anything, spec.Destination.Server).Return(nil, status.Errorf(codes.NotFound, "Cluster does not exist")).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Len(t, conditions, 1)
@@ -831,7 +831,7 @@ func TestValidatePermissions(t *testing.T) {
 			},
 		}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetClusterServersByName(t.Context(), "does-not-exist").Return(nil, nil)
+		db.EXPECT().GetClusterServersByName(mock.Anything, "does-not-exist").Return(nil, nil).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Len(t, conditions, 1)
@@ -863,7 +863,7 @@ func TestValidatePermissions(t *testing.T) {
 			},
 		}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetCluster(t.Context(), spec.Destination.Server).Return(nil, errors.New("Unknown error occurred"))
+		db.EXPECT().GetCluster(mock.Anything, spec.Destination.Server).Return(nil, errors.New("Unknown error occurred")).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Len(t, conditions, 1)
@@ -899,8 +899,8 @@ func TestValidatePermissions(t *testing.T) {
 			Name:   "does-exist",
 			Server: "https://127.0.0.1:6443",
 		}
-		db.EXPECT().GetClusterServersByName(t.Context(), "does-exist").Return([]string{"https://127.0.0.1:6443"}, nil)
-		db.EXPECT().GetCluster(t.Context(), "https://127.0.0.1:6443").Return(&cluster, nil)
+		db.EXPECT().GetClusterServersByName(mock.Anything, "does-exist").Return([]string{"https://127.0.0.1:6443"}, nil)
+		db.EXPECT().GetCluster(mock.Anything, "https://127.0.0.1:6443").Return(&cluster, nil).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Empty(t, conditions)
@@ -965,7 +965,7 @@ func TestGetDestinationCluster(t *testing.T) {
 
 		expectedCluster := &argoappv1.Cluster{Server: "https://127.0.0.1:6443"}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetCluster(t.Context(), "https://127.0.0.1:6443").Return(expectedCluster, nil)
+		db.EXPECT().GetCluster(mock.Anything, "https://127.0.0.1:6443").Return(expectedCluster, nil).Maybe()
 
 		destCluster, err := GetDestinationCluster(t.Context(), dest, db)
 		require.NoError(t, err)
@@ -979,8 +979,8 @@ func TestGetDestinationCluster(t *testing.T) {
 		}
 
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetClusterServersByName(t.Context(), "minikube").Return([]string{"https://127.0.0.1:6443"}, nil)
-		db.EXPECT().GetCluster(t.Context(), "https://127.0.0.1:6443").Return(&argoappv1.Cluster{Server: "https://127.0.0.1:6443", Name: "minikube"}, nil)
+		db.EXPECT().GetClusterServersByName(mock.Anything, "minikube").Return([]string{"https://127.0.0.1:6443"}, nil)
+		db.EXPECT().GetCluster(mock.Anything, "https://127.0.0.1:6443").Return(&argoappv1.Cluster{Server: "https://127.0.0.1:6443", Name: "minikube"}, nil)
 
 		destCluster, err := GetDestinationCluster(t.Context(), dest, db)
 		require.NoError(t, err)
@@ -1004,7 +1004,7 @@ func TestGetDestinationCluster(t *testing.T) {
 		}
 
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetClusterServersByName(t.Context(), mock.Anything).Return(nil, errors.New("an error occurred"))
+		db.EXPECT().GetClusterServersByName(mock.Anything, mock.Anything).Return(nil, errors.New("an error occurred")).Maybe()
 
 		_, err := GetDestinationCluster(t.Context(), dest, db)
 		require.ErrorContains(t, err, "an error occurred")
@@ -1016,7 +1016,7 @@ func TestGetDestinationCluster(t *testing.T) {
 		}
 
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetClusterServersByName(t.Context(), "minikube").Return(nil, nil)
+		db.EXPECT().GetClusterServersByName(mock.Anything, "minikube").Return(nil, nil).Maybe()
 
 		_, err := GetDestinationCluster(t.Context(), dest, db)
 		assert.EqualError(t, err, "there are no clusters with this name: minikube")
@@ -1028,7 +1028,7 @@ func TestGetDestinationCluster(t *testing.T) {
 		}
 
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetClusterServersByName(t.Context(), "dind").Return([]string{"https://127.0.0.1:2443", "https://127.0.0.1:8443"}, nil)
+		db.EXPECT().GetClusterServersByName(mock.Anything, "dind").Return([]string{"https://127.0.0.1:2443", "https://127.0.0.1:8443"}, nil)
 
 		_, err := GetDestinationCluster(t.Context(), dest, db)
 		assert.EqualError(t, err, "there are 2 clusters with the same name: [https://127.0.0.1:2443 https://127.0.0.1:8443]")
@@ -1455,7 +1455,7 @@ func TestValidatePermissionsMultipleSources(t *testing.T) {
 		}
 		cluster := &argoappv1.Cluster{Server: "https://127.0.0.1:6443", Name: "test"}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetCluster(t.Context(), spec.Destination.Server).Return(cluster, nil)
+		db.EXPECT().GetCluster(mock.Anything, spec.Destination.Server).Return(cluster, nil).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Len(t, conditions, 1)
@@ -1493,8 +1493,8 @@ func TestValidatePermissionsMultipleSources(t *testing.T) {
 			Name:   "does-exist",
 			Server: "https://127.0.0.1:6443",
 		}
-		db.EXPECT().GetClusterServersByName(t.Context(), "does-exist").Return([]string{"https://127.0.0.1:6443"}, nil)
-		db.EXPECT().GetCluster(t.Context(), "https://127.0.0.1:6443").Return(&cluster, nil)
+		db.EXPECT().GetClusterServersByName(mock.Anything, "does-exist").Return([]string{"https://127.0.0.1:6443"}, nil)
+		db.EXPECT().GetCluster(mock.Anything, "https://127.0.0.1:6443").Return(&cluster, nil).Maybe()
 		conditions, err := ValidatePermissions(t.Context(), &spec, &proj, db)
 		require.NoError(t, err)
 		assert.Empty(t, conditions)

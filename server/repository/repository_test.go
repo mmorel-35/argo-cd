@@ -674,7 +674,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil).Maybe()
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.Anything).Return(&expectedResp, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.Anything).Return(&expectedResp, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -699,7 +699,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil).Maybe()
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.Anything).Return(&expectedResp, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.Anything).Return(&expectedResp, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProjNoSources)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -725,7 +725,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil).Maybe()
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.Anything).Return(&expectedResp, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.Anything).Return(&expectedResp, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -750,7 +750,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil).Maybe()
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.Anything).Return(&expectedResp, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.Anything).Return(&expectedResp, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -790,8 +790,8 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp0 := apiclient.RepoAppDetailsResponse{Type: "Plugin"}
 		expectedResp1 := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url0 })).Return(&expectedResp0, nil).Maybe()
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url1 })).Return(&expectedResp1, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url0 })).Return(&expectedResp0, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url1 })).Return(&expectedResp1, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp002)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -868,7 +868,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil).Maybe()
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.Anything).Return(&expectedResp, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.Anything).Return(&expectedResp, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 		previousSource := guestbookApp.Status.History[0].Source.DeepCopy()
 		previousSource.TargetRevision = guestbookApp.Status.History[0].Revision
@@ -896,7 +896,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil).Maybe()
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.Anything).Return(&expectedResp, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.Anything).Return(&expectedResp, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 
 		differentSource := multiSourceApp001.Spec.Sources[0].DeepCopy()
@@ -925,7 +925,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil).Maybe()
 		db.EXPECT().GetProjectClusters(mock.Anything, "default").Return(nil, nil).Maybe()
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT().GetAppDetails(t.Context(), mock.Anything).Return(&expectedResp, nil).Maybe()
+		repoServerClient.EXPECT().GetAppDetails(mock.Anything, mock.Anything).Return(&expectedResp, nil).Maybe()
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 		previousSource := multiSourceApp001.Status.History[0].Sources[0].DeepCopy()
 		previousSource.TargetRevision = multiSourceApp001.Status.History[0].Revisions[0]
@@ -1137,13 +1137,13 @@ func TestDeleteRepository(t *testing.T) {
 	for name, repo := range repositories {
 		t.Run(name, func(t *testing.T) {
 			repoServerClient := mocks.NewRepoServerServiceClient(t)
-			repoServerClient.EXPECT().TestRepository(t.Context(), mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil).Maybe()
+			repoServerClient.EXPECT().TestRepository(mock.Anything, mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil).Maybe()
 
 			repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 			enforcer := newEnforcer(kubeclientset)
 
 			db := dbmocks.NewArgoDB(t)
-			db.EXPECT().DeleteRepository(t.Context(), repo, "default").Return(nil).Maybe()
+			db.EXPECT().DeleteRepository(mock.Anything, repo, "default").Return(nil).Maybe()
 			db.EXPECT().ListRepositories(mock.Anything).Return([]*appsv1.Repository{{Repo: repo, Project: "default"}}, nil).Maybe()
 			db.EXPECT().GetRepository(mock.Anything, repo, "default").Return(&appsv1.Repository{Repo: repo, Project: "default"}, nil).Maybe()
 			appLister, projLister := newAppAndProjLister(defaultProj)
