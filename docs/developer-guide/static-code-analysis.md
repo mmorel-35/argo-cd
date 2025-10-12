@@ -14,6 +14,24 @@ These are at least run daily or on each pull request.
 
 Since `v2.10.0` [mockery](https://github.com/vektra/mockery) introduced [Expecter Structs](https://vektra.github.io/mockery/v3.5/template/testify/#expecter-structs). The `expecterlint` tool checks if calls to `.On("Method")` could be replaced with the more type-safe `.EXPECT().Method()` syntax.
 
+### Installation
+
+The expecterlint tool can be installed via:
+```bash
+bash hack/installers/install-lint-tools.sh
+```
+
+**Note on Go version compatibility:** The released version of expecterlint (v1.1.0) was built with Go 1.24, but this repository requires Go 1.25. If you encounter version compatibility errors when running expecterlint, you can build it from source with the correct Go version:
+
+```bash
+cd /tmp
+git clone https://github.com/d0ubletr0uble/expecterlint.git
+cd expecterlint
+# Update go.mod to use go 1.25
+sed -i 's/go 1.24.0/go 1.25.0/' go.mod
+go build -o $HOME/go/bin/expecterlint ./cmd/expecterlint
+```
+
 ### Usage
 
 To check for potential improvements without modifying files:
