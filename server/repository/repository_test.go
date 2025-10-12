@@ -439,8 +439,8 @@ func TestRepositoryServer(t *testing.T) {
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: &repoServerClient}
 
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().GetRepository(t.Context(), "test").Return(nil, errors.New("not found"))
-		db.EXPECT().CreateRepository(t.Context(), mock.Anything).Return(&apiclient.TestRepositoryResponse{}).Return(&appsv1.Repository{
+		db.EXPECT().GetRepository(t.Context(), "test", "").Return(nil, errors.New("not found"))
+		db.EXPECT().CreateRepository(t.Context(), mock.Anything).Return(&appsv1.Repository{
 			Repo:    "repo",
 			Project: "proj",
 		}, nil)
@@ -494,7 +494,7 @@ func TestRepositoryServer(t *testing.T) {
 		url := "https://test"
 		db := &dbmocks.ArgoDB{}
 		db.EXPECT().GetRepository(t.Context(), url, "argocd").Return(nil, nil)
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(nil, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().ListRepositories(t.Context()).Return([]*appsv1.Repository{&fakeRepo, &fakeRepo}, nil)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projInformer, testNamespace, settingsMgr, false)
@@ -669,7 +669,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 
 		url := "https://test"
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(nil, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
@@ -720,7 +720,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 
 		url := "https://test"
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(nil, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
@@ -745,7 +745,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		url := "https://helm.elastic.co"
 		helmRepos := []*appsv1.Repository{{Repo: url}, {Repo: url}}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(helmRepos, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(helmRepos, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
@@ -783,7 +783,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		url1 := "https://helm.elastic.co"
 		helmRepos := []*appsv1.Repository{{Repo: url0}, {Repo: url1}}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(helmRepos, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(helmRepos, nil)
 		db.EXPECT().GetRepository(t.Context(), url0, "default").Return(&appsv1.Repository{Repo: url0}, nil)
 		db.EXPECT().GetRepository(t.Context(), url1, "default").Return(&appsv1.Repository{Repo: url1}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
@@ -864,7 +864,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		url := "https://test"
 		db := &dbmocks.ArgoDB{}
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(nil, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
@@ -891,7 +891,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		url := "https://helm.elastic.co"
 		helmRepos := []*appsv1.Repository{{Repo: url}, {Repo: url}}
 		db := &dbmocks.ArgoDB{}
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(helmRepos, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(helmRepos, nil)
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
@@ -921,7 +921,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		url := "https://helm.elastic.co"
 		db := &dbmocks.ArgoDB{}
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
-		db.EXPECT().ListHelmRepositories(t.Context(), mock.Anything).Return(nil, nil)
+		db.EXPECT().ListHelmRepositories(t.Context()).Return(nil, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
