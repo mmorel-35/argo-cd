@@ -257,8 +257,8 @@ func TestCallExtension(t *testing.T) {
 		userMock := &mocks.UserGetter{}
 
 		dbMock := &dbmocks.ArgoDB{}
-		dbMock.On("GetClusterServersByName", mock.Anything, mock.Anything).Return([]string{"cluster1"}, nil)
-		dbMock.On("GetCluster", mock.Anything, mock.Anything).Return(&v1alpha1.Cluster{Server: "some-url", Name: "cluster1"}, nil)
+		dbMock.EXPECT().GetClusterServersByName(mock.Anything, mock.Anything).Return([]string{"cluster1"}, nil)
+		dbMock.EXPECT().GetCluster(mock.Anything, mock.Anything).Return(&v1alpha1.Cluster{Server: "some-url", Name: "cluster1"}, nil)
 
 		logger, _ := test.NewNullLogger()
 		logEntry := logger.WithContext(t.Context())

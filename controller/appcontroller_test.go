@@ -197,7 +197,7 @@ func newFakeControllerWithResync(data *fakeData, appResyncPeriod time.Duration, 
 		false,
 	)
 	db := &dbmocks.ArgoDB{}
-	db.On("GetApplicationControllerReplicas").Return(1)
+	db.EXPECT().GetApplicationControllerReplicas().Return(1)
 	// Setting a default sharding algorithm for the tests where we cannot set it.
 	ctrl.clusterSharding = sharding.NewClusterSharding(db, 0, 1, common.DefaultShardingAlgorithm)
 	if err != nil {
@@ -2531,8 +2531,8 @@ func TestGetAppHosts(t *testing.T) {
 	}
 	ctrl := newFakeController(data, nil)
 	mockStateCache := &mockstatecache.LiveStateCache{}
-	mockStateCache.On("IterateResources", mock.Anything, mock.MatchedBy(func(callback func(res *clustercache.Resource, info *statecache.ResourceInfo)) bool {
-		// node resource
+	mockStateCache.EXPECT().IterateResources(mock.Anything, mock.MatchedBy(func(callback func(res *clustercache.Resource, info *statecache.ResourceInfo)) bool {
+
 		callback(&clustercache.Resource{
 			Ref: corev1.ObjectReference{Name: "minikube", Kind: "Node", APIVersion: "v1"},
 		}, &statecache.ResourceInfo{NodeInfo: &statecache.NodeInfo{
@@ -2542,14 +2542,13 @@ func TestGetAppHosts(t *testing.T) {
 			Labels:     map[string]string{"label1": "value1", "label2": "value2"},
 		}})
 
-		// app pod
 		callback(&clustercache.Resource{
 			Ref: corev1.ObjectReference{Name: "pod1", Kind: kube.PodKind, APIVersion: "v1", Namespace: "default"},
 		}, &statecache.ResourceInfo{PodInfo: &statecache.PodInfo{
 			NodeName:         "minikube",
 			ResourceRequests: map[corev1.ResourceName]resource.Quantity{corev1.ResourceCPU: resource.MustParse("1")},
 		}})
-		// neighbor pod
+
 		callback(&clustercache.Resource{
 			Ref: corev1.ObjectReference{Name: "pod2", Kind: kube.PodKind, APIVersion: "v1", Namespace: "default"},
 		}, &statecache.ResourceInfo{PodInfo: &statecache.PodInfo{

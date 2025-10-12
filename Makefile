@@ -396,6 +396,26 @@ lint-local:
 	# See https://github.com/golangci/golangci-lint#memory-usage-of-golangci-lint
 	GOGC=$(ARGOCD_LINT_GOGC) GOMAXPROCS=2 golangci-lint run --fix --verbose
 
+# Run expecterlint to check if mock.On() can be replaced with mock.EXPECT()
+.PHONY: lint-expecter
+lint-expecter: test-tools-image
+	$(call run-in-test-client,make lint-expecter-local)
+
+# Run expecterlint (local version)
+.PHONY: lint-expecter-local
+lint-expecter-local:
+	expecterlint ./...
+
+# Run expecterlint with -fix flag to automatically convert .On() to .EXPECT()
+.PHONY: lint-expecter-fix
+lint-expecter-fix: test-tools-image
+	$(call run-in-test-client,make lint-expecter-fix-local)
+
+# Run expecterlint with -fix flag (local version)
+.PHONY: lint-expecter-fix-local
+lint-expecter-fix-local:
+	expecterlint -fix ./...
+
 .PHONY: lint-ui
 lint-ui: test-tools-image
 	$(call run-in-test-client,make lint-ui-local)
