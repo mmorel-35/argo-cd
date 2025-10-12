@@ -114,13 +114,13 @@ func TestGetReconcileResults_Refresh(t *testing.T) {
 	}, nil).Maybe()
 	repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 	liveStateCache := cachemocks.NewLiveStateCache(t)
-	liveStateCache.EXPECT()."GetManagedLiveObjs", mock.Anything, mock.Anything, mock.Anything).Return(map[kube.ResourceKey]*unstructured.Unstructured{
+	liveStateCache.EXPECT().GetManagedLiveObjs", mock.Anything, mock.Anything, mock.Anything).Return(map[kube.ResourceKey]*unstructured.Unstructured{
 		kube.GetResourceKey(deployment): deployment,
 	}, nil)
-	liveStateCache.EXPECT()."GetVersionsInfo", mock.Anything).Return("v1.2.3", nil, nil)
-	liveStateCache.EXPECT()."Init").Return(nil, nil)
-	liveStateCache.EXPECT()."GetClusterCache", mock.Anything).Return(clusterCache, nil)
-	liveStateCache.EXPECT()."IsNamespaced", mock.Anything, mock.Anything).Return(true, nil)
+	liveStateCache.EXPECT().GetVersionsInfo", mock.Anything).Return("v1.2.3", nil, nil)
+	liveStateCache.EXPECT().Init").Return(nil, nil)
+	liveStateCache.EXPECT().GetClusterCache", mock.Anything).Return(clusterCache, nil)
+	liveStateCache.EXPECT().IsNamespaced", mock.Anything, mock.Anything).Return(true, nil)
 
 	result, err := reconcileApplications(ctx, kubeClientset, appClientset, "default", &repoServerClientset, "",
 		func(_ db.ArgoDB, _ cache.SharedIndexInformer, _ *settings.SettingsManager, _ *metrics.MetricsServer) statecache.LiveStateCache {

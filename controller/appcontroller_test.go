@@ -95,11 +95,11 @@ func (m *MockKubectl) DeleteResource(ctx context.Context, config *rest.Config, g
 	return m.Kubectl.DeleteResource(ctx, config, gvk, name, namespace, deleteOptions)
 }
 
-func newFakeController(data *fakeData, repoErr error, t *testing.T, t) *ApplicationController {
-	return newFakeControllerWithResync(data, time.Minute, repoErr, nil, t, t)
+func newFakeController(t *testing.T, data *fakeData, repoErr error) *ApplicationController {
+	return newFakeControllerWithResync(t, data, time.Minute, repoErr, nil)
 }
 
-func newFakeControllerWithResync(data *fakeData, appResyncPeriod time.Duration, repoErr, revisionPathsErr error, t *testing.T, t) *ApplicationController {
+func newFakeControllerWithResync(t *testing.T, data *fakeData, appResyncPeriod time.Duration, repoErr, revisionPathsErr error) *ApplicationController {
 	var clust corev1.Secret
 	err := yaml.Unmarshal([]byte(fakeCluster), &clust)
 	if err != nil {
@@ -597,7 +597,7 @@ func newFakeServiceAccount() map[string]any {
 
 func TestAutoSync(t *testing.T) {
 	app := newFakeApp()
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	syncStatus := v1alpha1.SyncStatus{
 		Status:   v1alpha1.SyncStatusCodeOutOfSync,
 		Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -615,7 +615,7 @@ func TestAutoSyncEnabledSetToTrue(t *testing.T) {
 	app := newFakeApp()
 	enable := true
 	app.Spec.SyncPolicy.Automated = &v1alpha1.SyncPolicyAutomated{Enabled: &enable}
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	syncStatus := v1alpha1.SyncStatus{
 		Status:   v1alpha1.SyncStatusCodeOutOfSync,
 		Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -636,7 +636,7 @@ func TestAutoSyncMultiSourceWithoutSelfHeal(t *testing.T) {
 		app := newFakeMultiSourceApp()
 		app.Spec.SyncPolicy.Automated.SelfHeal = false
 		app.Status.OperationState.SyncResult.Revisions = []string{"z", "x", "v"}
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:    v1alpha1.SyncStatusCodeOutOfSync,
 			Revisions: []string{"z", "x", "v"},
@@ -651,7 +651,7 @@ func TestAutoSyncMultiSourceWithoutSelfHeal(t *testing.T) {
 		app := newFakeMultiSourceApp()
 		app.Spec.SyncPolicy.Automated.SelfHeal = false
 		app.Status.OperationState.SyncResult.Revisions = []string{"z", "x", "v"}
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:    v1alpha1.SyncStatusCodeOutOfSync,
 			Revisions: []string{"a", "b", "c"},
@@ -667,7 +667,7 @@ func TestAutoSyncMultiSourceWithoutSelfHeal(t *testing.T) {
 func TestAutoSyncNotAllowEmpty(t *testing.T) {
 	app := newFakeApp()
 	app.Spec.SyncPolicy.Automated.Prune = true
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	syncStatus := v1alpha1.SyncStatus{
 		Status:   v1alpha1.SyncStatusCodeOutOfSync,
 		Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -680,7 +680,7 @@ func TestAutoSyncAllowEmpty(t *testing.T) {
 	app := newFakeApp()
 	app.Spec.SyncPolicy.Automated.Prune = true
 	app.Spec.SyncPolicy.Automated.AllowEmpty = true
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	syncStatus := v1alpha1.SyncStatus{
 		Status:   v1alpha1.SyncStatusCodeOutOfSync,
 		Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -694,7 +694,7 @@ func TestSkipAutoSync(t *testing.T) {
 	// Set current to 'aaaaa', desired to 'aaaa' and mark system OutOfSync
 	t.Run("PreviouslySyncedToRevision", func(t *testing.T) {
 		app := newFakeApp()
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -709,7 +709,7 @@ func TestSkipAutoSync(t *testing.T) {
 	// Verify we skip when we are already Synced (even if revision is different)
 	t.Run("AlreadyInSyncedState", func(t *testing.T) {
 		app := newFakeApp()
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeSynced,
 			Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -725,7 +725,7 @@ func TestSkipAutoSync(t *testing.T) {
 	t.Run("AutoSyncIsDisabled", func(t *testing.T) {
 		app := newFakeApp()
 		app.Spec.SyncPolicy = nil
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -742,7 +742,7 @@ func TestSkipAutoSync(t *testing.T) {
 		app := newFakeApp()
 		enable := false
 		app.Spec.SyncPolicy.Automated = &v1alpha1.SyncPolicyAutomated{Enabled: &enable}
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -759,7 +759,7 @@ func TestSkipAutoSync(t *testing.T) {
 		app := newFakeApp()
 		now := metav1.Now()
 		app.DeletionTimestamp = &now
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -785,7 +785,7 @@ func TestSkipAutoSync(t *testing.T) {
 				Source:   *app.Spec.Source.DeepCopy(),
 			},
 		}
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -809,7 +809,7 @@ func TestSkipAutoSync(t *testing.T) {
 				Source:   *app.Spec.Source.DeepCopy(),
 			},
 		}
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -823,7 +823,7 @@ func TestSkipAutoSync(t *testing.T) {
 
 	t.Run("NeedsToPruneResourcesOnlyButAutomatedPruneDisabled", func(t *testing.T) {
 		app := newFakeApp()
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		syncStatus := v1alpha1.SyncStatus{
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -849,7 +849,7 @@ func TestAutoSyncIndicateError(t *testing.T) {
 			},
 		},
 	}
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	syncStatus := v1alpha1.SyncStatus{
 		Status:   v1alpha1.SyncStatusCodeOutOfSync,
 		Revision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -909,7 +909,7 @@ func TestAutoSyncParameterOverrides(t *testing.T) {
 			Status:   v1alpha1.SyncStatusCodeOutOfSync,
 			Revision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 		}
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		cond, _ := ctrl.autoSync(app, &syncStatus, []v1alpha1.ResourceStatus{{Name: "guestbook", Kind: kube.DeploymentKind, Status: v1alpha1.SyncStatusCodeOutOfSync}}, true)
 		assert.Nil(t, cond)
 		app, err := ctrl.applicationClientset.ArgoprojV1alpha1().Applications(test.FakeArgoCDNamespace).Get(t.Context(), "my-app", metav1.GetOptions{})
@@ -927,7 +927,7 @@ func TestAutoSyncParameterOverrides(t *testing.T) {
 				},
 			},
 		}
-		ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+		ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 		app.Status.OperationState.SyncResult.Revisions = []string{"z", "x", "v"}
 		app.Status.OperationState.SyncResult.Sources[0].Helm = &v1alpha1.ApplicationSourceHelm{
 			Parameters: []v1alpha1.HelmParameter{
@@ -1308,7 +1308,7 @@ func TestFinalizeAppDeletionWithImpersonation(t *testing.T) {
 			},
 			additionalObjs: additionalObjs,
 		}
-		ctrl := newFakeController(&data, nil, t)
+		ctrl := newFakeController(t, &data, nil)
 		return &fixture{
 			application: app,
 			controller:  ctrl,
@@ -1391,7 +1391,7 @@ func TestNormalizeApplication(t *testing.T) {
 
 	{
 		// Verify we normalize the app because project is missing
-		ctrl := newFakeController(&data, nil, t)
+		ctrl := newFakeController(t, &data, nil)
 		key, _ := cache.MetaNamespaceKeyFunc(app)
 		ctrl.appRefreshQueue.AddRateLimited(key)
 		fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
@@ -1413,7 +1413,7 @@ func TestNormalizeApplication(t *testing.T) {
 		// Verify we don't unnecessarily normalize app when project is set
 		app.Spec.Project = "default"
 		data.apps[0] = app
-		ctrl := newFakeController(&data, nil, t)
+		ctrl := newFakeController(t, &data, nil)
 		key, _ := cache.MetaNamespaceKeyFunc(app)
 		ctrl.appRefreshQueue.AddRateLimited(key)
 		fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
@@ -1519,7 +1519,7 @@ func TestGetResourceTree_HasOrphanedResources(t *testing.T) {
 }
 
 func TestSetOperationStateOnDeletedApp(t *testing.T) {
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	fakeAppCs.ReactionChain = nil
 	patched := false
@@ -1537,7 +1537,7 @@ func TestSetOperationStateLogRetries(t *testing.T) {
 	t.Cleanup(func() {
 		logrus.StandardLogger().ReplaceHooks(logrus.LevelHooks{})
 	})
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	fakeAppCs.ReactionChain = nil
 	patched := false
@@ -1593,7 +1593,7 @@ func TestNeedRefreshAppStatus(t *testing.T) {
 				app.Status.Sync.ComparedTo.Source = app.Spec.GetSource()
 			}
 
-			ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+			ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 
 			t.Run("no need to refresh just reconciled application", func(t *testing.T) {
 				needRefresh, _, _ := ctrl.needRefreshAppStatus(app, 1*time.Hour, 2*time.Hour)
@@ -1605,7 +1605,7 @@ func TestNeedRefreshAppStatus(t *testing.T) {
 				assert.False(t, needRefresh)
 
 				// use a one-off controller so other tests don't have a manual refresh request
-				ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+				ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 
 				// refresh app using the 'deepest' requested comparison level
 				ctrl.requestAppRefresh(app.Name, CompareWithRecent.Pointer(), nil)
@@ -1622,7 +1622,7 @@ func TestNeedRefreshAppStatus(t *testing.T) {
 				assert.False(t, needRefresh)
 
 				// use a one-off controller so other tests don't have a manual refresh request
-				ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+				ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 
 				// refresh app with a non-nil delay
 				// use zero-second delay to test the add later logic without waiting in the test
@@ -1652,7 +1652,7 @@ func TestNeedRefreshAppStatus(t *testing.T) {
 				app := app.DeepCopy()
 
 				// use a one-off controller so other tests don't have a manual refresh request
-				ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+				ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 
 				needRefresh, _, _ := ctrl.needRefreshAppStatus(app, 1*time.Hour, 2*time.Hour)
 				assert.False(t, needRefresh)
@@ -1682,7 +1682,7 @@ func TestNeedRefreshAppStatus(t *testing.T) {
 				}
 
 				// use a one-off controller so other tests don't have a manual refresh request
-				ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+				ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 
 				needRefresh, _, _ := ctrl.needRefreshAppStatus(app, 1*time.Hour, 2*time.Hour)
 				assert.False(t, needRefresh)
@@ -1762,7 +1762,7 @@ func TestNeedRefreshAppStatus(t *testing.T) {
 }
 
 func TestUpdatedManagedNamespaceMetadata(t *testing.T) {
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 	app := newFakeApp()
 	app.Spec.SyncPolicy.ManagedNamespaceMetadata = &v1alpha1.ManagedNamespaceMetadata{
 		Labels: map[string]string{
@@ -1786,7 +1786,7 @@ func TestUpdatedManagedNamespaceMetadata(t *testing.T) {
 }
 
 func TestUnchangedManagedNamespaceMetadata(t *testing.T) {
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{}}, nil)
 	app := newFakeApp()
 	app.Spec.SyncPolicy.ManagedNamespaceMetadata = &v1alpha1.ManagedNamespaceMetadata{
 		Labels: map[string]string{
@@ -2063,7 +2063,7 @@ apps/Deployment:
 
     return hs`,
 	}
-	ctrl := newFakeControllerWithResync(&fakeData{
+	ctrl := newFakeControllerWithResync(t, &fakeData{
 		apps: []runtime.Object{app, &defaultProj},
 		manifestResponse: &apiclient.ManifestResponse{
 			Manifests: []string{},
@@ -2174,7 +2174,7 @@ func TestFinalizeProjectDeletion_HasApplications(t *testing.T) {
 
 func TestFinalizeProjectDeletion_DoesNotHaveApplications(t *testing.T) {
 	proj := &v1alpha1.AppProject{ObjectMeta: metav1.ObjectMeta{Name: "default", Namespace: test.FakeArgoCDNamespace}}
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{&defaultProj}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{&defaultProj}}, nil)
 
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	receivedPatch := map[string]any{}
@@ -2200,7 +2200,7 @@ func TestProcessRequestedAppOperation_FailedNoRetries(t *testing.T) {
 	app.Operation = &v1alpha1.Operation{
 		Sync: &v1alpha1.SyncOperation{},
 	}
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	receivedPatch := map[string]any{}
 	fakeAppCs.PrependReactor("patch", "*", func(action kubetesting.Action) (handled bool, ret runtime.Object, err error) {
@@ -2256,7 +2256,7 @@ func TestProcessRequestedAppOperation_FailedHasRetries(t *testing.T) {
 		Sync:  &v1alpha1.SyncOperation{},
 		Retry: v1alpha1.RetryStrategy{Limit: 1},
 	}
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	receivedPatch := map[string]any{}
 	fakeAppCs.PrependReactor("patch", "*", func(action kubetesting.Action) (handled bool, ret runtime.Object, err error) {
@@ -2303,7 +2303,7 @@ func TestProcessRequestedAppOperation_RunningPreviouslyFailed(t *testing.T) {
 			Revision:  "abc123",
 		},
 	}
-	ctrl := newFakeController(data, nil, t)
+	ctrl := newFakeController(t, data, nil)
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	receivedPatch := map[string]any{}
 	fakeAppCs.PrependReactor("patch", "*", func(action kubetesting.Action) (handled bool, ret runtime.Object, err error) {
@@ -2360,7 +2360,7 @@ func TestProcessRequestedAppOperation_RunningPreviouslyFailedBackoff(t *testing.
 			Revision:  "abc123",
 		},
 	}
-	ctrl := newFakeController(data, nil, t)
+	ctrl := newFakeController(t, data, nil)
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	fakeAppCs.PrependReactor("patch", "*", func(_ kubetesting.Action) (handled bool, ret runtime.Object, err error) {
 		require.FailNow(t, "A patch should not have been called if the backoff has not passed")
@@ -2388,7 +2388,7 @@ func TestProcessRequestedAppOperation_HasRetriesTerminated(t *testing.T) {
 			Revision:  "abc123",
 		},
 	}
-	ctrl := newFakeController(data, nil, t)
+	ctrl := newFakeController(t, data, nil)
 	fakeAppCs := ctrl.applicationClientset.(*appclientset.Clientset)
 	receivedPatch := map[string]any{}
 	fakeAppCs.PrependReactor("patch", "*", func(action kubetesting.Action) (handled bool, ret runtime.Object, err error) {
@@ -2529,7 +2529,7 @@ func TestGetAppHosts(t *testing.T) {
 			"application.allowedNodeLabels": "label1,label2",
 		},
 	}
-	ctrl := newFakeController(data, nil, t)
+	ctrl := newFakeController(t, data, nil)
 	mockStateCache := mockstatecache.NewLiveStateCache(t)
 	mockStateCache.EXPECT().IterateResources(mock.Anything, mock.MatchedBy(func(callback func(res *clustercache.Resource, info *statecache.ResourceInfo)) bool {
 		// node resource
@@ -2584,7 +2584,7 @@ func TestGetAppHosts(t *testing.T) {
 func TestMetricsExpiration(t *testing.T) {
 	app := newFakeApp()
 	// Check expiration is disabled by default
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	assert.False(t, ctrl.metricsServer.HasExpiration())
 	// Check expiration is enabled if set
 	ctrl = newFakeController(&fakeData{apps: []runtime.Object{app}, metricsCacheExpiration: 10 * time.Second}, nil, t)
@@ -2592,7 +2592,7 @@ func TestMetricsExpiration(t *testing.T) {
 }
 
 func TestToAppKey(t *testing.T) {
-	ctrl := newFakeController(&fakeData{}, nil, t)
+	ctrl := newFakeController(t, &fakeData{}, nil)
 	tests := []struct {
 		name     string
 		input    string
@@ -2612,7 +2612,7 @@ func TestToAppKey(t *testing.T) {
 
 func Test_canProcessApp(t *testing.T) {
 	app := newFakeApp()
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	ctrl.applicationNamespaces = []string{"good"}
 	t.Run("without cluster filter, good namespace", func(t *testing.T) {
 		app.Namespace = "good"
@@ -2643,7 +2643,7 @@ func Test_canProcessAppSkipReconcileAnnotation(t *testing.T) {
 	appSkipReconcileFalse.Annotations = map[string]string{common.AnnotationKeyAppSkipReconcile: "false"}
 	appSkipReconcileTrue := newFakeApp()
 	appSkipReconcileTrue.Annotations = map[string]string{common.AnnotationKeyAppSkipReconcile: "true"}
-	ctrl := newFakeController(&fakeData{}, nil, t)
+	ctrl := newFakeController(t, &fakeData{}, nil)
 	tests := []struct {
 		name     string
 		input    any
@@ -2664,7 +2664,7 @@ func Test_canProcessAppSkipReconcileAnnotation(t *testing.T) {
 
 func Test_syncDeleteOption(t *testing.T) {
 	app := newFakeApp()
-	ctrl := newFakeController(&fakeData{apps: []runtime.Object{app}}, nil, t)
+	ctrl := newFakeController(t, &fakeData{apps: []runtime.Object{app}}, nil)
 	cm := newFakeCM()
 	t.Run("without delete option object is deleted", func(t *testing.T) {
 		cmObj := kube.MustToUnstructured(&cm)
@@ -2960,7 +2960,7 @@ func assertDurationAround(t *testing.T, expected time.Duration, actual time.Dura
 }
 
 func TestSelfHealRemainingBackoff(t *testing.T) {
-	ctrl := newFakeController(&fakeData{}, nil, t)
+	ctrl := newFakeController(t, &fakeData{}, nil)
 	ctrl.selfHealBackoff = &wait.Backoff{
 		Factor:   3,
 		Duration: 2 * time.Second,
@@ -3042,7 +3042,7 @@ func TestSelfHealRemainingBackoff(t *testing.T) {
 
 func TestSelfHealBackoffCooldownElapsed(t *testing.T) {
 	cooldown := time.Second * 30
-	ctrl := newFakeController(&fakeData{}, nil, t)
+	ctrl := newFakeController(t, &fakeData{}, nil)
 	ctrl.selfHealBackoffCooldown = cooldown
 
 	app := &v1alpha1.Application{

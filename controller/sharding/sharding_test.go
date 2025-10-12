@@ -252,10 +252,10 @@ func TestGetShardByIndexModuloReplicasCountDistributionFunctionWhenClusterIsAdde
 	clusterAccessor := getClusterAccessor(clusters)
 
 	clusterList := &v1alpha1.ClusterList{Items: []v1alpha1.Cluster{cluster1, cluster2, cluster3, cluster4, cluster5}}
-	db.EXPECT()."ListClusters", mock.Anything).Return(clusterList, nil)
+	db.EXPECT().ListClusters", mock.Anything).Return(clusterList, nil)
 	// Test with replicas set to 2
 	replicasCount := 2
-	db.EXPECT()."GetApplicationControllerReplicas").Return(replicasCount)
+	db.EXPECT().GetApplicationControllerReplicas").Return(replicasCount)
 	distributionFunction := RoundRobinDistributionFunction(clusterAccessor, replicasCount)
 	assert.Equal(t, 0, distributionFunction(nil))
 	assert.Equal(t, 0, distributionFunction(&cluster1))
@@ -290,10 +290,10 @@ func TestConsistentHashingWhenClusterIsAddedAndRemoved(t *testing.T) {
 	clusterAccessor := getClusterAccessor(clusters)
 	appAccessor, _, _, _, _, _ := createTestApps()
 	clusterList := &v1alpha1.ClusterList{Items: clusters}
-	db.EXPECT()."ListClusters", mock.Anything).Return(clusterList, nil)
+	db.EXPECT().ListClusters", mock.Anything).Return(clusterList, nil)
 	// Test with replicas set to 3
 	replicasCount := 3
-	db.EXPECT()."GetApplicationControllerReplicas").Return(replicasCount)
+	db.EXPECT().GetApplicationControllerReplicas").Return(replicasCount)
 	distributionFunction := ConsistentHashingWithBoundedLoadsDistributionFunction(clusterAccessor, appAccessor, replicasCount)
 	assert.Equal(t, 0, distributionFunction(nil))
 	distributionMap := map[int]int{}
@@ -351,11 +351,11 @@ func TestConsistentHashingWhenClusterWithZeroReplicas(t *testing.T) {
 	clusters := []v1alpha1.Cluster{createCluster("cluster-01", "01")}
 	clusterAccessor := getClusterAccessor(clusters)
 	clusterList := &v1alpha1.ClusterList{Items: clusters}
-	db.EXPECT()."ListClusters", mock.Anything).Return(clusterList, nil)
+	db.EXPECT().ListClusters", mock.Anything).Return(clusterList, nil)
 	appAccessor, _, _, _, _, _ := createTestApps()
 	// Test with replicas set to 0
 	replicasCount := 0
-	db.EXPECT()."GetApplicationControllerReplicas").Return(replicasCount)
+	db.EXPECT().GetApplicationControllerReplicas").Return(replicasCount)
 	distributionFunction := ConsistentHashingWithBoundedLoadsDistributionFunction(clusterAccessor, appAccessor, replicasCount)
 	assert.Equal(t, -1, distributionFunction(nil))
 }
@@ -368,11 +368,11 @@ func TestConsistentHashingWhenClusterWithFixedShard(t *testing.T) {
 
 	clusterAccessor := getClusterAccessor(clusters)
 	clusterList := &v1alpha1.ClusterList{Items: clusters}
-	db.EXPECT()."ListClusters", mock.Anything).Return(clusterList, nil)
+	db.EXPECT().ListClusters", mock.Anything).Return(clusterList, nil)
 
 	// Test with replicas set to 5
 	replicasCount := 5
-	db.EXPECT()."GetApplicationControllerReplicas").Return(replicasCount)
+	db.EXPECT().GetApplicationControllerReplicas").Return(replicasCount)
 	appAccessor, _, _, _, _, _ := createTestApps()
 	distributionFunction := ConsistentHashingWithBoundedLoadsDistributionFunction(clusterAccessor, appAccessor, replicasCount)
 	assert.Equal(t, fixedShard, int64(distributionFunction(cluster)))
@@ -428,7 +428,7 @@ func createTestClusters() (clusterAccessor, *dbmocks.ArgoDB, v1alpha1.Cluster, v
 
 	clusters := []v1alpha1.Cluster{cluster1, cluster2, cluster3, cluster4, cluster5}
 
-	db.EXPECT()."ListClusters", mock.Anything).Return(&v1alpha1.ClusterList{Items: []v1alpha1.Cluster{
+	db.EXPECT().ListClusters", mock.Anything).Return(&v1alpha1.ClusterList{Items: []v1alpha1.Cluster{
 		cluster1, cluster2, cluster3, cluster4, cluster5,
 	}}, nil)
 	return getClusterAccessor(clusters), &db, cluster1, cluster2, cluster3, cluster4, cluster5

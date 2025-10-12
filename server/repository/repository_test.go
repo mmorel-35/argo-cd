@@ -273,7 +273,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_validateAccess", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		s := NewServer(&repoServerClientset, argoDB, enforcer, nil, appLister, projInformer, testNamespace, settingsMgr, false)
@@ -286,7 +286,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_Get", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
@@ -305,7 +305,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_GetInherited", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
@@ -352,7 +352,7 @@ func TestRepositoryServer(t *testing.T) {
 	t.Run("Test_GetWithNotExistRepoShouldReturn404", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 
 		url := "https://test"
 		db := dbmocks.NewArgoDB(t)
@@ -370,7 +370,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_GetRepoIsSanitized", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
@@ -393,7 +393,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_GetRepoIsNormalized", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		url := "https://test"
@@ -413,7 +413,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_GetRepoHasConnectionState", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{
 			VerifiedRepository: true,
 		}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
@@ -435,7 +435,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_CreateRepositoryWithoutUpsert", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		db := dbmocks.NewArgoDB(t)
@@ -458,7 +458,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_CreateRepositoryWithUpsert", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 
 		r := &appsv1.Repository{
@@ -487,7 +487,7 @@ func TestRepositoryServer(t *testing.T) {
 
 	t.Run("Test_ListRepositories", func(t *testing.T) {
 		repoServerClient := mocks.NewRepoServerServiceClient(t)
-		repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+		repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 		repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 		enforcer := newEnforcer(kubeclientset)
 
@@ -542,7 +542,7 @@ func TestRepositoryServerListApps(t *testing.T) {
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
-		repoServerClient.EXPECT()."ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
+		repoServerClient.EXPECT().ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
 			Apps: map[string]string{
 				"path/to/dir": "Kustomize",
 			},
@@ -573,7 +573,7 @@ func TestRepositoryServerListApps(t *testing.T) {
 		db.EXPECT().GetRepository(t.Context(), url, "default").Return(&appsv1.Repository{Repo: url}, nil)
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
-		repoServerClient.EXPECT()."ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
+		repoServerClient.EXPECT().ListApps", t.Context(), mock.Anything).Return(&apiclient.AppList{
 			Apps: map[string]string{
 				"path/to/dir": "Kustomize",
 			},
@@ -674,7 +674,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -699,7 +699,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProjNoSources)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -725,7 +725,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -750,7 +750,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -790,8 +790,8 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp0 := apiclient.RepoAppDetailsResponse{Type: "Plugin"}
 		expectedResp1 := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url0 })).Return(&expectedResp0, nil)
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url1 })).Return(&expectedResp1, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url0 })).Return(&expectedResp0, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.MatchedBy(func(req *apiclient.RepoServerAppDetailsQuery) bool { return req.Source.RepoURL == url1 })).Return(&expectedResp1, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp002)
 
 		s := NewServer(&repoServerClientset, db, enforcer, newFixtures().Cache, appLister, projLister, testNamespace, settingsMgr, false)
@@ -868,7 +868,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, guestbookApp)
 		previousSource := guestbookApp.Status.History[0].Source.DeepCopy()
 		previousSource.TargetRevision = guestbookApp.Status.History[0].Revision
@@ -896,7 +896,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Helm"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 
 		differentSource := multiSourceApp001.Spec.Sources[0].DeepCopy()
@@ -925,7 +925,7 @@ func TestRepositoryServerGetAppDetails(t *testing.T) {
 		db.EXPECT().GetProjectRepositories("default").Return(nil, nil)
 		db.EXPECT().GetProjectClusters(t.Context(), "default").Return(nil, nil)
 		expectedResp := apiclient.RepoAppDetailsResponse{Type: "Directory"}
-		repoServerClient.EXPECT()."GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
+		repoServerClient.EXPECT().GetAppDetails", t.Context(), mock.Anything).Return(&expectedResp, nil)
 		appLister, projLister := newAppAndProjLister(defaultProj, multiSourceApp001)
 		previousSource := multiSourceApp001.Status.History[0].Sources[0].DeepCopy()
 		previousSource.TargetRevision = multiSourceApp001.Status.History[0].Revisions[0]
@@ -1137,7 +1137,7 @@ func TestDeleteRepository(t *testing.T) {
 	for name, repo := range repositories {
 		t.Run(name, func(t *testing.T) {
 			repoServerClient := mocks.NewRepoServerServiceClient(t)
-			repoServerClient.EXPECT()."TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
+			repoServerClient.EXPECT().TestRepository", mock.Anything, mock.Anything).Return(&apiclient.TestRepositoryResponse{}, nil)
 
 			repoServerClientset := mocks.Clientset{RepoServerServiceClient: repoServerClient}
 			enforcer := newEnforcer(kubeclientset)
