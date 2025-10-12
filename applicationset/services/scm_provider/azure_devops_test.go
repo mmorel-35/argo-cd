@@ -84,7 +84,10 @@ func TestAzureDevopsRepoHasPath(t *testing.T) {
 			clientFactoryMock.mock.On("GetClient", mock.Anything).Return(gitClientMock, testCase.clientError)
 
 			repoId := &uuid
-			gitClientMock.EXPECT().GetItem(ctx, azureGit.GetItemArgs{Project: &teamProject, Path: &path, VersionDescriptor: &azureGit.GitVersionDescriptor{Version: &branchName}, RepositoryId: repoId}).Return(nil, testCase.azureDevopsError)
+			// Only set up the GetItem expectation if we expect it to be called (when clientError is nil)
+			if testCase.clientError == nil {
+				gitClientMock.EXPECT().GetItem(ctx, azureGit.GetItemArgs{Project: &teamProject, Path: &path, VersionDescriptor: &azureGit.GitVersionDescriptor{Version: &branchName}, RepositoryId: repoId}).Return(nil, testCase.azureDevopsError)
+			}
 
 			provider := AzureDevOpsProvider{organization: organization, teamProject: teamProject, clientFactory: clientFactoryMock}
 
@@ -290,7 +293,10 @@ func TestAzureDevOpsGetBranchesDefultBranchOnly(t *testing.T) {
 			clientFactoryMock := &AzureClientFactoryMock{mock: &mock.Mock{}}
 			clientFactoryMock.mock.On("GetClient", mock.Anything).Return(gitClientMock, testCase.clientError)
 
-			gitClientMock.EXPECT().GetBranch(ctx, azureGit.GetBranchArgs{RepositoryId: &repoName, Project: &teamProject, Name: &defaultBranch}).Return(testCase.expectedBranch, testCase.getBranchesAPIError)
+			// Only set up the GetBranch expectation if we expect it to be called (when clientError is nil)
+			if testCase.clientError == nil {
+				gitClientMock.EXPECT().GetBranch(ctx, azureGit.GetBranchArgs{RepositoryId: &repoName, Project: &teamProject, Name: &defaultBranch}).Return(testCase.expectedBranch, testCase.getBranchesAPIError)
+			}
 
 			repo := &Repository{Organization: organization, Repository: repoName, RepositoryId: uuid, Branch: defaultBranch}
 
@@ -370,7 +376,10 @@ func TestAzureDevopsGetBranches(t *testing.T) {
 			clientFactoryMock := &AzureClientFactoryMock{mock: &mock.Mock{}}
 			clientFactoryMock.mock.On("GetClient", mock.Anything).Return(gitClientMock, testCase.clientError)
 
-			gitClientMock.EXPECT().GetBranches(ctx, azureGit.GetBranchesArgs{RepositoryId: &repoName, Project: &teamProject}).Return(testCase.expectedBranches, testCase.getBranchesAPIError)
+			// Only set up the GetBranches expectation if we expect it to be called (when clientError is nil)
+			if testCase.clientError == nil {
+				gitClientMock.EXPECT().GetBranches(ctx, azureGit.GetBranchesArgs{RepositoryId: &repoName, Project: &teamProject}).Return(testCase.expectedBranches, testCase.getBranchesAPIError)
+			}
 
 			repo := &Repository{Organization: organization, Repository: repoName, RepositoryId: uuid}
 

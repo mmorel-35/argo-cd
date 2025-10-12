@@ -14,6 +14,7 @@ import (
 	"github.com/argoproj/gitops-engine/pkg/utils/kube/kubetest"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -112,18 +113,27 @@ func newFakeControllerWithResync(t *testing.T, data *fakeData, appResyncPeriod t
 	mockRepoClient := mockrepoclient.NewRepoServerServiceClient(t)
 
 	if len(data.manifestResponses) > 0 {
-		for _, response := range data.manifestResponses {
-			if repoErr != nil {
-				mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(response, repoErr).Once()
-			} else {
-				mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(response, nil).Once()
-			}
-		}
+		// For multiple responses, use a call counter to return them in sequence
+		callCount := 0
+		responses := data.manifestResponses
+		mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).RunAndReturn(
+			func(ctx context.Context, req *apiclient.ManifestRequest, opts ...grpc.CallOption) (*apiclient.ManifestResponse, error) {
+				if callCount >= len(responses) {
+					// Return the last response if we've exhausted all responses
+					callCount = len(responses) - 1
+				}
+				resp := responses[callCount]
+				callCount++
+				if repoErr != nil {
+					return resp, repoErr
+				}
+				return resp, nil
+			}).Maybe()
 	} else {
 		if repoErr != nil {
-			mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(data.manifestResponse, repoErr).Once()
+			mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(data.manifestResponse, repoErr).Maybe()
 		} else {
-			mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(data.manifestResponse, nil).Once()
+			mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(data.manifestResponse, nil).Maybe()
 		}
 	}
 
@@ -217,16 +227,16 @@ func newFakeControllerWithResync(t *testing.T, data *fakeData, appResyncPeriod t
 	mockStateCache := mockstatecache.NewLiveStateCache(t)
 	ctrl.appStateManager.(*appStateManager).liveStateCache = mockStateCache
 	ctrl.stateCache = mockStateCache
-	mockStateCache.EXPECT().IsNamespaced(mock.Anything, mock.Anything).Return(true, nil)
-	mockStateCache.EXPECT().GetManagedLiveObjs(mock.Anything, mock.Anything, mock.Anything).Return(data.managedLiveObjs, nil)
-	mockStateCache.EXPECT().GetVersionsInfo(mock.Anything).Return("v1.2.3", nil, nil)
+	mockStateCache.EXPECT().IsNamespaced(mock.Anything, mock.Anything).Return(true, nil).Maybe()
+	mockStateCache.EXPECT().GetManagedLiveObjs(mock.Anything, mock.Anything, mock.Anything).Return(data.managedLiveObjs, nil).Maybe()
+	mockStateCache.EXPECT().GetVersionsInfo(mock.Anything).Return("v1.2.3", nil, nil).Maybe()
 	response := make(map[kube.ResourceKey]v1alpha1.ResourceNode)
 	for k, v := range data.namespacedResources {
 		response[k] = v.ResourceNode
 	}
-	mockStateCache.EXPECT().GetNamespaceTopLevelResources(mock.Anything, mock.Anything).Return(response, nil)
-	mockStateCache.EXPECT().IterateResources(mock.Anything, mock.Anything).Return(nil)
-	mockStateCache.EXPECT().GetClusterCache(mock.Anything).Return(clusterCacheMock, nil)
+	mockStateCache.EXPECT().GetNamespaceTopLevelResources(mock.Anything, mock.Anything).Return(response, nil).Maybe()
+	mockStateCache.EXPECT().IterateResources(mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockStateCache.EXPECT().GetClusterCache(mock.Anything).Return(clusterCacheMock, nil).Maybe()
 	mockStateCache.EXPECT().IterateHierarchyV2(mock.Anything, mock.Anything, mock.Anything).Run(func(_ *v1alpha1.Cluster, keys []kube.ResourceKey, action func(child v1alpha1.ResourceNode, appName string) bool) {
 		for _, key := range keys {
 			appName := ""
@@ -235,7 +245,7 @@ func newFakeControllerWithResync(t *testing.T, data *fakeData, appResyncPeriod t
 			}
 			_ = action(v1alpha1.ResourceNode{ResourceRef: v1alpha1.ResourceRef{Kind: key.Kind, Group: key.Group, Namespace: key.Namespace, Name: key.Name}}, appName)
 		}
-	}).Return(nil)
+	}).Return(nil).Maybe()
 	return ctrl
 }
 
