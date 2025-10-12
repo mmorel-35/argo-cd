@@ -353,9 +353,15 @@ func getMockGitGenerator(t *testing.T) Generator {
 }
 
 func TestGetRelevantGenerators(t *testing.T) {
+	// Create a simple git generator without expectations since we don't actually call methods on it
+	argoCDServiceMock := mocks.NewRepos(t)
+	// Use Maybe() to indicate this expectation may or may not be called
+	argoCDServiceMock.EXPECT().GetDirectories(mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return([]string{"app1", "app2", "app_3", "p1/app4"}, nil).Maybe()
+	gitGenerator := NewGitGenerator(argoCDServiceMock, "namespace")
+	
 	testGenerators := map[string]Generator{
 		"Clusters": getMockClusterGenerator(),
-		"Git":      getMockGitGenerator(t),
+		"Git":      gitGenerator,
 	}
 
 	testGenerators["Matrix"] = NewMatrixGenerator(testGenerators)
