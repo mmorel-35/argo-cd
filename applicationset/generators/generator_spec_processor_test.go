@@ -345,9 +345,9 @@ func getMockClusterGenerator() Generator {
 	return NewClusterGenerator(context.Background(), fakeClient, appClientset, "namespace")
 }
 
-func getMockGitGenerator() Generator {
-	argoCDServiceMock := mocks.Repos{}
-	argoCDServiceMock.On("GetDirectories", mock.Anything, mock.Anything, mock.Anything).Return([]string{"app1", "app2", "app_3", "p1/app4"}, nil)
+func getMockGitGenerator(t *testing.T) Generator {
+	argoCDServiceMock := mocks.NewRepos(t)
+	argoCDServiceMock.EXPECT().GetDirectories(mock.Anything, mock.Anything, mock.Anything).Return([]string{"app1", "app2", "app_3", "p1/app4"}, nil)
 	gitGenerator := NewGitGenerator(&argoCDServiceMock, "namespace")
 	return gitGenerator
 }
@@ -355,7 +355,7 @@ func getMockGitGenerator() Generator {
 func TestGetRelevantGenerators(t *testing.T) {
 	testGenerators := map[string]Generator{
 		"Clusters": getMockClusterGenerator(),
-		"Git":      getMockGitGenerator(),
+		"Git":      getMockGitGenerator(t),
 	}
 
 	testGenerators["Matrix"] = NewMatrixGenerator(testGenerators)
