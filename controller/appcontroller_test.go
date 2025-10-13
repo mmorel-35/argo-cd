@@ -113,22 +113,13 @@ func newFakeControllerWithResync(t *testing.T, data *fakeData, appResyncPeriod t
 	mockRepoClient := mockrepoclient.NewRepoServerServiceClient(t)
 
 	if len(data.manifestResponses) > 0 {
-		// For multiple responses, use a call counter to return them in sequence
-		callCount := 0
-		responses := data.manifestResponses
-		mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).RunAndReturn(
-			func(ctx context.Context, req *apiclient.ManifestRequest, opts ...grpc.CallOption) (*apiclient.ManifestResponse, error) {
-				if callCount >= len(responses) {
-					// Return the last response if we've exhausted all responses
-					callCount = len(responses) - 1
-				}
-				resp := responses[callCount]
-				callCount++
-				if repoErr != nil {
-					return resp, repoErr
-				}
-				return resp, nil
-			}).Maybe()
+		for _, response := range data.manifestResponses {
+			if repoErr != nil {
+				mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(response, repoErr).Maybe()
+			} else {
+				mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(response, nil).Maybe()
+			}
+		}
 	} else {
 		if repoErr != nil {
 			mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(data.manifestResponse, repoErr).Maybe()
