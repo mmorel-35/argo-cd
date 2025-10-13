@@ -1,9 +1,6 @@
 #!/bin/bash
 set -eux -o pipefail
 
-# Add GOPATH/bin to PATH so go-installed binaries can be found
-export PATH="$(go env GOPATH)/bin:${PATH}"
-
 # check for local installation of go-junit-report otherwise install locally
 which go-junit-report || go install github.com/jstemmer/go-junit-report@latest
 
