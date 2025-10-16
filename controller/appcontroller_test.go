@@ -56,6 +56,7 @@ import (
 	appstatecache "github.com/argoproj/argo-cd/v3/util/cache/appstate"
 	"github.com/argoproj/argo-cd/v3/util/settings"
 	utilTest "github.com/argoproj/argo-cd/v3/util/test"
+	"google.golang.org/grpc"
 )
 
 var testEnableEventList []string = argo.DefaultEnableEventList()
@@ -112,13 +113,20 @@ func newFakeControllerWithResync(t *testing.T, data *fakeData, appResyncPeriod t
 	mockRepoClient := mockrepoclient.NewRepoServerServiceClient(t)
 
 	if len(data.manifestResponses) > 0 {
-		for _, response := range data.manifestResponses {
-			if repoErr != nil {
-				mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(response, repoErr).Maybe()
-			} else {
-				mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(response, nil).Maybe()
-			}
-		}
+		// Use a counter to return responses in order
+		callCount := 0
+		mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).RunAndReturn(
+			func(ctx context.Context, req *apiclient.ManifestRequest, opts ...grpc.CallOption) (*apiclient.ManifestResponse, error) {
+				if callCount >= len(data.manifestResponses) {
+					callCount = len(data.manifestResponses) - 1
+				}
+				response := data.manifestResponses[callCount]
+				callCount++
+				if repoErr != nil {
+					return response, repoErr
+				}
+				return response, nil
+			}).Maybe()
 	} else {
 		if repoErr != nil {
 			mockRepoClient.EXPECT().GenerateManifest(mock.Anything, mock.Anything).Return(data.manifestResponse, repoErr).Maybe()
