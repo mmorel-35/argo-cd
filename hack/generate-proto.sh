@@ -21,6 +21,7 @@ GOPATH_PROJECT_ROOT="${GOPATH}/src/github.com/argoproj/argo-cd"
 # output tool versions
 go version
 protoc --version
+buf --version
 swagger version
 jq --version
 
@@ -79,39 +80,51 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
-# Either protoc-gen-go, protoc-gen-gofast, or protoc-gen-gogofast can be used to build
-# server/*/<service>.pb.go from .proto files. golang/protobuf and gogo/protobuf can be used
-# interchangeably. The difference in the options are:
-# 1. protoc-gen-go - official golang/protobuf
-#GOPROTOBINARY=go
-# 2. protoc-gen-gofast - fork of golang golang/protobuf. Faster code generation
-#GOPROTOBINARY=gofast
-# 3. protoc-gen-gogofast - faster code generation and gogo extensions and flexibility in controlling
-# the generated go code (e.g. customizing field names, nullable fields)
-GOPROTOBINARY=gogofast
+# Use buf to generate code from proto files instead of manual protoc loop.
+# buf automatically discovers proto files based on buf.yaml configuration and uses
+# the plugins defined in buf.gen.yaml (gogofast, grpc-gateway, swagger).
+# With paths=source_relative, files are generated next to proto files, so we move them
+# to their expected locations based on go_package declarations.
+buf generate
 
-# Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
-MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway | awk '{print $NF}' | head -1)
-GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway@${grpc_gateway_version}/third_party/googleapis
-GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
-PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
-for i in ${PROTO_FILES}; do
-    protoc \
-        -I"${PROJECT_ROOT}" \
-        -I"${protoc_include}" \
-        -I./vendor \
-        -I"$GOPATH"/src \
-        -I"${GOOGLE_PROTO_API_PATH}" \
-        -I"${GOGO_PROTOBUF_PATH}" \
-        --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
-        --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
-        --swagger_out=logtostderr=true:. \
-        "$i"
+# Move generated files from proto locations to their expected go_package locations
+# server/* proto files have go_package pointing to pkg/apiclient/*
+for dir in account application applicationset certificate cluster gpgkey notification project repocreds repository session settings version; do
+    if [ -f "server/${dir}/${dir}.pb.go" ]; then
+        mkdir -p "pkg/apiclient/${dir}"
+        mv "server/${dir}/${dir}.pb.go" "pkg/apiclient/${dir}/"
+    fi
+    if [ -f "server/${dir}/${dir}.pb.gw.go" ]; then
+        mkdir -p "pkg/apiclient/${dir}"
+        mv "server/${dir}/${dir}.pb.gw.go" "pkg/apiclient/${dir}/"
+    fi
 done
 
+# server/settings/oidc has no gateway file and stays in place
+# (generated pb.go file location matches go_package)
+
+# reposerver/repository -> reposerver/apiclient
+if [ -f "reposerver/repository/repository.pb.go" ]; then
+    mkdir -p "reposerver/apiclient"
+    mv "reposerver/repository/repository.pb.go" "reposerver/apiclient/"
+fi
+
+# cmpserver/plugin -> cmpserver/apiclient
+if [ -f "cmpserver/plugin/plugin.pb.go" ]; then
+    mkdir -p "cmpserver/apiclient"
+    mv "cmpserver/plugin/plugin.pb.go" "cmpserver/apiclient/"
+fi
+
+# commitserver/commit -> commitserver/apiclient
+if [ -f "commitserver/commit/commit.pb.go" ]; then
+    mkdir -p "commitserver/apiclient"
+    mv "commitserver/commit/commit.pb.go" "commitserver/apiclient/"
+fi
+
+# util/askpass stays in place (matches go_package)
+
 # This file is generated but should not be checked in.
-rm util/askpass/askpass.swagger.json
+rm -f util/askpass/askpass.swagger.json
 
 [ -L "${GOPATH_PROJECT_ROOT}" ] && rm -rf "${GOPATH_PROJECT_ROOT}"
 [ -L ./v3 ] && rm -rf v3
