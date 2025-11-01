@@ -82,10 +82,47 @@ go mod vendor
 
 # Use buf to generate code from proto files instead of manual protoc loop.
 # buf automatically discovers proto files based on buf.yaml configuration and uses
-# the plugins defined in buf.gen.yaml (gogofast, grpc-gateway, swagger).
-# With managed mode enabled, buf respects the go_package declarations and generates
-# files in the correct locations automatically.
+# the plugins defined in buf.gen.yaml (gogofast, grpc-gateway, openapiv2).
+# We need to output to $GOPATH/src to handle the absolute import paths in proto files.
+# We also need to create a symlink structure so buf can resolve the absolute imports.
+
+# Create symlink structure for buf to resolve absolute import paths
+mkdir -p github.com/argoproj/argo-cd
+ln -sfn ../../../v3 github.com/argoproj/argo-cd/v3
+
+# Backup buf.gen.yaml and create one with GOPATH for output
+cp buf.gen.yaml buf.gen.yaml.bak
+cat > buf.gen.yaml <<EOF
+version: v2
+managed:
+  enabled: false
+plugins:
+  - local: protoc-gen-gogofast
+    out: ${GOPATH}/src
+    opt:
+      - plugins=grpc
+      - Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/wrappers.proto=github.com/gogo/protobuf/types
+      - Mgoogle/api/annotations.proto=google.golang.org/genproto/googleapis/api/annotations
+  - local: protoc-gen-grpc-gateway
+    out: ${GOPATH}/src
+    opt:
+      - logtostderr=true
+  - local: protoc-gen-openapiv2
+    out: .
+    opt:
+      - logtostderr=true
+EOF
+
 buf generate
+mv buf.gen.yaml.bak buf.gen.yaml
+
+# Clean up symlink structure
+rm -rf github.com
 
 # This file is generated but should not be checked in.
 rm -f util/askpass/askpass.swagger.json

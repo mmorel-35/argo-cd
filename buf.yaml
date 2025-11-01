@@ -6,6 +6,7 @@ modules:
       - pkg/apis/application/v1alpha1
       - dist
       - vendor
+      - github.com
 lint:
   use:
     - DEFAULT
