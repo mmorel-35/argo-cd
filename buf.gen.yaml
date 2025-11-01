@@ -1,0 +1,28 @@
+version: v2
+managed:
+  enabled: false
+plugins:
+  # Generate Go protobuf code using gogofast
+  - local: protoc-gen-gogofast
+    out: .
+    opt:
+      - plugins=grpc
+      - paths=source_relative
+      - Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types
+      - Mgoogle/protobuf/wrappers.proto=github.com/gogo/protobuf/types
+      - Mgoogle/api/annotations.proto=google.golang.org/genproto/googleapis/api/annotations
+  # Generate gRPC-Gateway reverse proxy
+  - local: protoc-gen-grpc-gateway
+    out: .
+    opt:
+      - paths=source_relative
+      - logtostderr=true
+  # Generate Swagger/OpenAPI documentation
+  - local: protoc-gen-swagger
+    out: .
+    opt:
+      - logtostderr=true

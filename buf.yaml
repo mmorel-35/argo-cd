@@ -1,0 +1,15 @@
+version: v2
+modules:
+  - path: .
+    name: buf.build/argoproj/argo-cd
+    excludes:
+      - pkg/apis/application/v1alpha1
+lint:
+  use:
+    - DEFAULT
+  except:
+    - PACKAGE_VERSION_SUFFIX
+    - IMPORT_NO_PUBLIC
+breaking:
+  use:
+    - FILE
