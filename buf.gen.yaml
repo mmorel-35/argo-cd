@@ -1,13 +1,15 @@
 version: v2
 managed:
-  enabled: false
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/argoproj/argo-cd/v3
 plugins:
   # Generate Go protobuf code using gogofast
   - local: protoc-gen-gogofast
     out: .
     opt:
       - plugins=grpc
-      - paths=source_relative
       - Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types
       - Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types
       - Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types
@@ -19,7 +21,6 @@ plugins:
   - local: protoc-gen-grpc-gateway
     out: .
     opt:
-      - paths=source_relative
       - logtostderr=true
   # Generate Swagger/OpenAPI documentation
   - local: protoc-gen-swagger

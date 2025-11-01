@@ -83,45 +83,9 @@ go mod vendor
 # Use buf to generate code from proto files instead of manual protoc loop.
 # buf automatically discovers proto files based on buf.yaml configuration and uses
 # the plugins defined in buf.gen.yaml (gogofast, grpc-gateway, swagger).
-# With paths=source_relative, files are generated next to proto files, so we move them
-# to their expected locations based on go_package declarations.
+# With managed mode enabled, buf respects the go_package declarations and generates
+# files in the correct locations automatically.
 buf generate
-
-# Move generated files from proto locations to their expected go_package locations
-# server/* proto files have go_package pointing to pkg/apiclient/*
-for dir in account application applicationset certificate cluster gpgkey notification project repocreds repository session settings version; do
-    if [ -f "server/${dir}/${dir}.pb.go" ]; then
-        mkdir -p "pkg/apiclient/${dir}"
-        mv "server/${dir}/${dir}.pb.go" "pkg/apiclient/${dir}/"
-    fi
-    if [ -f "server/${dir}/${dir}.pb.gw.go" ]; then
-        mkdir -p "pkg/apiclient/${dir}"
-        mv "server/${dir}/${dir}.pb.gw.go" "pkg/apiclient/${dir}/"
-    fi
-done
-
-# server/settings/oidc has no gateway file and stays in place
-# (generated pb.go file location matches go_package)
-
-# reposerver/repository -> reposerver/apiclient
-if [ -f "reposerver/repository/repository.pb.go" ]; then
-    mkdir -p "reposerver/apiclient"
-    mv "reposerver/repository/repository.pb.go" "reposerver/apiclient/"
-fi
-
-# cmpserver/plugin -> cmpserver/apiclient
-if [ -f "cmpserver/plugin/plugin.pb.go" ]; then
-    mkdir -p "cmpserver/apiclient"
-    mv "cmpserver/plugin/plugin.pb.go" "cmpserver/apiclient/"
-fi
-
-# commitserver/commit -> commitserver/apiclient
-if [ -f "commitserver/commit/commit.pb.go" ]; then
-    mkdir -p "commitserver/apiclient"
-    mv "commitserver/commit/commit.pb.go" "commitserver/apiclient/"
-fi
-
-# util/askpass stays in place (matches go_package)
 
 # This file is generated but should not be checked in.
 rm -f util/askpass/askpass.swagger.json
