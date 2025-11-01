@@ -6211,20 +6211,20 @@
     "clusterOIDCConfig": {
       "type": "object",
       "properties": {
-        "cliClientID": {
+        "CLIClientID": {
           "type": "string"
         },
-        "clientID": {
+        "ClientID": {
           "type": "string"
         },
-        "enablePKCEAuthentication": {
-          "type": "boolean"
-        },
-        "idTokenClaims": {
+        "IDTokenClaims": {
           "type": "object",
           "additionalProperties": {
             "$ref": "#/definitions/oidcClaim"
           }
+        },
+        "enablePKCEAuthentication": {
+          "type": "boolean"
         },
         "issuer": {
           "type": "string"
@@ -6253,11 +6253,17 @@
     "clusterSettings": {
       "type": "object",
       "properties": {
-        "additionalUrls": {
+        "AdditionalURLs": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "OIDCConfig": {
+          "$ref": "#/definitions/clusterOIDCConfig"
+        },
+        "URL": {
+          "type": "string"
         },
         "appLabelKey": {
           "type": "string"
@@ -6306,9 +6312,6 @@
             "type": "string"
           }
         },
-        "oidcConfig": {
-          "$ref": "#/definitions/clusterOIDCConfig"
-        },
         "passwordPattern": {
           "type": "string"
         },
@@ -6350,9 +6353,6 @@
           "type": "string"
         },
         "uiCssURL": {
-          "type": "string"
-        },
-        "url": {
           "type": "string"
         },
         "userLoginsDisabled": {

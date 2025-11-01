@@ -67,9 +67,9 @@ func (*SettingsQuery) Descriptor() ([]byte, []int) {
 
 type Settings struct {
 	state              protoimpl.MessageState                `protogen:"open.v1"`
-	Url                string                                `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	URL                string                                `protobuf:"bytes,1,opt,name=URL,proto3" json:"URL,omitempty"`
 	DexConfig          *DexConfig                            `protobuf:"bytes,2,opt,name=dexConfig,proto3" json:"dexConfig,omitempty"`
-	OidcConfig         *OIDCConfig                           `protobuf:"bytes,3,opt,name=oidcConfig,proto3" json:"oidcConfig,omitempty"`
+	OIDCConfig         *OIDCConfig                           `protobuf:"bytes,3,opt,name=OIDCConfig,proto3" json:"OIDCConfig,omitempty"`
 	AppLabelKey        string                                `protobuf:"bytes,4,opt,name=appLabelKey,proto3" json:"appLabelKey,omitempty"`
 	ResourceOverrides  map[string]*v1alpha1.ResourceOverride `protobuf:"bytes,5,rep,name=resourceOverrides,proto3" json:"resourceOverrides,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	StatusBadgeEnabled bool                                  `protobuf:"varint,6,opt,name=statusBadgeEnabled,proto3" json:"statusBadgeEnabled,omitempty"`
@@ -95,7 +95,7 @@ type Settings struct {
 	AppsInAnyNamespaceEnabled bool                               `protobuf:"varint,24,opt,name=appsInAnyNamespaceEnabled,proto3" json:"appsInAnyNamespaceEnabled,omitempty"`
 	ImpersonationEnabled      bool                               `protobuf:"varint,25,opt,name=impersonationEnabled,proto3" json:"impersonationEnabled,omitempty"`
 	InstallationID            string                             `protobuf:"bytes,26,opt,name=installationID,proto3" json:"installationID,omitempty"`
-	AdditionalUrls            []string                           `protobuf:"bytes,27,rep,name=additionalUrls,proto3" json:"additionalUrls,omitempty"`
+	AdditionalURLs            []string                           `protobuf:"bytes,27,rep,name=AdditionalURLs,proto3" json:"AdditionalURLs,omitempty"`
 	HydratorEnabled           bool                               `protobuf:"varint,28,opt,name=hydratorEnabled,proto3" json:"hydratorEnabled,omitempty"`
 	SyncWithReplaceAllowed    bool                               `protobuf:"varint,29,opt,name=syncWithReplaceAllowed,proto3" json:"syncWithReplaceAllowed,omitempty"`
 	unknownFields             protoimpl.UnknownFields
@@ -132,9 +132,9 @@ func (*Settings) Descriptor() ([]byte, []int) {
 	return file_server_settings_settings_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Settings) GetUrl() string {
+func (x *Settings) GetURL() string {
 	if x != nil {
-		return x.Url
+		return x.URL
 	}
 	return ""
 }
@@ -146,9 +146,9 @@ func (x *Settings) GetDexConfig() *DexConfig {
 	return nil
 }
 
-func (x *Settings) GetOidcConfig() *OIDCConfig {
+func (x *Settings) GetOIDCConfig() *OIDCConfig {
 	if x != nil {
-		return x.OidcConfig
+		return x.OIDCConfig
 	}
 	return nil
 }
@@ -314,9 +314,9 @@ func (x *Settings) GetInstallationID() string {
 	return ""
 }
 
-func (x *Settings) GetAdditionalUrls() []string {
+func (x *Settings) GetAdditionalURLs() []string {
 	if x != nil {
-		return x.AdditionalUrls
+		return x.AdditionalURLs
 	}
 	return nil
 }
@@ -641,10 +641,10 @@ type OIDCConfig struct {
 	state                    protoimpl.MessageState `protogen:"open.v1"`
 	Name                     string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Issuer                   string                 `protobuf:"bytes,2,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	ClientID                 string                 `protobuf:"bytes,3,opt,name=clientID,proto3" json:"clientID,omitempty"`
-	CliClientID              string                 `protobuf:"bytes,4,opt,name=cliClientID,proto3" json:"cliClientID,omitempty"`
+	ClientID                 string                 `protobuf:"bytes,3,opt,name=ClientID,proto3" json:"ClientID,omitempty"`
+	CLIClientID              string                 `protobuf:"bytes,4,opt,name=CLIClientID,proto3" json:"CLIClientID,omitempty"`
 	Scopes                   []string               `protobuf:"bytes,5,rep,name=scopes,proto3" json:"scopes,omitempty"`
-	IdTokenClaims            map[string]*oidc.Claim `protobuf:"bytes,6,rep,name=idTokenClaims,proto3" json:"idTokenClaims,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	IDTokenClaims            map[string]*oidc.Claim `protobuf:"bytes,6,rep,name=IDTokenClaims,proto3" json:"IDTokenClaims,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	EnablePKCEAuthentication bool                   `protobuf:"varint,7,opt,name=enablePKCEAuthentication,proto3" json:"enablePKCEAuthentication,omitempty"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
@@ -701,9 +701,9 @@ func (x *OIDCConfig) GetClientID() string {
 	return ""
 }
 
-func (x *OIDCConfig) GetCliClientID() string {
+func (x *OIDCConfig) GetCLIClientID() string {
 	if x != nil {
-		return x.CliClientID
+		return x.CLIClientID
 	}
 	return ""
 }
@@ -715,9 +715,9 @@ func (x *OIDCConfig) GetScopes() []string {
 	return nil
 }
 
-func (x *OIDCConfig) GetIdTokenClaims() map[string]*oidc.Claim {
+func (x *OIDCConfig) GetIDTokenClaims() map[string]*oidc.Claim {
 	if x != nil {
-		return x.IdTokenClaims
+		return x.IDTokenClaims
 	}
 	return nil
 }
@@ -736,11 +736,11 @@ const file_server_settings_settings_proto_rawDesc = "" +
 	"\x1eserver/settings/settings.proto\x12\acluster\x1a\x1cgoogle/api/annotations.proto\x1aLgithub.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1/generated.proto\x1a@github.com/argoproj/argo-cd/v3/server/settings/oidc/claims.proto\"\x0f\n" +
 	"\rSettingsQuery\"\x83\r\n" +
 	"\bSettings\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\x120\n" +
+	"\x03URL\x18\x01 \x01(\tR\x03URL\x120\n" +
 	"\tdexConfig\x18\x02 \x01(\v2\x12.cluster.DexConfigR\tdexConfig\x123\n" +
 	"\n" +
-	"oidcConfig\x18\x03 \x01(\v2\x13.cluster.OIDCConfigR\n" +
-	"oidcConfig\x12 \n" +
+	"OIDCConfig\x18\x03 \x01(\v2\x13.cluster.OIDCConfigR\n" +
+	"OIDCConfig\x12 \n" +
 	"\vappLabelKey\x18\x04 \x01(\tR\vappLabelKey\x12V\n" +
 	"\x11resourceOverrides\x18\x05 \x03(\v2(.cluster.Settings.ResourceOverridesEntryR\x11resourceOverrides\x12.\n" +
 	"\x12statusBadgeEnabled\x18\x06 \x01(\bR\x12statusBadgeEnabled\x12H\n" +
@@ -765,7 +765,7 @@ const file_server_settings_settings_proto_rawDesc = "" +
 	"\x19appsInAnyNamespaceEnabled\x18\x18 \x01(\bR\x19appsInAnyNamespaceEnabled\x122\n" +
 	"\x14impersonationEnabled\x18\x19 \x01(\bR\x14impersonationEnabled\x12&\n" +
 	"\x0einstallationID\x18\x1a \x01(\tR\x0einstallationID\x12&\n" +
-	"\x0eadditionalUrls\x18\x1b \x03(\tR\x0eadditionalUrls\x12(\n" +
+	"\x0eAdditionalURLs\x18\x1b \x03(\tR\x0eAdditionalURLs\x12(\n" +
 	"\x0fhydratorEnabled\x18\x1c \x01(\bR\x0fhydratorEnabled\x126\n" +
 	"\x16syncWithReplaceAllowed\x18\x1d \x01(\bR\x16syncWithReplaceAllowed\x1a\x94\x01\n" +
 	"\x16ResourceOverridesEntry\x12\x10\n" +
@@ -800,12 +800,12 @@ const file_server_settings_settings_proto_rawDesc = "" +
 	"OIDCConfig\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
 	"\x06issuer\x18\x02 \x01(\tR\x06issuer\x12\x1a\n" +
-	"\bclientID\x18\x03 \x01(\tR\bclientID\x12 \n" +
-	"\vcliClientID\x18\x04 \x01(\tR\vcliClientID\x12\x16\n" +
+	"\bClientID\x18\x03 \x01(\tR\bClientID\x12 \n" +
+	"\vCLIClientID\x18\x04 \x01(\tR\vCLIClientID\x12\x16\n" +
 	"\x06scopes\x18\x05 \x03(\tR\x06scopes\x12L\n" +
-	"\ridTokenClaims\x18\x06 \x03(\v2&.cluster.OIDCConfig.IdTokenClaimsEntryR\ridTokenClaims\x12:\n" +
+	"\rIDTokenClaims\x18\x06 \x03(\v2&.cluster.OIDCConfig.IDTokenClaimsEntryR\rIDTokenClaims\x12:\n" +
 	"\x18enablePKCEAuthentication\x18\a \x01(\bR\x18enablePKCEAuthentication\x1ay\n" +
-	"\x12IdTokenClaimsEntry\x12\x10\n" +
+	"\x12IDTokenClaimsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12M\n" +
 	"\x05value\x18\x02 \x01(\v27.github.com.argoproj.argo_cd.server.settings.oidc.ClaimR\x05value:\x028\x012\xc7\x01\n" +
 	"\x0fSettingsService\x12J\n" +
@@ -838,7 +838,7 @@ var file_server_settings_settings_proto_goTypes = []any{
 	(*OIDCConfig)(nil),                      // 8: cluster.OIDCConfig
 	nil,                                     // 9: cluster.Settings.ResourceOverridesEntry
 	nil,                                     // 10: cluster.Help.BinaryUrlsEntry
-	nil,                                     // 11: cluster.OIDCConfig.IdTokenClaimsEntry
+	nil,                                     // 11: cluster.OIDCConfig.IDTokenClaimsEntry
 	(*v1alpha1.KustomizeOptions)(nil),       // 12: github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.KustomizeOptions
 	(*v1alpha1.ConfigManagementPlugin)(nil), // 13: github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.ConfigManagementPlugin
 	(*v1alpha1.ResourceOverride)(nil),       // 14: github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.ResourceOverride
@@ -846,7 +846,7 @@ var file_server_settings_settings_proto_goTypes = []any{
 }
 var file_server_settings_settings_proto_depIdxs = []int32{
 	6,  // 0: cluster.Settings.dexConfig:type_name -> cluster.DexConfig
-	8,  // 1: cluster.Settings.oidcConfig:type_name -> cluster.OIDCConfig
+	8,  // 1: cluster.Settings.OIDCConfig:type_name -> cluster.OIDCConfig
 	9,  // 2: cluster.Settings.resourceOverrides:type_name -> cluster.Settings.ResourceOverridesEntry
 	2,  // 3: cluster.Settings.googleAnalytics:type_name -> cluster.GoogleAnalyticsConfig
 	12, // 4: cluster.Settings.kustomizeOptions:type_name -> github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.KustomizeOptions
@@ -856,9 +856,9 @@ var file_server_settings_settings_proto_depIdxs = []int32{
 	5,  // 8: cluster.SettingsPluginsResponse.plugins:type_name -> cluster.Plugin
 	10, // 9: cluster.Help.binaryUrls:type_name -> cluster.Help.BinaryUrlsEntry
 	7,  // 10: cluster.DexConfig.connectors:type_name -> cluster.Connector
-	11, // 11: cluster.OIDCConfig.idTokenClaims:type_name -> cluster.OIDCConfig.IdTokenClaimsEntry
+	11, // 11: cluster.OIDCConfig.IDTokenClaims:type_name -> cluster.OIDCConfig.IDTokenClaimsEntry
 	14, // 12: cluster.Settings.ResourceOverridesEntry.value:type_name -> github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.ResourceOverride
-	15, // 13: cluster.OIDCConfig.IdTokenClaimsEntry.value:type_name -> github.com.argoproj.argo_cd.server.settings.oidc.Claim
+	15, // 13: cluster.OIDCConfig.IDTokenClaimsEntry.value:type_name -> github.com.argoproj.argo_cd.server.settings.oidc.Claim
 	0,  // 14: cluster.SettingsService.Get:input_type -> cluster.SettingsQuery
 	0,  // 15: cluster.SettingsService.GetPlugins:input_type -> cluster.SettingsQuery
 	1,  // 16: cluster.SettingsService.Get:output_type -> cluster.Settings

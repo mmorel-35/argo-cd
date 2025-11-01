@@ -15,9 +15,9 @@ message SettingsQuery {
 }
 
 message Settings {
-    string url = 1;
+    string URL = 1;
     DexConfig dexConfig = 2;
-    OIDCConfig oidcConfig = 3;
+    OIDCConfig OIDCConfig = 3;
     string appLabelKey = 4;
     map<string, github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.ResourceOverride> resourceOverrides = 5;
     bool statusBadgeEnabled = 6;
@@ -43,7 +43,7 @@ message Settings {
     bool appsInAnyNamespaceEnabled = 24;
     bool impersonationEnabled = 25;
     string installationID = 26;
-    repeated string additionalUrls = 27;
+    repeated string AdditionalURLs = 27;
     bool hydratorEnabled = 28;
     bool syncWithReplaceAllowed = 29;
 }
@@ -85,10 +85,10 @@ message Connector {
 message OIDCConfig {
     string name = 1;
     string issuer = 2;
-    string clientID = 3;
-    string cliClientID = 4;
+    string ClientID = 3;
+    string CLIClientID = 4;
     repeated string scopes = 5;
-    map<string, github.com.argoproj.argo_cd.server.settings.oidc.Claim> idTokenClaims = 6;
+    map<string, github.com.argoproj.argo_cd.server.settings.oidc.Claim> IDTokenClaims = 6;
     bool enablePKCEAuthentication = 7;
 }
 
