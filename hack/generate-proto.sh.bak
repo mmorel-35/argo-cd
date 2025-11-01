@@ -1,11 +1,8 @@
 #! /usr/bin/env bash
 
-# This script auto-generates protobuf related files using buf. It is intended to be run manually 
-# when either API types are added/modified, or server gRPC calls are added. The generated files 
-# should then be checked into source control.
-#
-# This simplified version uses buf (https://buf.build) instead of direct protoc calls, which
-# provides better dependency management and simpler configuration.
+# This script auto-generates protobuf related files. It is intended to be run manually when either
+# API types are added/modified, or server gRPC calls are added. The generated files should then
+# be checked into source control.
 
 set -x
 set -o errexit
@@ -21,29 +18,18 @@ PATH="${PROJECT_ROOT}/dist:${PATH}"
 GOPATH=$(go env GOPATH)
 GOPATH_PROJECT_ROOT="${GOPATH}/src/github.com/argoproj/argo-cd"
 
-# Check if buf is installed
-if ! command -v buf &> /dev/null; then
-    echo "Error: buf is not installed."
-    echo "Please install buf from https://buf.build/docs/installation"
-    echo "Quick install: go install github.com/bufbuild/buf/cmd/buf@latest"
-    exit 1
-fi
-
 # output tool versions
 go version
 protoc --version
-buf --version
 swagger version
 jq --version
 
 export GO111MODULE=off
 
-# ============================================================================
-# Phase 1: Generate pkg/apis/application/v1alpha1/generated.proto from Go types
-# ============================================================================
-# This step uses go-to-protobuf which is Kubernetes-specific and cannot be
-# replaced by buf. It generates proto definitions from Go struct types.
-
+# Generate pkg/apis/<group>/<apiversion>/(generated.proto,generated.pb.go)
+# NOTE: any dependencies of our types to the k8s.io apimachinery types should be added to the
+# --apimachinery-packages= option so that go-to-protobuf can locate the types, but prefixed with a
+# '-' so that go-to-protobuf will not generate .proto files for it.
 PACKAGES=(
     github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1
 )
@@ -93,44 +79,42 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
-# ============================================================================
-# Phase 2: Use buf to generate Go code, gRPC Gateway, and Swagger from proto files
-# ============================================================================
-# This replaces the manual protoc invocation loop with buf generate, which:
-# - Automatically discovers all proto files in the workspace (excluding pkg/apis/application/v1alpha1)
-# - Handles imports and dependencies correctly
-# - Uses local plugins to avoid remote plugin rate limits
-# - Provides better error messages and validation
+# Either protoc-gen-go, protoc-gen-gofast, or protoc-gen-gogofast can be used to build
+# server/*/<service>.pb.go from .proto files. golang/protobuf and gogo/protobuf can be used
+# interchangeably. The difference in the options are:
+# 1. protoc-gen-go - official golang/protobuf
+#GOPROTOBINARY=go
+# 2. protoc-gen-gofast - fork of golang golang/protobuf. Faster code generation
+#GOPROTOBINARY=gofast
+# 3. protoc-gen-gogofast - faster code generation and gogo extensions and flexibility in controlling
+# the generated go code (e.g. customizing field names, nullable fields)
+GOPROTOBINARY=gogofast
 
-# Save the original buf.gen.yaml and create a modified version with the correct GOPATH
-# We output to $GOPATH/src (like the original script) so that files are generated
-# in the correct location based on their go_package option, with the help of symlinks
-BUF_GEN_BACKUP=$(mktemp)
-cp buf.gen.yaml "${BUF_GEN_BACKUP}"
-
-# Update buf.gen.yaml with the correct GOPATH for output directories
-# Replace "out: ." with "out: $GOPATH/src" for gogofast and grpc-gateway plugins
-sed -i.bak "s|out: \.$|out: ${GOPATH}/src|g" buf.gen.yaml
-# Keep swagger output in current directory (restore it after the above change)
-# The swagger plugin is the last one, so we can use a more specific pattern
-sed -i.bak2 '/protoc-gen-swagger/,/out:/{s|out: .*/src$|out: .|g;}' buf.gen.yaml
-
-# Run buf generate
-buf generate
-
-# Restore original buf.gen.yaml
-mv "${BUF_GEN_BACKUP}" buf.gen.yaml
-rm -f buf.gen.yaml.bak buf.gen.yaml.bak2
+# Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
+MOD_ROOT=${GOPATH}/pkg/mod
+grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway | awk '{print $NF}' | head -1)
+GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway@${grpc_gateway_version}/third_party/googleapis
+GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
+PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
+for i in ${PROTO_FILES}; do
+    protoc \
+        -I"${PROJECT_ROOT}" \
+        -I"${protoc_include}" \
+        -I./vendor \
+        -I"$GOPATH"/src \
+        -I"${GOOGLE_PROTO_API_PATH}" \
+        -I"${GOGO_PROTOBUF_PATH}" \
+        --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
+        --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
+        --swagger_out=logtostderr=true:. \
+        "$i"
+done
 
 # This file is generated but should not be checked in.
-rm -f util/askpass/askpass.swagger.json
+rm util/askpass/askpass.swagger.json
 
 [ -L "${GOPATH_PROJECT_ROOT}" ] && rm -rf "${GOPATH_PROJECT_ROOT}"
 [ -L ./v3 ] && rm -rf v3
-
-# ============================================================================
-# Phase 3: Collect and combine Swagger documentation
-# ============================================================================
 
 # collect_swagger gathers swagger files into a subdirectory
 collect_swagger() {

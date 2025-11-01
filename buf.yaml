@@ -4,6 +4,8 @@ modules:
     name: buf.build/argoproj/argo-cd
     excludes:
       - pkg/apis/application/v1alpha1
+      - dist
+      - vendor
 lint:
   use:
     - DEFAULT
