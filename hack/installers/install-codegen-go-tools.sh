@@ -51,6 +51,11 @@ go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.18.0
 # swagger cli is used to generate swagger docs
 go install github.com/go-swagger/go-swagger/cmd/swagger@v0.28.0
 
+# buf is used to generate protobuf code from .proto files
+# renovate: datasource=go packageName=github.com/bufbuild/buf
+BUF_VERSION=1.47.2
+go install github.com/bufbuild/buf/cmd/buf@v${BUF_VERSION}
+
 # goimports is used to auto-format generated code
 go install golang.org/x/tools/cmd/goimports@v0.35.0
 
