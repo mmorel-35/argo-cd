@@ -17,13 +17,13 @@ plugins:
       - Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types
       - Mgoogle/protobuf/wrappers.proto=github.com/gogo/protobuf/types
       - Mgoogle/api/annotations.proto=google.golang.org/genproto/googleapis/api/annotations
-  # Generate gRPC-Gateway reverse proxy
+  # Generate gRPC-Gateway reverse proxy (v2)
   - local: protoc-gen-grpc-gateway
     out: .
     opt:
       - logtostderr=true
-  # Generate Swagger/OpenAPI documentation
-  - local: protoc-gen-swagger
+  # Generate OpenAPI v2 documentation (replaces swagger in grpc-gateway v2)
+  - local: protoc-gen-openapiv2
     out: .
     opt:
       - logtostderr=true
