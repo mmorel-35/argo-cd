@@ -79,21 +79,15 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
-# Either protoc-gen-go, protoc-gen-gofast, or protoc-gen-gogofast can be used to build
-# server/*/<service>.pb.go from .proto files. golang/protobuf and gogo/protobuf can be used
-# interchangeably. The difference in the options are:
-# 1. protoc-gen-go - official golang/protobuf
-#GOPROTOBINARY=go
-# 2. protoc-gen-gofast - fork of golang golang/protobuf. Faster code generation
-#GOPROTOBINARY=gofast
-# 3. protoc-gen-gogofast - faster code generation and gogo extensions and flexibility in controlling
-# the generated go code (e.g. customizing field names, nullable fields)
-GOPROTOBINARY=gogofast
+# For grpc-gateway v2 compatibility, we use protoc-gen-go instead of protoc-gen-gogofast
+# protoc-gen-go generates code compatible with google.golang.org/protobuf which is required by grpc-gateway v2
+GOPROTOBINARY=go
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
-googleapis_version=$(go list -m github.com/googleapis/googleapis | awk '{print $NF}' | head -1)
+grpc_gateway_version=$(GO111MODULE=on go list -mod=readonly -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
+# googleapis is downloaded but not vendored, so we use the module cache directly
+googleapis_version="v0.0.0-20251031080037-97763d6efb2d"
 GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/googleapis/googleapis@${googleapis_version}
 GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
@@ -105,7 +99,8 @@ for i in ${PROTO_FILES}; do
         -I"$GOPATH"/src \
         -I"${GOOGLE_PROTO_API_PATH}" \
         -I"${GOGO_PROTOBUF_PATH}" \
-        --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
+        --${GOPROTOBINARY}_out=:"$GOPATH"/src \
+        --${GOPROTOBINARY}-grpc_out=:"$GOPATH"/src \
         --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
         --openapiv2_out=logtostderr=true:. \
         "$i"
