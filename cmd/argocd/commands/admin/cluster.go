@@ -130,7 +130,7 @@ func loadClusters(ctx context.Context, kubeClient kubernetes.Interface, appClien
 	batchesCount := int(math.Ceil(float64(len(clusters)) / float64(batchSize)))
 	for batchNum := range batchesCount {
 		batchStart := batchSize * batchNum
-		batchEnd := min(batchSize*(batchNum+1), len(clustersList.Items))
+		batchEnd := min((batchSize * (batchNum + 1)), len(clustersList.Items))
 		batch := clustersList.Items[batchStart:batchEnd]
 		_ = kube.RunAllAsync(len(batch), func(i int) error {
 			clusterShard := 0

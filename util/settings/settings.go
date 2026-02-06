@@ -159,7 +159,7 @@ type GoogleAnalytics struct {
 
 type GlobalProjectSettings struct {
 	ProjectName   string               `json:"projectName,omitempty"`
-	LabelSelector metav1.LabelSelector `json:"labelSelector,omitzero"`
+	LabelSelector metav1.LabelSelector `json:"labelSelector,omitempty"`
 }
 
 // Help settings
