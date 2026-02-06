@@ -550,7 +550,7 @@ func TestGetCertBundlePathForRepository(t *testing.T) {
 func TestTLSCertificateLimit(t *testing.T) {
 	var data strings.Builder
 	// Append one more than the max allowed
-	for range (CertificateMaxEntriesPerStream + 1) {
+	for range CertificateMaxEntriesPerStream + 1 {
 		data.WriteString(TestTLSValidSingleCert)
 	}
 	_, err := ParseTLSCertificatesFromData(data.String())

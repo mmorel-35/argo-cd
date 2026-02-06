@@ -1871,7 +1871,6 @@ rootCA: "invalid"`},
 	}
 
 	for _, testCase := range testCases {
-
 		t.Run(testCase.name, func(t *testing.T) {
 			if testCase.expectNilTLSConfig {
 				assert.Nil(t, testCase.settings.OIDCTLSConfig())
