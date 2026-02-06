@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
@@ -340,10 +341,5 @@ func startProcess(k8sClient kubernetes.Interface, cfg *rest.Config, namespace, p
 
 // isValidShell checks if the shell is an allowed one
 func isValidShell(validShells []string, shell string) bool {
-	for _, validShell := range validShells {
-		if validShell == shell {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(validShells, shell)
 }

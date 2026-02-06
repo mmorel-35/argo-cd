@@ -24,7 +24,7 @@ type PluginConfig struct {
 
 type PluginConfigSpec struct {
 	Version          string     `json:"version"`
-	Init             Command    `json:"init,omitempty"`
+	Init             Command    `json:"init,omitzero"`
 	Generate         Command    `json:"generate"`
 	Discover         Discover   `json:"discover"`
 	Parameters       Parameters `yaml:"parameters"`
