@@ -57,7 +57,7 @@ else
 fi
 
 # go-to-protobuf expects dependency proto files to be in $GOPATH/src. Copy them there.
-rm -rf "${GOPATH}/src/github.com/gogo/protobuf" && mkdir -p "${GOPATH}/src/github.com/gogo" && cp -r "${PROJECT_ROOT}/vendor/github.com/gogo/protobuf" "${GOPATH}/src/github.com/gogo"
+# Note: gogo/protobuf is no longer needed after migration to google.golang.org/protobuf
 rm -rf "${GOPATH}/src/k8s.io/apimachinery" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apimachinery" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/api" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/api" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/apiextensions-apiserver" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apiextensions-apiserver" "${GOPATH}/src/k8s.io"
@@ -79,23 +79,25 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
-# Either protoc-gen-go, protoc-gen-gofast, or protoc-gen-gogofast can be used to build
-# server/*/<service>.pb.go from .proto files. golang/protobuf and gogo/protobuf can be used
-# interchangeably. The difference in the options are:
-# 1. protoc-gen-go - official golang/protobuf
-#GOPROTOBINARY=go
-# 2. protoc-gen-gofast - fork of golang golang/protobuf. Faster code generation
-#GOPROTOBINARY=gofast
-# 3. protoc-gen-gogofast - faster code generation and gogo extensions and flexibility in controlling
-# the generated go code (e.g. customizing field names, nullable fields)
-GOPROTOBINARY=gogofast
+# Regenerate v1alpha1 generated.pb.go with standard protoc-gen-go (instead of gogo)
+# go-to-protobuf generates the .proto file, but we need to regenerate the .pb.go with standard protobuf
+echo "Regenerating v1alpha1 types with standard protoc-gen-go..."
+rm -f "${PROJECT_ROOT}"/pkg/apis/application/v1alpha1/generated.pb.go
+protoc \
+    -I"${PROJECT_ROOT}" \
+    -I"${protoc_include}" \
+    -I./vendor \
+    -I"$GOPATH"/src \
+    --go_out="${PROJECT_ROOT}" \
+    --go_opt=paths=source_relative \
+    "${PROJECT_ROOT}"/pkg/apis/application/v1alpha1/generated.proto
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
+# Using standard protoc-gen-go and protoc-gen-go-grpc for google.golang.org/protobuf compatibility
 MOD_ROOT=${GOPATH}/pkg/mod
 grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
 googleapis_version=$(go list -m github.com/googleapis/googleapis | awk '{print $NF}' | head -1)
 GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/googleapis/googleapis@${googleapis_version}
-GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
 for i in ${PROTO_FILES}; do
     protoc \
@@ -104,8 +106,10 @@ for i in ${PROTO_FILES}; do
         -I./vendor \
         -I"$GOPATH"/src \
         -I"${GOOGLE_PROTO_API_PATH}" \
-        -I"${GOGO_PROTOBUF_PATH}" \
-        --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
+        --go_out="$GOPATH"/src \
+        --go_opt=paths=source_relative \
+        --go-grpc_out="$GOPATH"/src \
+        --go-grpc_opt=paths=source_relative \
         --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
         --openapiv2_out=logtostderr=true:. \
         "$i"
