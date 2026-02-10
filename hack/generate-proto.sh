@@ -92,8 +92,9 @@ GOPROTOBINARY=gogofast
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway | awk '{print $NF}' | head -1)
-GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway@${grpc_gateway_version}/third_party/googleapis
+grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
+googleapis_version=$(go list -m github.com/googleapis/googleapis | awk '{print $NF}' | head -1)
+GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/googleapis/googleapis@${googleapis_version}
 GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
 for i in ${PROTO_FILES}; do
@@ -106,7 +107,7 @@ for i in ${PROTO_FILES}; do
         -I"${GOGO_PROTOBUF_PATH}" \
         --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
         --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
-        --swagger_out=logtostderr=true:. \
+        --openapiv2_out=logtostderr=true:. \
         "$i"
 done
 

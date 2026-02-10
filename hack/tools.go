@@ -8,10 +8,10 @@ import (
 	// Also, we need the gogo/protobuf/gogoproto/gogo.proto file
 	_ "github.com/gogo/protobuf/protoc-gen-gogofast"
 
-	// grpc-ecosystem/grpc-gateway is vendored because the generated *.pb.gw.go code imports it.
+	// grpc-ecosystem/grpc-gateway/v2 is vendored because the generated *.pb.gw.go code imports it.
 	// Also, we need the .proto files under grpc-gateway/third_party/googleapis
-	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"
-	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger"
+	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway"
+	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2"
 
 	// k8s.io/code-generator is vendored to get generate-groups.sh, and k8s codegen utilities
 	_ "k8s.io/code-generator"
