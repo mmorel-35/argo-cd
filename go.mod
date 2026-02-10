@@ -309,12 +309,12 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 )
 
-require github.com/grpc-ecosystem/grpc-gateway v1.16.0
-
 require (
-	github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
-	github.com/googleapis/googleapis v0.0.0-20260210210504-3b4ba526fe31 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.1
 )
+
+require github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
 
 replace (
 	github.com/golang/protobuf => github.com/golang/protobuf v1.5.4
