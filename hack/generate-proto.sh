@@ -74,23 +74,11 @@ go-to-protobuf \
     )" \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
-    --output-dir="${GOPATH}/src/"
+    --output-dir="${GOPATH}/src/" \
+    --drop-gogo-go
 
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
-
-# Regenerate v1alpha1 generated.pb.go with standard protoc-gen-go (instead of gogo)
-# go-to-protobuf generates the .proto file, but we need to regenerate the .pb.go with standard protobuf
-echo "Regenerating v1alpha1 types with standard protoc-gen-go..."
-rm -f "${PROJECT_ROOT}"/pkg/apis/application/v1alpha1/generated.pb.go
-protoc \
-    -I"${PROJECT_ROOT}" \
-    -I"${protoc_include}" \
-    -I./vendor \
-    -I"$GOPATH"/src \
-    --go_out="${PROJECT_ROOT}" \
-    --go_opt=paths=source_relative \
-    "${PROJECT_ROOT}"/pkg/apis/application/v1alpha1/generated.proto
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using standard protoc-gen-go and protoc-gen-go-grpc for google.golang.org/protobuf compatibility

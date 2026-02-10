@@ -110,7 +110,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.34.0
 	k8s.io/apimachinery v0.34.0
 	k8s.io/client-go v0.34.0
-	k8s.io/code-generator v0.34.0
+	k8s.io/code-generator v0.35.0
 	k8s.io/klog/v2 v2.130.1
 	k8s.io/kube-openapi v0.0.0-20250710124328-f3f2b991d03b
 	k8s.io/kubectl v0.34.0
@@ -311,7 +311,10 @@ require (
 
 require github.com/grpc-ecosystem/grpc-gateway v1.16.0
 
-require github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
+require (
+	github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
+	github.com/googleapis/googleapis v0.0.0-20260210210504-3b4ba526fe31 // indirect
+)
 
 replace (
 	github.com/golang/protobuf => github.com/golang/protobuf v1.5.4
