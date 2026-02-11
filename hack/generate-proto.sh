@@ -114,7 +114,7 @@ for i in ${PROTO_FILES}; do
         --go_out="$GOPATH"/src \
         --go_opt=paths=source_relative \
         --go-grpc_out="$GOPATH"/src \
-        --go-grpc_opt=paths=source_relative \
+        --go-grpc_opt=paths=source_relative,require_unimplemented_servers=false \
         --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
         --openapiv2_out=logtostderr=true:. \
         "$i"
