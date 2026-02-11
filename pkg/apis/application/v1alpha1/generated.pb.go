@@ -5,22 +5,25 @@ package v1alpha1
 
 import (
 	fmt "fmt"
+
 	github_com_argoproj_gitops_engine_pkg_health "github.com/argoproj/gitops-engine/pkg/health"
 	github_com_argoproj_gitops_engine_pkg_sync_common "github.com/argoproj/gitops-engine/pkg/sync/common"
 
 	io "io"
+	"sort"
+
 	k8s_io_api_core_v1 "k8s.io/api/core/v1"
 	v12 "k8s.io/api/core/v1"
 	v11 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
-	"sort"
 
-	intstr "k8s.io/apimachinery/pkg/util/intstr"
-	k8s_io_apimachinery_pkg_watch "k8s.io/apimachinery/pkg/watch"
 	math_bits "math/bits"
 	reflect "reflect"
 	strings "strings"
+
+	intstr "k8s.io/apimachinery/pkg/util/intstr"
+	k8s_io_apimachinery_pkg_watch "k8s.io/apimachinery/pkg/watch"
 )
 
 func (m *AWSAuthConfig) Reset() { *m = AWSAuthConfig{} }
@@ -14886,7 +14889,7 @@ func (this *AppProjectStatus) String() string {
 		return "nil"
 	}
 	keysForJWTTokensByRole := make([]string, 0, len(this.JWTTokensByRole))
-	for k, _ := range this.JWTTokensByRole {
+	for k := range this.JWTTokensByRole {
 		keysForJWTTokensByRole = append(keysForJWTTokensByRole, k)
 	}
 	sort.Strings(keysForJWTTokensByRole)
@@ -15224,7 +15227,7 @@ func (this *ApplicationSetTemplateMeta) String() string {
 		return "nil"
 	}
 	keysForLabels := make([]string, 0, len(this.Labels))
-	for k, _ := range this.Labels {
+	for k := range this.Labels {
 		keysForLabels = append(keysForLabels, k)
 	}
 	sort.Strings(keysForLabels)
@@ -15234,7 +15237,7 @@ func (this *ApplicationSetTemplateMeta) String() string {
 	}
 	mapStringForLabels += "}"
 	keysForAnnotations := make([]string, 0, len(this.Annotations))
-	for k, _ := range this.Annotations {
+	for k := range this.Annotations {
 		keysForAnnotations = append(keysForAnnotations, k)
 	}
 	sort.Strings(keysForAnnotations)
@@ -15388,7 +15391,7 @@ func (this *ApplicationSourceKustomize) String() string {
 	}
 	repeatedStringForPatches += "}"
 	keysForCommonLabels := make([]string, 0, len(this.CommonLabels))
-	for k, _ := range this.CommonLabels {
+	for k := range this.CommonLabels {
 		keysForCommonLabels = append(keysForCommonLabels, k)
 	}
 	sort.Strings(keysForCommonLabels)
@@ -15398,7 +15401,7 @@ func (this *ApplicationSourceKustomize) String() string {
 	}
 	mapStringForCommonLabels += "}"
 	keysForCommonAnnotations := make([]string, 0, len(this.CommonAnnotations))
-	for k, _ := range this.CommonAnnotations {
+	for k := range this.CommonAnnotations {
 		keysForCommonAnnotations = append(keysForCommonAnnotations, k)
 	}
 	sort.Strings(keysForCommonAnnotations)
@@ -15646,7 +15649,7 @@ func (this *Cluster) String() string {
 		return "nil"
 	}
 	keysForLabels := make([]string, 0, len(this.Labels))
-	for k, _ := range this.Labels {
+	for k := range this.Labels {
 		keysForLabels = append(keysForLabels, k)
 	}
 	sort.Strings(keysForLabels)
@@ -15656,7 +15659,7 @@ func (this *Cluster) String() string {
 	}
 	mapStringForLabels += "}"
 	keysForAnnotations := make([]string, 0, len(this.Annotations))
-	for k, _ := range this.Annotations {
+	for k := range this.Annotations {
 		keysForAnnotations = append(keysForAnnotations, k)
 	}
 	sort.Strings(keysForAnnotations)
@@ -15717,7 +15720,7 @@ func (this *ClusterGenerator) String() string {
 		return "nil"
 	}
 	keysForValues := make([]string, 0, len(this.Values))
-	for k, _ := range this.Values {
+	for k := range this.Values {
 		keysForValues = append(keysForValues, k)
 	}
 	sort.Strings(keysForValues)
@@ -15895,7 +15898,7 @@ func (this *DuckTypeGenerator) String() string {
 		return "nil"
 	}
 	keysForValues := make([]string, 0, len(this.Values))
-	for k, _ := range this.Values {
+	for k := range this.Values {
 		keysForValues = append(keysForValues, k)
 	}
 	sort.Strings(keysForValues)
@@ -15931,7 +15934,7 @@ func (this *ExecProviderConfig) String() string {
 		return "nil"
 	}
 	keysForEnv := make([]string, 0, len(this.Env))
-	for k, _ := range this.Env {
+	for k := range this.Env {
 		keysForEnv = append(keysForEnv, k)
 	}
 	sort.Strings(keysForEnv)
@@ -15987,7 +15990,7 @@ func (this *GitGenerator) String() string {
 	}
 	repeatedStringForFiles += "}"
 	keysForValues := make([]string, 0, len(this.Values))
-	for k, _ := range this.Values {
+	for k := range this.Values {
 		keysForValues = append(keysForValues, k)
 	}
 	sort.Strings(keysForValues)
@@ -16095,7 +16098,7 @@ func (this *HostInfo) String() string {
 	}
 	repeatedStringForResourcesInfo += "}"
 	keysForLabels := make([]string, 0, len(this.Labels))
-	for k, _ := range this.Labels {
+	for k := range this.Labels {
 		keysForLabels = append(keysForLabels, k)
 	}
 	sort.Strings(keysForLabels)
@@ -16258,7 +16261,7 @@ func (this *KustomizePatch) String() string {
 		return "nil"
 	}
 	keysForOptions := make([]string, 0, len(this.Options))
-	for k, _ := range this.Options {
+	for k := range this.Options {
 		keysForOptions = append(keysForOptions, k)
 	}
 	sort.Strings(keysForOptions)
@@ -16345,7 +16348,7 @@ func (this *ManagedNamespaceMetadata) String() string {
 		return "nil"
 	}
 	keysForLabels := make([]string, 0, len(this.Labels))
-	for k, _ := range this.Labels {
+	for k := range this.Labels {
 		keysForLabels = append(keysForLabels, k)
 	}
 	sort.Strings(keysForLabels)
@@ -16355,7 +16358,7 @@ func (this *ManagedNamespaceMetadata) String() string {
 	}
 	mapStringForLabels += "}"
 	keysForAnnotations := make([]string, 0, len(this.Annotations))
-	for k, _ := range this.Annotations {
+	for k := range this.Annotations {
 		keysForAnnotations = append(keysForAnnotations, k)
 	}
 	sort.Strings(keysForAnnotations)
@@ -16511,7 +16514,7 @@ func (this *OptionalMap) String() string {
 		return "nil"
 	}
 	keysForMap := make([]string, 0, len(this.Map))
-	for k, _ := range this.Map {
+	for k := range this.Map {
 		keysForMap = append(keysForMap, k)
 	}
 	sort.Strings(keysForMap)
@@ -16581,7 +16584,7 @@ func (this *PluginGenerator) String() string {
 		return "nil"
 	}
 	keysForValues := make([]string, 0, len(this.Values))
-	for k, _ := range this.Values {
+	for k := range this.Values {
 		keysForValues = append(keysForValues, k)
 	}
 	sort.Strings(keysForValues)
@@ -16605,7 +16608,7 @@ func (this *PluginInput) String() string {
 		return "nil"
 	}
 	keysForParameters := make([]string, 0, len(this.Parameters))
-	for k, _ := range this.Parameters {
+	for k := range this.Parameters {
 		keysForParameters = append(keysForParameters, k)
 	}
 	sort.Strings(keysForParameters)
@@ -16649,7 +16652,7 @@ func (this *PullRequestGenerator) String() string {
 	}
 	repeatedStringForFilters += "}"
 	keysForValues := make([]string, 0, len(this.Values))
-	for k, _ := range this.Values {
+	for k := range this.Values {
 		keysForValues = append(keysForValues, k)
 	}
 	sort.Strings(keysForValues)
@@ -17024,7 +17027,7 @@ func (this *ResourceNetworkingInfo) String() string {
 	}
 	repeatedStringForIngress += "}"
 	keysForTargetLabels := make([]string, 0, len(this.TargetLabels))
-	for k, _ := range this.TargetLabels {
+	for k := range this.TargetLabels {
 		keysForTargetLabels = append(keysForTargetLabels, k)
 	}
 	sort.Strings(keysForTargetLabels)
@@ -17034,7 +17037,7 @@ func (this *ResourceNetworkingInfo) String() string {
 	}
 	mapStringForTargetLabels += "}"
 	keysForLabels := make([]string, 0, len(this.Labels))
-	for k, _ := range this.Labels {
+	for k := range this.Labels {
 		keysForLabels = append(keysForLabels, k)
 	}
 	sort.Strings(keysForLabels)
@@ -17229,7 +17232,7 @@ func (this *SCMProviderGenerator) String() string {
 	}
 	repeatedStringForFilters += "}"
 	keysForValues := make([]string, 0, len(this.Values))
-	for k, _ := range this.Values {
+	for k := range this.Values {
 		keysForValues = append(keysForValues, k)
 	}
 	sort.Strings(keysForValues)

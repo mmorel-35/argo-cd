@@ -91,9 +91,9 @@ go mod vendor
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using protoc with LOCAL plugins for compatibility with existing import structure
 MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
-googleapis_version=$(go list -m github.com/googleapis/googleapis | awk '{print $NF}' | head -1)
-GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/googleapis/googleapis@${googleapis_version}
+grpc_gateway_version=$(GO111MODULE=on go list -m -mod=readonly github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
+# Use google/api proto files from grpc-gateway v1 (v2 doesn't include these)
+GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway@v1.16.0/third_party/googleapis
 
 # Ensure all required LOCAL plugins are available
 for plugin in protoc-gen-go protoc-gen-go-grpc protoc-gen-grpc-gateway protoc-gen-openapiv2; do
@@ -110,6 +110,7 @@ for i in ${PROTO_FILES}; do
         -I"${PROJECT_ROOT}" \
         -I./vendor \
         -I"$GOPATH"/src \
+        -I"${protoc_include}" \
         -I"${GOOGLE_PROTO_API_PATH}" \
         --go_out="$GOPATH"/src \
         --go_opt=paths=source_relative \
