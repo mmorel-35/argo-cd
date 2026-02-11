@@ -81,9 +81,7 @@ go-to-protobuf \
     )" \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
-    --output-dir="${GOPATH}/src/" \
-    --drop-gogo-go \
-    --keep-gogoproto=false
+    --output-dir="${GOPATH}/src/"
 
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
@@ -91,7 +89,6 @@ go mod vendor
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using protoc with LOCAL plugins for compatibility with existing import structure
 MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(GO111MODULE=on go list -m -mod=mod github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
 # Use official googleapis proto files from github.com/googleapis/googleapis
 # Check if googleapis is in go.mod and get its version
 googleapis_version=$(GO111MODULE=on go mod edit -json | jq -r '.Require[] | select(.Path == "github.com/googleapis/googleapis") | .Version')
@@ -99,13 +96,13 @@ if [ -z "$googleapis_version" ]; then
     # googleapis not in go.mod, add it with a pinned version
     # Use the same version that was last used in the project
     googleapis_version="v0.0.0-20260211014246-9eea40c74d97"
-    GO111MODULE=on go get github.com/googleapis/googleapis@${googleapis_version}
+    GO111MODULE=on go get "github.com/googleapis/googleapis@${googleapis_version}"
     go mod vendor
 else
     # googleapis exists in go.mod, use that version
     # Download if not already present in module cache
-    if ! GO111MODULE=on go list -m github.com/googleapis/googleapis@${googleapis_version} &> /dev/null; then
-        GO111MODULE=on go get github.com/googleapis/googleapis@${googleapis_version}
+    if ! GO111MODULE=on go list -m "github.com/googleapis/googleapis@${googleapis_version}" &> /dev/null; then
+        GO111MODULE=on go get "github.com/googleapis/googleapis@${googleapis_version}"
         go mod vendor
     fi
 fi
