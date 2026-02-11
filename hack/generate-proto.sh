@@ -92,9 +92,8 @@ GOPROTOBINARY=gogofast
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 MOD_ROOT=${GOPATH}/pkg/mod
-# grpc-gateway v2 doesn't bundle googleapis, so we get them from v1 which is still an indirect dependency
-grpc_gateway_v1_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway | awk '{print $NF}' | head -1)
-GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway@${grpc_gateway_v1_version}/third_party/googleapis
+# Use local googleapis proto files instead of bundled ones from grpc-gateway v1
+GOOGLE_PROTO_API_PATH=${PROJECT_ROOT}/hack/googleapis
 GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
 for i in ${PROTO_FILES}; do
