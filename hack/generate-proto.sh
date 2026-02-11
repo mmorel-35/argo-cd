@@ -82,7 +82,8 @@ go-to-protobuf \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
     --output-dir="${GOPATH}/src/" \
-    --drop-gogo-go
+    --drop-gogo-go \
+    --keep-gogoproto=false
 
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
