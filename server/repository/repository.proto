@@ -117,8 +117,8 @@ message RepoUpdateRequest {
 service RepositoryService {
 
 	// List returns list of repos or repository credentials
+	// DEPRECATED: Use ListRepositories instead. HTTP gateway binding removed for grpc-gateway v2 compatibility.
 	rpc List(RepoQuery) returns (github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.RepositoryList) {
-		option (google.api.http).get = "/api/v1/repositories";
 		option deprecated = true;
 	}
 
@@ -169,11 +169,8 @@ service RepositoryService {
 	}
 
 	// Create creates a repo or a repo credential set
+	// DEPRECATED: Use CreateRepository instead. HTTP gateway binding removed for grpc-gateway v2 compatibility.
 	rpc Create(RepoCreateRequest) returns (github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.Repository) {
-		option (google.api.http) = {
-			post: "/api/v1/repositories"
-			body: "repo"
-		};
 		option deprecated = true;
 	}
 
@@ -194,11 +191,8 @@ service RepositoryService {
 	}
 
 	// Update updates a repo or repo credential set
+	// DEPRECATED: Use UpdateRepository instead. HTTP gateway binding removed for grpc-gateway v2 compatibility.
 	rpc Update(RepoUpdateRequest) returns (github.com.argoproj.argo_cd.v3.pkg.apis.application.v1alpha1.Repository) {
-		option (google.api.http) = {
-			put: "/api/v1/repositories/{repo.repo}"
-			body: "repo"
-		};
 		option deprecated = true;
 	}
 
@@ -219,8 +213,8 @@ service RepositoryService {
 	}
 
 	// Delete deletes a repository from the configuration
+	// DEPRECATED: Use DeleteRepository instead. HTTP gateway binding removed for grpc-gateway v2 compatibility.
 	rpc Delete(RepoQuery) returns (RepoResponse) {
-		option (google.api.http).delete = "/api/v1/repositories/{repo}";
 		option deprecated = true;
 	}
 
