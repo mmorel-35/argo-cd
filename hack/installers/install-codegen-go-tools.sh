@@ -23,7 +23,7 @@ mkdir -p "$GOBIN"
 
 # protoc-gen-go* is used to generate <service>.pb.go from .proto files
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.1
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.1
 
 # protoc-gen-grpc-gateway is used to build <service>.pb.gw.go files from .proto files
 go_mod_install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway

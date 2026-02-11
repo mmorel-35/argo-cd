@@ -88,6 +88,17 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
+# Run protoc on generated.proto to create generated.pb.go with google.golang.org/protobuf
+# This is needed after go-to-protobuf with --drop-gogo-go which generates .proto but not .pb.go
+protoc \
+    -I"${PROJECT_ROOT}" \
+    -I./vendor \
+    -I"$GOPATH"/src \
+    -I"${protoc_include}" \
+    --go_out="$GOPATH"/src \
+    --go_opt=paths=source_relative \
+    "${PROJECT_ROOT}"/pkg/apis/application/v1alpha1/generated.proto
+
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using protoc with LOCAL plugins for compatibility with existing import structure
 MOD_ROOT=${GOPATH}/pkg/mod

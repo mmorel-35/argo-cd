@@ -135,7 +135,7 @@ func (c *applicationSetServiceClient) ListResourceEvents(ctx context.Context, in
 }
 
 // ApplicationSetServiceServer is the server API for ApplicationSetService service.
-// All implementations must embed UnimplementedApplicationSetServiceServer
+// All implementations should embed UnimplementedApplicationSetServiceServer
 // for forward compatibility.
 //
 // ApplicationSetService
@@ -154,10 +154,9 @@ type ApplicationSetServiceServer interface {
 	ResourceTree(context.Context, *ApplicationSetTreeQuery) (*v1alpha1.ApplicationSetTree, error)
 	// ListResourceEvents returns a list of event resources
 	ListResourceEvents(context.Context, *ApplicationSetGetQuery) (*v1.EventList, error)
-	mustEmbedUnimplementedApplicationSetServiceServer()
 }
 
-// UnimplementedApplicationSetServiceServer must be embedded to have
+// UnimplementedApplicationSetServiceServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
@@ -185,8 +184,7 @@ func (UnimplementedApplicationSetServiceServer) ResourceTree(context.Context, *A
 func (UnimplementedApplicationSetServiceServer) ListResourceEvents(context.Context, *ApplicationSetGetQuery) (*v1.EventList, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListResourceEvents not implemented")
 }
-func (UnimplementedApplicationSetServiceServer) mustEmbedUnimplementedApplicationSetServiceServer() {}
-func (UnimplementedApplicationSetServiceServer) testEmbeddedByValue()                               {}
+func (UnimplementedApplicationSetServiceServer) testEmbeddedByValue() {}
 
 // UnsafeApplicationSetServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to ApplicationSetServiceServer will
