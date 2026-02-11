@@ -157,7 +157,21 @@ EOF
       (.definitions[]?.properties[]? | select(.type == "string" and .format == "int64")) |= (.type = "integer")
     ' "${COMBINED_SWAGGER}" |
         jq '.definitions.v1Time.type = "string" | .definitions.v1Time.format = "date-time" | del(.definitions.v1Time.properties)' |
-        jq '.definitions.v1alpha1ResourceNode.allOf = [{"$ref": "#/definitions/v1alpha1ResourceRef"}] | del(.definitions.v1alpha1ResourceNode.properties.resourceRef) ' \
+        jq '.definitions.v1alpha1ResourceNode.allOf = [{"$ref": "#/definitions/v1alpha1ResourceRef"}] | del(.definitions.v1alpha1ResourceNode.properties.resourceRef) ' |
+        jq '
+          # Clean Kubernetes code generation markers from descriptions and titles
+          # Remove lines starting with + (e.g., +optional, +genclient, +kubebuilder:resource, etc.)
+          walk(
+            if type == "object" then
+              if .description and (.description | type) == "string" then
+                .description |= (split("\n") | map(select(startswith("+") | not)) | join("\n") | sub("\\n+$"; ""))
+              else . end |
+              if .title and (.title | type) == "string" then
+                .title |= (split("\n") | map(select(startswith("+") | not)) | join("\n") | sub("\\n+$"; ""))
+              else . end
+            else . end
+          )
+        ' \
             >"${SWAGGER_OUT}"
 
     /bin/rm "${PRIMARY_SWAGGER}" "${COMBINED_SWAGGER}"
