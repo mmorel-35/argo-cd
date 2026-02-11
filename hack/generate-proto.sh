@@ -3,6 +3,12 @@
 # This script auto-generates protobuf related files. It is intended to be run manually when either
 # API types are added/modified, or server gRPC calls are added. The generated files should then
 # be checked into source control.
+#
+# This script uses LOCAL protoc plugins installed in dist/ directory to avoid:
+# - Network dependency and rate limiting issues with remote plugins
+# - Inconsistent results from different plugin versions
+# All plugins (protoc-gen-go, protoc-gen-go-grpc, protoc-gen-grpc-gateway, protoc-gen-openapiv2)
+# must be installed before running this script via: go install <plugin>@<version>
 
 set -x
 set -o errexit
