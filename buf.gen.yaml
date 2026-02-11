@@ -1,0 +1,27 @@
+version: v2
+managed:
+  enabled: false
+plugins:
+  # Standard Go protobuf plugin (local)
+  - local: protoc-gen-go
+    out: .
+    opt:
+      - paths=source_relative
+  # gRPC Go plugin (local)
+  - local: protoc-gen-go-grpc
+    out: .
+    opt:
+      - paths=source_relative
+  # grpc-gateway plugin (local) - only for server protos
+  - local: protoc-gen-grpc-gateway
+    out: .
+    opt:
+      - paths=source_relative
+      - logtostderr=true
+  # OpenAPI v2 (Swagger) plugin (local)
+  - local: protoc-gen-openapiv2
+    out: .
+    opt:
+      - logtostderr=true
+      - output_format=json
+      - simple_operation_ids=true

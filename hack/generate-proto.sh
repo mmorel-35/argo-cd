@@ -1,14 +1,17 @@
 #! /usr/bin/env bash
 
-# This script auto-generates protobuf related files. It is intended to be run manually when either
-# API types are added/modified, or server gRPC calls are added. The generated files should then
-# be checked into source control.
+# This script auto-generates protobuf related files.
+# It is intended to be run manually when either API types are added/modified,
+# or server gRPC calls are added. The generated files should then be checked into source control.
 #
-# This script uses LOCAL protoc plugins installed in dist/ directory to avoid:
-# - Network dependency and rate limiting issues with remote plugins
-# - Inconsistent results from different plugin versions
-# All plugins (protoc-gen-go, protoc-gen-go-grpc, protoc-gen-grpc-gateway, protoc-gen-openapiv2)
-# must be installed before running this script via: go install <plugin>@<version>
+# This script uses:
+# - Buf v2 for proto linting and breaking change detection (optional but recommended)
+# - protoc with LOCAL plugins for code generation (avoids network dependencies)
+# - go-to-protobuf v0.35.1 for v1alpha1 CRD types (handles dual type definitions)
+#
+# Note: protoc is used for generation instead of `buf generate` because the proto files
+# use non-standard import paths that require protoc's -I directory handling.
+# Buf is still used for linting to improve proto file quality.
 
 set -x
 set -o errexit
@@ -26,7 +29,7 @@ GOPATH_PROJECT_ROOT="${GOPATH}/src/github.com/argoproj/argo-cd"
 
 # output tool versions
 go version
-protoc --version
+buf --version 2>/dev/null || echo "buf not installed (optional - used for linting)"
 swagger version
 jq --version
 
@@ -86,17 +89,36 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
+# Run buf lint for proto file quality checks (optional but recommended)
+echo "Running Buf lint checks..."
+if command -v buf &> /dev/null; then
+    # Buf lint helps catch common proto issues
+    buf lint --path server --path reposerver --path cmpserver --path commitserver --path util/askpass || echo "Buf lint found issues (non-fatal)"
+fi
+
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
-# Using standard protoc-gen-go and protoc-gen-go-grpc for google.golang.org/protobuf compatibility
+# Using protoc with LOCAL plugins for compatibility with existing import structure
+# Note: protoc is used instead of `buf generate` because the proto files use
+# non-standard import paths (github.com/argoproj/argo-cd/v3/...) that require
+# specific -I directory handling that Buf doesn't support the same way.
 MOD_ROOT=${GOPATH}/pkg/mod
 grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
 googleapis_version=$(go list -m github.com/googleapis/googleapis | awk '{print $NF}' | head -1)
 GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/googleapis/googleapis@${googleapis_version}
+
+# Ensure all required LOCAL plugins are available
+for plugin in protoc-gen-go protoc-gen-go-grpc protoc-gen-grpc-gateway protoc-gen-openapiv2; do
+    if ! command -v "$plugin" &> /dev/null; then
+        echo "ERROR: $plugin not found in PATH"
+        echo "Please ensure it's installed in dist/ directory"
+        exit 1
+    fi
+done
+
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
 for i in ${PROTO_FILES}; do
     protoc \
         -I"${PROJECT_ROOT}" \
-        -I"${protoc_include}" \
         -I./vendor \
         -I"$GOPATH"/src \
         -I"${GOOGLE_PROTO_API_PATH}" \
