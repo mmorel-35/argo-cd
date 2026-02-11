@@ -1,8 +1,15 @@
 #! /usr/bin/env bash
 
-# This script auto-generates protobuf related files. It is intended to be run manually when either
-# API types are added/modified, or server gRPC calls are added. The generated files should then
-# be checked into source control.
+# This script auto-generates protobuf related files.
+# It is intended to be run manually when either API types are added/modified,
+# or server gRPC calls are added. The generated files should then be checked into source control.
+#
+# This script uses:
+# - protoc with LOCAL plugins for code generation (avoids network dependencies)
+# - go-to-protobuf v0.35.1 for v1alpha1 CRD types (handles dual type definitions)
+#
+# All protoc plugins (protoc-gen-go, protoc-gen-go-grpc, protoc-gen-grpc-gateway, 
+# protoc-gen-openapiv2) must be installed locally in dist/ before running.
 
 set -x
 set -o errexit
@@ -57,7 +64,7 @@ else
 fi
 
 # go-to-protobuf expects dependency proto files to be in $GOPATH/src. Copy them there.
-rm -rf "${GOPATH}/src/github.com/gogo/protobuf" && mkdir -p "${GOPATH}/src/github.com/gogo" && cp -r "${PROJECT_ROOT}/vendor/github.com/gogo/protobuf" "${GOPATH}/src/github.com/gogo"
+# Note: gogo/protobuf is no longer needed after migration to google.golang.org/protobuf
 rm -rf "${GOPATH}/src/k8s.io/apimachinery" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apimachinery" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/api" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/api" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/apiextensions-apiserver" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apiextensions-apiserver" "${GOPATH}/src/k8s.io"
@@ -74,39 +81,42 @@ go-to-protobuf \
     )" \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
-    --output-dir="${GOPATH}/src/"
+    --output-dir="${GOPATH}/src/" \
+    --drop-gogo-go \
+    --keep-gogoproto=false
 
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
-# Either protoc-gen-go, protoc-gen-gofast, or protoc-gen-gogofast can be used to build
-# server/*/<service>.pb.go from .proto files. golang/protobuf and gogo/protobuf can be used
-# interchangeably. The difference in the options are:
-# 1. protoc-gen-go - official golang/protobuf
-#GOPROTOBINARY=go
-# 2. protoc-gen-gofast - fork of golang golang/protobuf. Faster code generation
-#GOPROTOBINARY=gofast
-# 3. protoc-gen-gogofast - faster code generation and gogo extensions and flexibility in controlling
-# the generated go code (e.g. customizing field names, nullable fields)
-GOPROTOBINARY=gogofast
-
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
+# Using protoc with LOCAL plugins for compatibility with existing import structure
 MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway | awk '{print $NF}' | head -1)
-GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway@${grpc_gateway_version}/third_party/googleapis
-GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
+grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
+googleapis_version=$(go list -m github.com/googleapis/googleapis | awk '{print $NF}' | head -1)
+GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/googleapis/googleapis@${googleapis_version}
+
+# Ensure all required LOCAL plugins are available
+for plugin in protoc-gen-go protoc-gen-go-grpc protoc-gen-grpc-gateway protoc-gen-openapiv2; do
+    if ! command -v "$plugin" &> /dev/null; then
+        echo "ERROR: $plugin not found in PATH"
+        echo "Please ensure it's installed in dist/ directory"
+        exit 1
+    fi
+done
+
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
 for i in ${PROTO_FILES}; do
     protoc \
         -I"${PROJECT_ROOT}" \
-        -I"${protoc_include}" \
         -I./vendor \
         -I"$GOPATH"/src \
         -I"${GOOGLE_PROTO_API_PATH}" \
-        -I"${GOGO_PROTOBUF_PATH}" \
-        --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
+        --go_out="$GOPATH"/src \
+        --go_opt=paths=source_relative \
+        --go-grpc_out="$GOPATH"/src \
+        --go-grpc_opt=paths=source_relative \
         --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
-        --swagger_out=logtostderr=true:. \
+        --openapiv2_out=logtostderr=true:. \
         "$i"
 done
 
@@ -148,7 +158,21 @@ EOF
       (.definitions[]?.properties[]? | select(.type == "string" and .format == "int64")) |= (.type = "integer")
     ' "${COMBINED_SWAGGER}" |
         jq '.definitions.v1Time.type = "string" | .definitions.v1Time.format = "date-time" | del(.definitions.v1Time.properties)' |
-        jq '.definitions.v1alpha1ResourceNode.allOf = [{"$ref": "#/definitions/v1alpha1ResourceRef"}] | del(.definitions.v1alpha1ResourceNode.properties.resourceRef) ' \
+        jq '.definitions.v1alpha1ResourceNode.allOf = [{"$ref": "#/definitions/v1alpha1ResourceRef"}] | del(.definitions.v1alpha1ResourceNode.properties.resourceRef) ' |
+        jq '
+          # Clean Kubernetes code generation markers from descriptions and titles
+          # Remove lines starting with + (e.g., +optional, +genclient, +kubebuilder:resource, etc.)
+          walk(
+            if type == "object" then
+              if .description and (.description | type) == "string" then
+                .description |= (split("\n") | map(select(startswith("+") | not)) | join("\n") | sub("\\n+$"; ""))
+              else . end |
+              if .title and (.title | type) == "string" then
+                .title |= (split("\n") | map(select(startswith("+") | not)) | join("\n") | sub("\\n+$"; ""))
+              else . end
+            else . end
+          )
+        ' \
             >"${SWAGGER_OUT}"
 
     /bin/rm "${PRIMARY_SWAGGER}" "${COMBINED_SWAGGER}"
