@@ -5,13 +5,11 @@
 # or server gRPC calls are added. The generated files should then be checked into source control.
 #
 # This script uses:
-# - Buf v2 for proto linting and breaking change detection (optional but recommended)
 # - protoc with LOCAL plugins for code generation (avoids network dependencies)
 # - go-to-protobuf v0.35.1 for v1alpha1 CRD types (handles dual type definitions)
 #
-# Note: protoc is used for generation instead of `buf generate` because the proto files
-# use non-standard import paths that require protoc's -I directory handling.
-# Buf is still used for linting to improve proto file quality.
+# All protoc plugins (protoc-gen-go, protoc-gen-go-grpc, protoc-gen-grpc-gateway, 
+# protoc-gen-openapiv2) must be installed locally in dist/ before running.
 
 set -x
 set -o errexit
@@ -29,7 +27,7 @@ GOPATH_PROJECT_ROOT="${GOPATH}/src/github.com/argoproj/argo-cd"
 
 # output tool versions
 go version
-buf --version 2>/dev/null || echo "buf not installed (optional - used for linting)"
+protoc --version
 swagger version
 jq --version
 
@@ -89,18 +87,8 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
-# Run buf lint for proto file quality checks (optional but recommended)
-echo "Running Buf lint checks..."
-if command -v buf &> /dev/null; then
-    # Buf lint helps catch common proto issues
-    buf lint --path server --path reposerver --path cmpserver --path commitserver --path util/askpass || echo "Buf lint found issues (non-fatal)"
-fi
-
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using protoc with LOCAL plugins for compatibility with existing import structure
-# Note: protoc is used instead of `buf generate` because the proto files use
-# non-standard import paths (github.com/argoproj/argo-cd/v3/...) that require
-# specific -I directory handling that Buf doesn't support the same way.
 MOD_ROOT=${GOPATH}/pkg/mod
 grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
 googleapis_version=$(go list -m github.com/googleapis/googleapis | awk '{print $NF}' | head -1)
