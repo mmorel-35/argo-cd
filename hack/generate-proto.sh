@@ -79,16 +79,10 @@ go-to-protobuf \
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
 
-# Either protoc-gen-go, protoc-gen-gofast, or protoc-gen-gogofast can be used to build
-# server/*/<service>.pb.go from .proto files. golang/protobuf and gogo/protobuf can be used
-# interchangeably. The difference in the options are:
-# 1. protoc-gen-go - official golang/protobuf
-#GOPROTOBINARY=go
-# 2. protoc-gen-gofast - fork of golang golang/protobuf. Faster code generation
-#GOPROTOBINARY=gofast
-# 3. protoc-gen-gogofast - faster code generation and gogo extensions and flexibility in controlling
-# the generated go code (e.g. customizing field names, nullable fields)
-GOPROTOBINARY=gogofast
+# protoc-gen-go is the official protocol buffer compiler for Go
+# We use it with grpc-gateway v2 which requires google.golang.org/protobuf
+# Previously used protoc-gen-gogofast (gogo/protobuf) which is incompatible with grpc-gateway v2
+GOPROTOBINARY=go
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 MOD_ROOT=${GOPATH}/pkg/mod
@@ -104,7 +98,8 @@ for i in ${PROTO_FILES}; do
         -I"$GOPATH"/src \
         -I"${GOOGLE_PROTO_API_PATH}" \
         -I"${GOGO_PROTOBUF_PATH}" \
-        --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
+        --${GOPROTOBINARY}_out="$GOPATH"/src \
+        --go-grpc_out="$GOPATH"/src \
         --grpc-gateway_out=logtostderr=true,allow_delete_body=true:"$GOPATH"/src \
         "$i"
     # Note: openapiv2 generation temporarily disabled due to duplicate HTTP annotations
