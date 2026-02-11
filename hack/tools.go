@@ -13,6 +13,9 @@ import (
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway"
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2"
 
+	// googleapis is vendored for the .proto files
+	_ "github.com/googleapis/googleapis"
+
 	// k8s.io/code-generator is vendored to get generate-groups.sh, and k8s codegen utilities
 	_ "k8s.io/code-generator"
 	_ "k8s.io/code-generator/cmd/client-gen"
