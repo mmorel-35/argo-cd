@@ -157,7 +157,12 @@ rsync -av "$GOPATH"/src/reposerver/ "$PROJECT_ROOT"/reposerver/
 rsync -av "$GOPATH"/src/cmpserver/ "$PROJECT_ROOT"/cmpserver/
 rsync -av "$GOPATH"/src/commitserver/ "$PROJECT_ROOT"/commitserver/
 rsync -av "$GOPATH"/src/util/ "$PROJECT_ROOT"/util/
-rsync -av "$GOPATH"/src/github.com/argoproj/argo-cd/v3/pkg/ "$PROJECT_ROOT"/pkg/
+
+# NOTE: We do NOT compile pkg/apis/application/v1alpha1/generated.proto with standard protoc
+# because it would redefine the types that are already defined in the manual Go files.
+# The Kubernetes CRD types require gogo/protobuf's special protoc-gen-gogo which can generate
+# protobuf methods without redefining types. For now, we keep the old generated.pb.go for v1alpha1.
+# The grpc-gateway generated code will use the gogo-based types from v1alpha1.
 
 # This file is generated but should not be checked in.
 rm util/askpass/askpass.swagger.json
