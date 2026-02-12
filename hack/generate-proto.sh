@@ -92,6 +92,14 @@ go mod vendor
 GOGO_PROTOBUF_VERSION=$(go list -m -f '{{.Version}}' github.com/gogo/protobuf)
 GOGO_PROTOBUF_PATH="${GOPATH}/pkg/mod/github.com/gogo/protobuf@${GOGO_PROTOBUF_VERSION}"
 
+# Create proper import structure for gogo/protobuf so protoc can find it
+# The .proto files import "github.com/gogo/protobuf/gogoproto/gogo.proto"
+# So we need to make that path resolvable
+PROTO_IMPORTS_DIR="${PROJECT_ROOT}/dist/proto-imports"
+rm -rf "${PROTO_IMPORTS_DIR}"
+mkdir -p "${PROTO_IMPORTS_DIR}/github.com/gogo"
+ln -sf "${GOGO_PROTOBUF_PATH}" "${PROTO_IMPORTS_DIR}/github.com/gogo/protobuf"
+
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using protoc with LOCAL plugins for compatibility with existing import structure
 MOD_ROOT=${GOPATH}/pkg/mod
@@ -131,7 +139,7 @@ for i in ${PROTO_FILES}; do
         -I"$GOPATH"/src \
         -I"${protoc_include}" \
         -I"${GOOGLE_PROTO_API_PATH}" \
-        -I"${GOGO_PROTOBUF_PATH}" \
+        -I"${PROTO_IMPORTS_DIR}" \
         --go_out="$GOPATH"/src \
         --go_opt=paths=source_relative \
         --go-grpc_out="$GOPATH"/src \
@@ -140,6 +148,16 @@ for i in ${PROTO_FILES}; do
         --openapiv2_out=logtostderr=true:. \
         "$i"
 done
+
+# Copy generated files from GOPATH/src back to project root
+# The files are generated with paths=source_relative, so they're at $GOPATH/src/<relative-path>
+# We need to copy them to the project root
+rsync -av "$GOPATH"/src/server/ "$PROJECT_ROOT"/server/
+rsync -av "$GOPATH"/src/reposerver/ "$PROJECT_ROOT"/reposerver/
+rsync -av "$GOPATH"/src/cmpserver/ "$PROJECT_ROOT"/cmpserver/
+rsync -av "$GOPATH"/src/commitserver/ "$PROJECT_ROOT"/commitserver/
+rsync -av "$GOPATH"/src/util/ "$PROJECT_ROOT"/util/
+rsync -av "$GOPATH"/src/github.com/argoproj/argo-cd/v3/pkg/ "$PROJECT_ROOT"/pkg/
 
 # This file is generated but should not be checked in.
 rm util/askpass/askpass.swagger.json

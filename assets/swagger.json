@@ -11571,40 +11571,40 @@
       "name": "RepoCredsService"
     },
     {
-      "name": "ClusterService"
-    },
-    {
-      "name": "ApplicationService"
-    },
-    {
-      "name": "CertificateService"
-    },
-    {
-      "name": "ProjectService"
-    },
-    {
-      "name": "SessionService"
-    },
-    {
-      "name": "VersionService"
-    },
-    {
-      "name": "ApplicationSetService"
-    },
-    {
-      "name": "SettingsService"
-    },
-    {
       "name": "AccountService"
-    },
-    {
-      "name": "GPGKeyService"
     },
     {
       "name": "RepositoryService"
     },
     {
+      "name": "ProjectService"
+    },
+    {
+      "name": "ApplicationService"
+    },
+    {
       "name": "NotificationService"
+    },
+    {
+      "name": "ApplicationSetService"
+    },
+    {
+      "name": "SessionService"
+    },
+    {
+      "name": "CertificateService"
+    },
+    {
+      "name": "ClusterService"
+    },
+    {
+      "name": "SettingsService"
+    },
+    {
+      "name": "GPGKeyService"
+    },
+    {
+      "name": "VersionService"
     }
   ]
 }
