@@ -37,7 +37,7 @@ var (
 
 var filter_CertificateService_ListCertificates_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_CertificateService_ListCertificates_0(ctx context.Context, marshaler runtime.Marshaler, client CertificateServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CertificateService_ListCertificates_0(ctx context.Context, marshaler runtime.Marshaler, client CertificateServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepositoryCertificateQuery
 		metadata runtime.ServerMetadata
@@ -55,7 +55,7 @@ func request_CertificateService_ListCertificates_0(ctx context.Context, marshale
 	return msg, metadata, err
 }
 
-func local_request_CertificateService_ListCertificates_0(ctx context.Context, marshaler runtime.Marshaler, server CertificateServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CertificateService_ListCertificates_0(ctx context.Context, marshaler runtime.Marshaler, server CertificateServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepositoryCertificateQuery
 		metadata runtime.ServerMetadata
@@ -72,7 +72,7 @@ func local_request_CertificateService_ListCertificates_0(ctx context.Context, ma
 
 var filter_CertificateService_CreateCertificate_0 = &utilities.DoubleArray{Encoding: map[string]int{"certificates": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_CertificateService_CreateCertificate_0(ctx context.Context, marshaler runtime.Marshaler, client CertificateServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CertificateService_CreateCertificate_0(ctx context.Context, marshaler runtime.Marshaler, client CertificateServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepositoryCertificateCreateRequest
 		metadata runtime.ServerMetadata
@@ -93,7 +93,7 @@ func request_CertificateService_CreateCertificate_0(ctx context.Context, marshal
 	return msg, metadata, err
 }
 
-func local_request_CertificateService_CreateCertificate_0(ctx context.Context, marshaler runtime.Marshaler, server CertificateServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CertificateService_CreateCertificate_0(ctx context.Context, marshaler runtime.Marshaler, server CertificateServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepositoryCertificateCreateRequest
 		metadata runtime.ServerMetadata
@@ -113,7 +113,7 @@ func local_request_CertificateService_CreateCertificate_0(ctx context.Context, m
 
 var filter_CertificateService_DeleteCertificate_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_CertificateService_DeleteCertificate_0(ctx context.Context, marshaler runtime.Marshaler, client CertificateServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CertificateService_DeleteCertificate_0(ctx context.Context, marshaler runtime.Marshaler, client CertificateServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepositoryCertificateQuery
 		metadata runtime.ServerMetadata
@@ -131,7 +131,7 @@ func request_CertificateService_DeleteCertificate_0(ctx context.Context, marshal
 	return msg, metadata, err
 }
 
-func local_request_CertificateService_DeleteCertificate_0(ctx context.Context, marshaler runtime.Marshaler, server CertificateServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CertificateService_DeleteCertificate_0(ctx context.Context, marshaler runtime.Marshaler, server CertificateServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepositoryCertificateQuery
 		metadata runtime.ServerMetadata
@@ -170,7 +170,7 @@ func RegisterCertificateServiceHandlerServer(ctx context.Context, mux *runtime.S
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CertificateService_ListCertificates_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CertificateService_ListCertificates_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_CertificateService_CreateCertificate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -190,7 +190,7 @@ func RegisterCertificateServiceHandlerServer(ctx context.Context, mux *runtime.S
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CertificateService_CreateCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CertificateService_CreateCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_CertificateService_DeleteCertificate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -210,7 +210,7 @@ func RegisterCertificateServiceHandlerServer(ctx context.Context, mux *runtime.S
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CertificateService_DeleteCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CertificateService_DeleteCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -267,7 +267,7 @@ func RegisterCertificateServiceHandlerClient(ctx context.Context, mux *runtime.S
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CertificateService_ListCertificates_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CertificateService_ListCertificates_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_CertificateService_CreateCertificate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -284,7 +284,7 @@ func RegisterCertificateServiceHandlerClient(ctx context.Context, mux *runtime.S
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CertificateService_CreateCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CertificateService_CreateCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_CertificateService_DeleteCertificate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -301,7 +301,7 @@ func RegisterCertificateServiceHandlerClient(ctx context.Context, mux *runtime.S
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CertificateService_DeleteCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CertificateService_DeleteCertificate_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }

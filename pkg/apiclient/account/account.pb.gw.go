@@ -35,7 +35,7 @@ var (
 	_ = metadata.Join
 )
 
-func request_AccountService_CanI_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_AccountService_CanI_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq CanIRequest
 		metadata runtime.ServerMetadata
@@ -72,7 +72,7 @@ func request_AccountService_CanI_0(ctx context.Context, marshaler runtime.Marsha
 	return msg, metadata, err
 }
 
-func local_request_AccountService_CanI_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_AccountService_CanI_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq CanIRequest
 		metadata runtime.ServerMetadata
@@ -106,7 +106,7 @@ func local_request_AccountService_CanI_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
-func request_AccountService_UpdatePassword_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_AccountService_UpdatePassword_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq UpdatePasswordRequest
 		metadata runtime.ServerMetadata
@@ -121,7 +121,7 @@ func request_AccountService_UpdatePassword_0(ctx context.Context, marshaler runt
 	return msg, metadata, err
 }
 
-func local_request_AccountService_UpdatePassword_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_AccountService_UpdatePassword_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq UpdatePasswordRequest
 		metadata runtime.ServerMetadata
@@ -133,7 +133,7 @@ func local_request_AccountService_UpdatePassword_0(ctx context.Context, marshale
 	return msg, metadata, err
 }
 
-func request_AccountService_ListAccounts_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_AccountService_ListAccounts_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ListAccountRequest
 		metadata runtime.ServerMetadata
@@ -145,7 +145,7 @@ func request_AccountService_ListAccounts_0(ctx context.Context, marshaler runtim
 	return msg, metadata, err
 }
 
-func local_request_AccountService_ListAccounts_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_AccountService_ListAccounts_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ListAccountRequest
 		metadata runtime.ServerMetadata
@@ -154,7 +154,7 @@ func local_request_AccountService_ListAccounts_0(ctx context.Context, marshaler 
 	return msg, metadata, err
 }
 
-func request_AccountService_GetAccount_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_AccountService_GetAccount_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetAccountRequest
 		metadata runtime.ServerMetadata
@@ -175,7 +175,7 @@ func request_AccountService_GetAccount_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
-func local_request_AccountService_GetAccount_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_AccountService_GetAccount_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetAccountRequest
 		metadata runtime.ServerMetadata
@@ -193,7 +193,7 @@ func local_request_AccountService_GetAccount_0(ctx context.Context, marshaler ru
 	return msg, metadata, err
 }
 
-func request_AccountService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_AccountService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq CreateTokenRequest
 		metadata runtime.ServerMetadata
@@ -217,7 +217,7 @@ func request_AccountService_CreateToken_0(ctx context.Context, marshaler runtime
 	return msg, metadata, err
 }
 
-func local_request_AccountService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_AccountService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq CreateTokenRequest
 		metadata runtime.ServerMetadata
@@ -238,7 +238,7 @@ func local_request_AccountService_CreateToken_0(ctx context.Context, marshaler r
 	return msg, metadata, err
 }
 
-func request_AccountService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_AccountService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, client AccountServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq DeleteTokenRequest
 		metadata runtime.ServerMetadata
@@ -267,7 +267,7 @@ func request_AccountService_DeleteToken_0(ctx context.Context, marshaler runtime
 	return msg, metadata, err
 }
 
-func local_request_AccountService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_AccountService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, server AccountServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq DeleteTokenRequest
 		metadata runtime.ServerMetadata
@@ -317,7 +317,7 @@ func RegisterAccountServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_CanI_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_CanI_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_AccountService_UpdatePassword_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -337,7 +337,7 @@ func RegisterAccountServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_UpdatePassword_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_UpdatePassword_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_AccountService_ListAccounts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -357,7 +357,7 @@ func RegisterAccountServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_ListAccounts_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_ListAccounts_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_AccountService_GetAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -377,7 +377,7 @@ func RegisterAccountServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_GetAccount_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_GetAccount_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_AccountService_CreateToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -397,7 +397,7 @@ func RegisterAccountServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_AccountService_DeleteToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -417,7 +417,7 @@ func RegisterAccountServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -474,7 +474,7 @@ func RegisterAccountServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_CanI_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_CanI_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_AccountService_UpdatePassword_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -491,7 +491,7 @@ func RegisterAccountServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_UpdatePassword_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_UpdatePassword_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_AccountService_ListAccounts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -508,7 +508,7 @@ func RegisterAccountServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_ListAccounts_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_ListAccounts_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_AccountService_GetAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -525,7 +525,7 @@ func RegisterAccountServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_GetAccount_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_GetAccount_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_AccountService_CreateToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -542,7 +542,7 @@ func RegisterAccountServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_AccountService_DeleteToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -559,7 +559,7 @@ func RegisterAccountServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_AccountService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_AccountService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }

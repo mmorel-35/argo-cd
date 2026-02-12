@@ -37,7 +37,7 @@ var (
 
 var filter_ApplicationSetService_Get_0 = &utilities.DoubleArray{Encoding: map[string]int{"name": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_ApplicationSetService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ApplicationSetService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetGetQuery
 		metadata runtime.ServerMetadata
@@ -64,7 +64,7 @@ func request_ApplicationSetService_Get_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
-func local_request_ApplicationSetService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ApplicationSetService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetGetQuery
 		metadata runtime.ServerMetadata
@@ -88,7 +88,7 @@ func local_request_ApplicationSetService_Get_0(ctx context.Context, marshaler ru
 	return msg, metadata, err
 }
 
-func request_ApplicationSetService_Generate_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ApplicationSetService_Generate_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetGenerateRequest
 		metadata runtime.ServerMetadata
@@ -103,7 +103,7 @@ func request_ApplicationSetService_Generate_0(ctx context.Context, marshaler run
 	return msg, metadata, err
 }
 
-func local_request_ApplicationSetService_Generate_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ApplicationSetService_Generate_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetGenerateRequest
 		metadata runtime.ServerMetadata
@@ -117,7 +117,7 @@ func local_request_ApplicationSetService_Generate_0(ctx context.Context, marshal
 
 var filter_ApplicationSetService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_ApplicationSetService_List_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ApplicationSetService_List_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetListQuery
 		metadata runtime.ServerMetadata
@@ -135,7 +135,7 @@ func request_ApplicationSetService_List_0(ctx context.Context, marshaler runtime
 	return msg, metadata, err
 }
 
-func local_request_ApplicationSetService_List_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ApplicationSetService_List_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetListQuery
 		metadata runtime.ServerMetadata
@@ -152,7 +152,7 @@ func local_request_ApplicationSetService_List_0(ctx context.Context, marshaler r
 
 var filter_ApplicationSetService_Create_0 = &utilities.DoubleArray{Encoding: map[string]int{"applicationset": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_ApplicationSetService_Create_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ApplicationSetService_Create_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetCreateRequest
 		metadata runtime.ServerMetadata
@@ -173,7 +173,7 @@ func request_ApplicationSetService_Create_0(ctx context.Context, marshaler runti
 	return msg, metadata, err
 }
 
-func local_request_ApplicationSetService_Create_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ApplicationSetService_Create_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetCreateRequest
 		metadata runtime.ServerMetadata
@@ -193,7 +193,7 @@ func local_request_ApplicationSetService_Create_0(ctx context.Context, marshaler
 
 var filter_ApplicationSetService_Delete_0 = &utilities.DoubleArray{Encoding: map[string]int{"name": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_ApplicationSetService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ApplicationSetService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetDeleteRequest
 		metadata runtime.ServerMetadata
@@ -220,7 +220,7 @@ func request_ApplicationSetService_Delete_0(ctx context.Context, marshaler runti
 	return msg, metadata, err
 }
 
-func local_request_ApplicationSetService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ApplicationSetService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetDeleteRequest
 		metadata runtime.ServerMetadata
@@ -246,7 +246,7 @@ func local_request_ApplicationSetService_Delete_0(ctx context.Context, marshaler
 
 var filter_ApplicationSetService_ResourceTree_0 = &utilities.DoubleArray{Encoding: map[string]int{"name": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_ApplicationSetService_ResourceTree_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ApplicationSetService_ResourceTree_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetTreeQuery
 		metadata runtime.ServerMetadata
@@ -273,7 +273,7 @@ func request_ApplicationSetService_ResourceTree_0(ctx context.Context, marshaler
 	return msg, metadata, err
 }
 
-func local_request_ApplicationSetService_ResourceTree_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ApplicationSetService_ResourceTree_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetTreeQuery
 		metadata runtime.ServerMetadata
@@ -299,7 +299,7 @@ func local_request_ApplicationSetService_ResourceTree_0(ctx context.Context, mar
 
 var filter_ApplicationSetService_ListResourceEvents_0 = &utilities.DoubleArray{Encoding: map[string]int{"name": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_ApplicationSetService_ListResourceEvents_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ApplicationSetService_ListResourceEvents_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetGetQuery
 		metadata runtime.ServerMetadata
@@ -326,7 +326,7 @@ func request_ApplicationSetService_ListResourceEvents_0(ctx context.Context, mar
 	return msg, metadata, err
 }
 
-func local_request_ApplicationSetService_ListResourceEvents_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ApplicationSetService_ListResourceEvents_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationSetServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ApplicationSetGetQuery
 		metadata runtime.ServerMetadata
@@ -374,7 +374,7 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ApplicationSetService_Generate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -394,7 +394,7 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Generate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Generate_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ApplicationSetService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -414,7 +414,7 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ApplicationSetService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -434,7 +434,7 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ApplicationSetService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -454,7 +454,7 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ApplicationSetService_ResourceTree_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -474,7 +474,7 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_ResourceTree_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_ResourceTree_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ApplicationSetService_ListResourceEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -494,7 +494,7 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_ListResourceEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_ListResourceEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -551,7 +551,7 @@ func RegisterApplicationSetServiceHandlerClient(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ApplicationSetService_Generate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -568,7 +568,7 @@ func RegisterApplicationSetServiceHandlerClient(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Generate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Generate_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ApplicationSetService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -585,7 +585,7 @@ func RegisterApplicationSetServiceHandlerClient(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ApplicationSetService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -602,7 +602,7 @@ func RegisterApplicationSetServiceHandlerClient(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ApplicationSetService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -619,7 +619,7 @@ func RegisterApplicationSetServiceHandlerClient(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ApplicationSetService_ResourceTree_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -636,7 +636,7 @@ func RegisterApplicationSetServiceHandlerClient(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_ResourceTree_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_ResourceTree_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ApplicationSetService_ListResourceEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -653,7 +653,7 @@ func RegisterApplicationSetServiceHandlerClient(ctx context.Context, mux *runtim
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ApplicationSetService_ListResourceEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ApplicationSetService_ListResourceEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }

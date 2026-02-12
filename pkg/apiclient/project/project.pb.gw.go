@@ -35,7 +35,7 @@ var (
 	_ = metadata.Join
 )
 
-func request_ProjectService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectTokenCreateRequest
 		metadata runtime.ServerMetadata
@@ -67,7 +67,7 @@ func request_ProjectService_CreateToken_0(ctx context.Context, marshaler runtime
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_CreateToken_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectTokenCreateRequest
 		metadata runtime.ServerMetadata
@@ -98,7 +98,7 @@ func local_request_ProjectService_CreateToken_0(ctx context.Context, marshaler r
 
 var filter_ProjectService_DeleteToken_0 = &utilities.DoubleArray{Encoding: map[string]int{"project": 0, "role": 1, "iat": 2}, Base: []int{1, 1, 2, 3, 0, 0, 0}, Check: []int{0, 1, 1, 1, 2, 3, 4}}
 
-func request_ProjectService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectTokenDeleteRequest
 		metadata runtime.ServerMetadata
@@ -141,7 +141,7 @@ func request_ProjectService_DeleteToken_0(ctx context.Context, marshaler runtime
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_DeleteToken_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectTokenDeleteRequest
 		metadata runtime.ServerMetadata
@@ -181,7 +181,7 @@ func local_request_ProjectService_DeleteToken_0(ctx context.Context, marshaler r
 	return msg, metadata, err
 }
 
-func request_ProjectService_Create_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_Create_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectCreateRequest
 		metadata runtime.ServerMetadata
@@ -196,7 +196,7 @@ func request_ProjectService_Create_0(ctx context.Context, marshaler runtime.Mars
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_Create_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_Create_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectCreateRequest
 		metadata runtime.ServerMetadata
@@ -210,7 +210,7 @@ func local_request_ProjectService_Create_0(ctx context.Context, marshaler runtim
 
 var filter_ProjectService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_ProjectService_List_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_List_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -228,7 +228,7 @@ func request_ProjectService_List_0(ctx context.Context, marshaler runtime.Marsha
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_List_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_List_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -243,7 +243,7 @@ func local_request_ProjectService_List_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
-func request_ProjectService_GetDetailedProject_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_GetDetailedProject_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -264,7 +264,7 @@ func request_ProjectService_GetDetailedProject_0(ctx context.Context, marshaler 
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_GetDetailedProject_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_GetDetailedProject_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -282,7 +282,7 @@ func local_request_ProjectService_GetDetailedProject_0(ctx context.Context, mars
 	return msg, metadata, err
 }
 
-func request_ProjectService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -303,7 +303,7 @@ func request_ProjectService_Get_0(ctx context.Context, marshaler runtime.Marshal
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -321,7 +321,7 @@ func local_request_ProjectService_Get_0(ctx context.Context, marshaler runtime.M
 	return msg, metadata, err
 }
 
-func request_ProjectService_GetGlobalProjects_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_GetGlobalProjects_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -342,7 +342,7 @@ func request_ProjectService_GetGlobalProjects_0(ctx context.Context, marshaler r
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_GetGlobalProjects_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_GetGlobalProjects_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -360,7 +360,7 @@ func local_request_ProjectService_GetGlobalProjects_0(ctx context.Context, marsh
 	return msg, metadata, err
 }
 
-func request_ProjectService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectUpdateRequest
 		metadata runtime.ServerMetadata
@@ -384,7 +384,7 @@ func request_ProjectService_Update_0(ctx context.Context, marshaler runtime.Mars
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_Update_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_Update_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectUpdateRequest
 		metadata runtime.ServerMetadata
@@ -405,7 +405,7 @@ func local_request_ProjectService_Update_0(ctx context.Context, marshaler runtim
 	return msg, metadata, err
 }
 
-func request_ProjectService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -426,7 +426,7 @@ func request_ProjectService_Delete_0(ctx context.Context, marshaler runtime.Mars
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -444,7 +444,7 @@ func local_request_ProjectService_Delete_0(ctx context.Context, marshaler runtim
 	return msg, metadata, err
 }
 
-func request_ProjectService_ListEvents_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_ListEvents_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -465,7 +465,7 @@ func request_ProjectService_ListEvents_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_ListEvents_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_ListEvents_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectQuery
 		metadata runtime.ServerMetadata
@@ -483,7 +483,7 @@ func local_request_ProjectService_ListEvents_0(ctx context.Context, marshaler ru
 	return msg, metadata, err
 }
 
-func request_ProjectService_GetSyncWindowsState_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_GetSyncWindowsState_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq SyncWindowsQuery
 		metadata runtime.ServerMetadata
@@ -504,7 +504,7 @@ func request_ProjectService_GetSyncWindowsState_0(ctx context.Context, marshaler
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_GetSyncWindowsState_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_GetSyncWindowsState_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq SyncWindowsQuery
 		metadata runtime.ServerMetadata
@@ -522,7 +522,7 @@ func local_request_ProjectService_GetSyncWindowsState_0(ctx context.Context, mar
 	return msg, metadata, err
 }
 
-func request_ProjectService_ListLinks_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ProjectService_ListLinks_0(ctx context.Context, marshaler runtime.Marshaler, client ProjectServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ListProjectLinksRequest
 		metadata runtime.ServerMetadata
@@ -543,7 +543,7 @@ func request_ProjectService_ListLinks_0(ctx context.Context, marshaler runtime.M
 	return msg, metadata, err
 }
 
-func local_request_ProjectService_ListLinks_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ProjectService_ListLinks_0(ctx context.Context, marshaler runtime.Marshaler, server ProjectServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ListProjectLinksRequest
 		metadata runtime.ServerMetadata
@@ -585,7 +585,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ProjectService_DeleteToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -605,7 +605,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ProjectService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -625,7 +625,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -645,7 +645,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_GetDetailedProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -665,7 +665,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_GetDetailedProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_GetDetailedProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_Get_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -685,7 +685,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_GetGlobalProjects_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -705,7 +705,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_GetGlobalProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_GetGlobalProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_ProjectService_Update_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -725,7 +725,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ProjectService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -745,7 +745,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_ListEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -765,7 +765,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_ListEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_ListEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_GetSyncWindowsState_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -785,7 +785,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_GetSyncWindowsState_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_GetSyncWindowsState_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_ListLinks_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -805,7 +805,7 @@ func RegisterProjectServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_ListLinks_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_ListLinks_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -862,7 +862,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_CreateToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ProjectService_DeleteToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -879,7 +879,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_DeleteToken_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ProjectService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -896,7 +896,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -913,7 +913,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_GetDetailedProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -930,7 +930,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_GetDetailedProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_GetDetailedProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_Get_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -947,7 +947,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_GetGlobalProjects_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -964,7 +964,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_GetGlobalProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_GetGlobalProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_ProjectService_Update_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -981,7 +981,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ProjectService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -998,7 +998,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_ListEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -1015,7 +1015,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_ListEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_ListEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_GetSyncWindowsState_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -1032,7 +1032,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_GetSyncWindowsState_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_GetSyncWindowsState_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ProjectService_ListLinks_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -1049,7 +1049,7 @@ func RegisterProjectServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ProjectService_ListLinks_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ProjectService_ListLinks_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }

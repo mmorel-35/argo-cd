@@ -37,7 +37,7 @@ var (
 
 var filter_ClusterService_List_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_ClusterService_List_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ClusterService_List_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -55,7 +55,7 @@ func request_ClusterService_List_0(ctx context.Context, marshaler runtime.Marsha
 	return msg, metadata, err
 }
 
-func local_request_ClusterService_List_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ClusterService_List_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -72,7 +72,7 @@ func local_request_ClusterService_List_0(ctx context.Context, marshaler runtime.
 
 var filter_ClusterService_Create_0 = &utilities.DoubleArray{Encoding: map[string]int{"cluster": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_ClusterService_Create_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ClusterService_Create_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterCreateRequest
 		metadata runtime.ServerMetadata
@@ -93,7 +93,7 @@ func request_ClusterService_Create_0(ctx context.Context, marshaler runtime.Mars
 	return msg, metadata, err
 }
 
-func local_request_ClusterService_Create_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ClusterService_Create_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterCreateRequest
 		metadata runtime.ServerMetadata
@@ -113,7 +113,7 @@ func local_request_ClusterService_Create_0(ctx context.Context, marshaler runtim
 
 var filter_ClusterService_Get_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0, "value": 1}, Base: []int{1, 1, 1, 0}, Check: []int{0, 1, 2, 3}}
 
-func request_ClusterService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ClusterService_Get_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -140,7 +140,7 @@ func request_ClusterService_Get_0(ctx context.Context, marshaler runtime.Marshal
 	return msg, metadata, err
 }
 
-func local_request_ClusterService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ClusterService_Get_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -166,7 +166,7 @@ func local_request_ClusterService_Get_0(ctx context.Context, marshaler runtime.M
 
 var filter_ClusterService_Update_0 = &utilities.DoubleArray{Encoding: map[string]int{"cluster": 0, "id": 1, "value": 2}, Base: []int{1, 1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 3, 2, 4}}
 
-func request_ClusterService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ClusterService_Update_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterUpdateRequest
 		metadata runtime.ServerMetadata
@@ -196,7 +196,7 @@ func request_ClusterService_Update_0(ctx context.Context, marshaler runtime.Mars
 	return msg, metadata, err
 }
 
-func local_request_ClusterService_Update_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ClusterService_Update_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterUpdateRequest
 		metadata runtime.ServerMetadata
@@ -225,7 +225,7 @@ func local_request_ClusterService_Update_0(ctx context.Context, marshaler runtim
 
 var filter_ClusterService_Delete_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0, "value": 1}, Base: []int{1, 1, 1, 0}, Check: []int{0, 1, 2, 3}}
 
-func request_ClusterService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ClusterService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -252,7 +252,7 @@ func request_ClusterService_Delete_0(ctx context.Context, marshaler runtime.Mars
 	return msg, metadata, err
 }
 
-func local_request_ClusterService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ClusterService_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -278,7 +278,7 @@ func local_request_ClusterService_Delete_0(ctx context.Context, marshaler runtim
 
 var filter_ClusterService_RotateAuth_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0, "value": 1}, Base: []int{1, 1, 1, 0}, Check: []int{0, 1, 2, 3}}
 
-func request_ClusterService_RotateAuth_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ClusterService_RotateAuth_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -305,7 +305,7 @@ func request_ClusterService_RotateAuth_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
-func local_request_ClusterService_RotateAuth_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ClusterService_RotateAuth_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -331,7 +331,7 @@ func local_request_ClusterService_RotateAuth_0(ctx context.Context, marshaler ru
 
 var filter_ClusterService_InvalidateCache_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0, "value": 1}, Base: []int{1, 1, 1, 0}, Check: []int{0, 1, 2, 3}}
 
-func request_ClusterService_InvalidateCache_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_ClusterService_InvalidateCache_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -358,7 +358,7 @@ func request_ClusterService_InvalidateCache_0(ctx context.Context, marshaler run
 	return msg, metadata, err
 }
 
-func local_request_ClusterService_InvalidateCache_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_ClusterService_InvalidateCache_0(ctx context.Context, marshaler runtime.Marshaler, server ClusterServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq ClusterQuery
 		metadata runtime.ServerMetadata
@@ -406,7 +406,7 @@ func RegisterClusterServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ClusterService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -426,7 +426,7 @@ func RegisterClusterServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ClusterService_Get_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -446,7 +446,7 @@ func RegisterClusterServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_ClusterService_Update_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -466,7 +466,7 @@ func RegisterClusterServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ClusterService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -486,7 +486,7 @@ func RegisterClusterServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ClusterService_RotateAuth_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -506,7 +506,7 @@ func RegisterClusterServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_RotateAuth_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_RotateAuth_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ClusterService_InvalidateCache_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -526,7 +526,7 @@ func RegisterClusterServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_InvalidateCache_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_InvalidateCache_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -583,7 +583,7 @@ func RegisterClusterServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_List_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ClusterService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -600,7 +600,7 @@ func RegisterClusterServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_ClusterService_Get_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -617,7 +617,7 @@ func RegisterClusterServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Get_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_ClusterService_Update_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -634,7 +634,7 @@ func RegisterClusterServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_ClusterService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -651,7 +651,7 @@ func RegisterClusterServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ClusterService_RotateAuth_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -668,7 +668,7 @@ func RegisterClusterServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_RotateAuth_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_RotateAuth_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_ClusterService_InvalidateCache_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -685,7 +685,7 @@ func RegisterClusterServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_ClusterService_InvalidateCache_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_ClusterService_InvalidateCache_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }

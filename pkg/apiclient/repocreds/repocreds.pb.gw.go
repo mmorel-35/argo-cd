@@ -37,7 +37,7 @@ var (
 
 var filter_RepoCredsService_ListRepositoryCredentials_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_RepoCredsService_ListRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_ListRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsQuery
 		metadata runtime.ServerMetadata
@@ -55,7 +55,7 @@ func request_RepoCredsService_ListRepositoryCredentials_0(ctx context.Context, m
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_ListRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_ListRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsQuery
 		metadata runtime.ServerMetadata
@@ -72,7 +72,7 @@ func local_request_RepoCredsService_ListRepositoryCredentials_0(ctx context.Cont
 
 var filter_RepoCredsService_ListWriteRepositoryCredentials_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_RepoCredsService_ListWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_ListWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsQuery
 		metadata runtime.ServerMetadata
@@ -90,7 +90,7 @@ func request_RepoCredsService_ListWriteRepositoryCredentials_0(ctx context.Conte
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_ListWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_ListWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsQuery
 		metadata runtime.ServerMetadata
@@ -107,7 +107,7 @@ func local_request_RepoCredsService_ListWriteRepositoryCredentials_0(ctx context
 
 var filter_RepoCredsService_CreateRepositoryCredentials_0 = &utilities.DoubleArray{Encoding: map[string]int{"creds": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_RepoCredsService_CreateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_CreateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsCreateRequest
 		metadata runtime.ServerMetadata
@@ -128,7 +128,7 @@ func request_RepoCredsService_CreateRepositoryCredentials_0(ctx context.Context,
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_CreateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_CreateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsCreateRequest
 		metadata runtime.ServerMetadata
@@ -148,7 +148,7 @@ func local_request_RepoCredsService_CreateRepositoryCredentials_0(ctx context.Co
 
 var filter_RepoCredsService_CreateWriteRepositoryCredentials_0 = &utilities.DoubleArray{Encoding: map[string]int{"creds": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_RepoCredsService_CreateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_CreateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsCreateRequest
 		metadata runtime.ServerMetadata
@@ -169,7 +169,7 @@ func request_RepoCredsService_CreateWriteRepositoryCredentials_0(ctx context.Con
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_CreateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_CreateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsCreateRequest
 		metadata runtime.ServerMetadata
@@ -187,7 +187,7 @@ func local_request_RepoCredsService_CreateWriteRepositoryCredentials_0(ctx conte
 	return msg, metadata, err
 }
 
-func request_RepoCredsService_UpdateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_UpdateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsUpdateRequest
 		metadata runtime.ServerMetadata
@@ -211,7 +211,7 @@ func request_RepoCredsService_UpdateRepositoryCredentials_0(ctx context.Context,
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_UpdateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_UpdateRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsUpdateRequest
 		metadata runtime.ServerMetadata
@@ -232,7 +232,7 @@ func local_request_RepoCredsService_UpdateRepositoryCredentials_0(ctx context.Co
 	return msg, metadata, err
 }
 
-func request_RepoCredsService_UpdateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_UpdateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsUpdateRequest
 		metadata runtime.ServerMetadata
@@ -256,7 +256,7 @@ func request_RepoCredsService_UpdateWriteRepositoryCredentials_0(ctx context.Con
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_UpdateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_UpdateWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsUpdateRequest
 		metadata runtime.ServerMetadata
@@ -277,7 +277,7 @@ func local_request_RepoCredsService_UpdateWriteRepositoryCredentials_0(ctx conte
 	return msg, metadata, err
 }
 
-func request_RepoCredsService_DeleteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_DeleteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsDeleteRequest
 		metadata runtime.ServerMetadata
@@ -298,7 +298,7 @@ func request_RepoCredsService_DeleteRepositoryCredentials_0(ctx context.Context,
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_DeleteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_DeleteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsDeleteRequest
 		metadata runtime.ServerMetadata
@@ -316,7 +316,7 @@ func local_request_RepoCredsService_DeleteRepositoryCredentials_0(ctx context.Co
 	return msg, metadata, err
 }
 
-func request_RepoCredsService_DeleteWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RepoCredsService_DeleteWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, client RepoCredsServiceClient, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsDeleteRequest
 		metadata runtime.ServerMetadata
@@ -337,7 +337,7 @@ func request_RepoCredsService_DeleteWriteRepositoryCredentials_0(ctx context.Con
 	return msg, metadata, err
 }
 
-func local_request_RepoCredsService_DeleteWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RepoCredsService_DeleteWriteRepositoryCredentials_0(ctx context.Context, marshaler runtime.Marshaler, server RepoCredsServiceServer, req *http.Request, pathParams map[string]string) (any, runtime.ServerMetadata, error) {
 	var (
 		protoReq RepoCredsDeleteRequest
 		metadata runtime.ServerMetadata
@@ -379,7 +379,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_ListRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_ListRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_RepoCredsService_ListWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -399,7 +399,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_ListWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_ListWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_RepoCredsService_CreateRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -419,7 +419,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_CreateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_CreateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_RepoCredsService_CreateWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -439,7 +439,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_CreateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_CreateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_RepoCredsService_UpdateRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -459,7 +459,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_UpdateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_UpdateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_RepoCredsService_UpdateWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -479,7 +479,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_UpdateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_UpdateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_RepoCredsService_DeleteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -499,7 +499,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_DeleteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_DeleteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_RepoCredsService_DeleteWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -519,7 +519,7 @@ func RegisterRepoCredsServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_DeleteWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_DeleteWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -576,7 +576,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_ListRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_ListRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodGet, pattern_RepoCredsService_ListWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -593,7 +593,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_ListWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_ListWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_RepoCredsService_CreateRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -610,7 +610,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_CreateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_CreateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_RepoCredsService_CreateWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -627,7 +627,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_CreateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_CreateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_RepoCredsService_UpdateRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -644,7 +644,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_UpdateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_UpdateRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPut, pattern_RepoCredsService_UpdateWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -661,7 +661,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_UpdateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_UpdateWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_RepoCredsService_DeleteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -678,7 +678,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_DeleteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_DeleteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_RepoCredsService_DeleteWriteRepositoryCredentials_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -695,7 +695,7 @@ func RegisterRepoCredsServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RepoCredsService_DeleteWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoCredsService_DeleteWriteRepositoryCredentials_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }
