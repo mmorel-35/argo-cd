@@ -33,7 +33,6 @@ go_mod_install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
 
 # k8s tools to codegen .proto files, client libraries, and helpers from types.go
 go_mod_install k8s.io/code-generator/cmd/go-to-protobuf
-go_mod_install k8s.io/code-generator/cmd/go-to-protobuf/protoc-gen-gogo
 go_mod_install k8s.io/code-generator/cmd/client-gen
 go_mod_install k8s.io/code-generator/cmd/deepcopy-gen
 go_mod_install k8s.io/code-generator/cmd/defaulter-gen

@@ -81,10 +81,16 @@ go-to-protobuf \
     )" \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
-    --output-dir="${GOPATH}/src/"
+    --output-dir="${GOPATH}/src/" \
+    --only-idl
 
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
+
+# Get gogo/protobuf path from module cache for proto imports
+# gogo/protobuf is kept as a dependency for the .proto IDL files only
+GOGO_PROTOBUF_VERSION=$(go list -m -f '{{.Version}}' github.com/gogo/protobuf)
+GOGO_PROTOBUF_PATH="${GOPATH}/pkg/mod/github.com/gogo/protobuf@${GOGO_PROTOBUF_VERSION}"
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using protoc with LOCAL plugins for compatibility with existing import structure
@@ -125,6 +131,7 @@ for i in ${PROTO_FILES}; do
         -I"$GOPATH"/src \
         -I"${protoc_include}" \
         -I"${GOOGLE_PROTO_API_PATH}" \
+        -I"${GOGO_PROTOBUF_PATH}" \
         --go_out="$GOPATH"/src \
         --go_opt=paths=source_relative \
         --go-grpc_out="$GOPATH"/src \
