@@ -655,7 +655,7 @@ entries: {}
 
 		// Should succeed because our implementation sets User-Agent
 		require.NoError(t, err, "Request should succeed with User-Agent set")
-		t.Logf("Success! Server accepted request with User-Agent")
+		t.Log("Success! Server accepted request with User-Agent")
 	})
 }
 

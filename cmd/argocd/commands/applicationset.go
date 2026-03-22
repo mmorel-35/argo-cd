@@ -145,7 +145,7 @@ func NewApplicationSetCreateCommand(clientOpts *argocdclient.ClientOptions) *cob
 			errors.CheckError(err)
 
 			if len(appsets) == 0 {
-				fmt.Printf("No ApplicationSets found while parsing the input file")
+				fmt.Print("No ApplicationSets found while parsing the input file")
 				os.Exit(1)
 			}
 
@@ -244,7 +244,7 @@ func NewApplicationSetGenerateCommand(clientOpts *argocdclient.ClientOptions) *c
 			errors.CheckError(err)
 
 			if len(appsets) != 1 {
-				fmt.Printf("Input file must contain one ApplicationSet")
+				fmt.Print("Input file must contain one ApplicationSet")
 				os.Exit(1)
 			}
 			appset := appsets[0]
@@ -503,7 +503,7 @@ func printAppSetSummaryTable(appSet *arogappsetv1.ApplicationSet) {
 }
 
 func printAppSetConditions(w io.Writer, appSet *arogappsetv1.ApplicationSet) {
-	_, _ = fmt.Fprintf(w, "CONDITION\tSTATUS\tMESSAGE\tLAST TRANSITION\n")
+	_, _ = fmt.Fprint(w, "CONDITION\tSTATUS\tMESSAGE\tLAST TRANSITION\n")
 	for _, item := range appSet.Status.Conditions {
 		_, _ = fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", item.Type, item.Status, item.Message, item.LastTransitionTime)
 	}
