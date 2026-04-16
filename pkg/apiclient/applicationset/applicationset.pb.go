@@ -145,6 +145,86 @@ func (x *ApplicationSetListQuery) GetAppsetNamespace() string {
 	return ""
 }
 
+type ApplicationSetWatchQuery struct {
+	Name            string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Projects        []string `protobuf:"bytes,2,rep,name=projects,proto3" json:"projects,omitempty"`
+	Selector        string   `protobuf:"bytes,3,opt,name=selector,proto3" json:"selector,omitempty"`
+	AppSetNamespace string   `protobuf:"bytes,4,opt,name=appSetNamespace,proto3" json:"appSetNamespace,omitempty"`
+	// when specified with a watch call, shows changes that occur after that particular version of a resource.
+	ResourceVersion      string   `protobuf:"bytes,5,opt,name=resourceVersion,proto3" json:"resourceVersion,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ApplicationSetWatchQuery) Reset()         { *m = ApplicationSetWatchQuery{} }
+func (m *ApplicationSetWatchQuery) String() string { return proto.CompactTextString(m) }
+func (*ApplicationSetWatchQuery) ProtoMessage()    {}
+func (*ApplicationSetWatchQuery) Descriptor() ([]byte, []int) {
+	return fileDescriptor_eacb9df0ce5738fa, []int{2}
+}
+func (m *ApplicationSetWatchQuery) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ApplicationSetWatchQuery) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ApplicationSetWatchQuery.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ApplicationSetWatchQuery) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationSetWatchQuery.Merge(m, src)
+}
+func (m *ApplicationSetWatchQuery) XXX_Size() int {
+	return m.Size()
+}
+func (m *ApplicationSetWatchQuery) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationSetWatchQuery.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ApplicationSetWatchQuery proto.InternalMessageInfo
+
+func (m *ApplicationSetWatchQuery) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *ApplicationSetWatchQuery) GetProjects() []string {
+	if m != nil {
+		return m.Projects
+	}
+	return nil
+}
+
+func (m *ApplicationSetWatchQuery) GetSelector() string {
+	if m != nil {
+		return m.Selector
+	}
+	return ""
+}
+
+func (m *ApplicationSetWatchQuery) GetAppSetNamespace() string {
+	if m != nil {
+		return m.AppSetNamespace
+	}
+	return ""
+}
+
+func (m *ApplicationSetWatchQuery) GetResourceVersion() string {
+	if m != nil {
+		return m.ResourceVersion
+	}
+	return ""
+}
+
 type ApplicationSetResponse struct {
 	state          protoimpl.MessageState   `protogen:"open.v1"`
 	Project        string                   `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`

@@ -350,6 +350,34 @@ func local_request_ApplicationSetService_ListResourceEvents_0(ctx context.Contex
 	return msg, metadata, err
 }
 
+var (
+	filter_ApplicationSetService_Watch_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_ApplicationSetService_Watch_0(ctx context.Context, marshaler runtime.Marshaler, client ApplicationSetServiceClient, req *http.Request, pathParams map[string]string) (ApplicationSetService_WatchClient, runtime.ServerMetadata, error) {
+	var protoReq ApplicationSetWatchQuery
+	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_ApplicationSetService_Watch_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	stream, err := client.Watch(ctx, &protoReq)
+	if err != nil {
+		return nil, metadata, err
+	}
+	header, err := stream.Header()
+	if err != nil {
+		return nil, metadata, err
+	}
+	metadata.HeaderMD = header
+	return stream, metadata, nil
+
+}
+
 // RegisterApplicationSetServiceHandlerServer registers the http handlers for service ApplicationSetService to "mux".
 // UnaryRPC     :call ApplicationSetServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -495,6 +523,13 @@ func RegisterApplicationSetServiceHandlerServer(ctx context.Context, mux *runtim
 			return
 		}
 		forward_ApplicationSetService_ListResourceEvents_0(annotatedContext, mux, outboundMarshaler, w, req, resp.(proto.Message), mux.GetForwardResponseOptions()...)
+	})
+
+	mux.Handle("GET", pattern_ApplicationSetService_Watch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
+		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+		return
 	})
 
 	return nil
@@ -676,4 +711,6 @@ var (
 	forward_ApplicationSetService_Delete_0             = runtime.ForwardResponseMessage
 	forward_ApplicationSetService_ResourceTree_0       = runtime.ForwardResponseMessage
 	forward_ApplicationSetService_ListResourceEvents_0 = runtime.ForwardResponseMessage
+
+	forward_ApplicationSetService_Watch_0 = runtime.ForwardResponseStream
 )

@@ -2323,6 +2323,44 @@ func (m *ApplicationSetTree) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *ApplicationSetWatchEvent) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ApplicationSetWatchEvent) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ApplicationSetWatchEvent) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.ApplicationSet.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintGenerated(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	i -= len(m.Type)
+	copy(dAtA[i:], m.Type)
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
 func (m *ApplicationSource) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -10452,30 +10490,36 @@ func (m *SyncPolicyAutomated) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x20
 	}
-	i--
-	if m.AllowEmpty {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.AllowEmpty != nil {
+		i--
+		if *m.AllowEmpty {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x18
 	}
-	i--
-	dAtA[i] = 0x18
-	i--
-	if m.SelfHeal {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.SelfHeal != nil {
+		i--
+		if *m.SelfHeal {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
 	}
-	i--
-	dAtA[i] = 0x10
-	i--
-	if m.Prune {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Prune != nil {
+		i--
+		if *m.Prune {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
 	}
-	i--
-	dAtA[i] = 0x8
 	return len(dAtA) - i, nil
 }
 
@@ -11598,6 +11642,19 @@ func (m *ApplicationSetTree) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	return n
+}
+
+func (m *ApplicationSetWatchEvent) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Type)
+	n += 1 + l + sovGenerated(uint64(l))
+	l = m.ApplicationSet.Size()
+	n += 1 + l + sovGenerated(uint64(l))
 	return n
 }
 
@@ -14601,9 +14658,15 @@ func (m *SyncPolicyAutomated) Size() (n int) {
 	}
 	var l int
 	_ = l
-	n += 2
-	n += 2
-	n += 2
+	if m.Prune != nil {
+		n += 2
+	}
+	if m.SelfHeal != nil {
+		n += 2
+	}
+	if m.AllowEmpty != nil {
+		n += 2
+	}
 	if m.Enabled != nil {
 		n += 2
 	}
@@ -15284,6 +15347,17 @@ func (this *ApplicationSetTree) String() string {
 	repeatedStringForNodes += "}"
 	s := strings.Join([]string{`&ApplicationSetTree{`,
 		`Nodes:` + repeatedStringForNodes + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ApplicationSetWatchEvent) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ApplicationSetWatchEvent{`,
+		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
+		`ApplicationSet:` + strings.Replace(strings.Replace(this.ApplicationSet.String(), "ApplicationSet", "ApplicationSet", 1), `&`, ``, 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -17521,9 +17595,9 @@ func (this *SyncPolicyAutomated) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&SyncPolicyAutomated{`,
-		`Prune:` + fmt.Sprintf("%v", this.Prune) + `,`,
-		`SelfHeal:` + fmt.Sprintf("%v", this.SelfHeal) + `,`,
-		`AllowEmpty:` + fmt.Sprintf("%v", this.AllowEmpty) + `,`,
+		`Prune:` + valueToStringGenerated(this.Prune) + `,`,
+		`SelfHeal:` + valueToStringGenerated(this.SelfHeal) + `,`,
+		`AllowEmpty:` + valueToStringGenerated(this.AllowEmpty) + `,`,
 		`Enabled:` + valueToStringGenerated(this.Enabled) + `,`,
 		`}`,
 	}, "")
@@ -23520,6 +23594,121 @@ func (m *ApplicationSetTree) Unmarshal(dAtA []byte) error {
 			}
 			m.Nodes = append(m.Nodes, ResourceNode{})
 			if err := m.Nodes[len(m.Nodes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ApplicationSetWatchEvent) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ApplicationSetWatchEvent: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ApplicationSetWatchEvent: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = k8s_io_apimachinery_pkg_watch.EventType(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ApplicationSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ApplicationSet.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -50843,7 +51032,8 @@ func (m *SyncPolicyAutomated) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Prune = bool(v != 0)
+			b := bool(v != 0)
+			m.Prune = &b
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SelfHeal", wireType)
@@ -50863,7 +51053,8 @@ func (m *SyncPolicyAutomated) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.SelfHeal = bool(v != 0)
+			b := bool(v != 0)
+			m.SelfHeal = &b
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AllowEmpty", wireType)
@@ -50883,7 +51074,8 @@ func (m *SyncPolicyAutomated) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.AllowEmpty = bool(v != 0)
+			b := bool(v != 0)
+			m.AllowEmpty = &b
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Enabled", wireType)
