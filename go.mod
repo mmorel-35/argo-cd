@@ -14,7 +14,6 @@ require (
 	github.com/alicebob/miniredis/v2 v2.37.0
 	github.com/argoproj/argo-cd/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627
 	github.com/argoproj/notifications-engine v0.5.1-0.20260213231747-1dbe3de712f8
-	github.com/argoproj/pkg v0.13.6
 	github.com/argoproj/pkg/v2 v2.0.1
 	github.com/bmatcuk/doublestar/v4 v4.10.0
 	github.com/bombsimon/logrusr/v4 v4.1.0
@@ -324,6 +323,10 @@ require (
 )
 
 replace (
+	// Use the grpc-gateway v2 compatible fork of argoproj/pkg/v2 until the changes are merged
+	// and published upstream. Fork: https://github.com/mmorel-35/argoproj.pkg/tree/grpc-ecosystem/grpc-gateway
+	// TODO: replace with a published version once the fork is merged upstream.
+	github.com/argoproj/pkg/v2 => /tmp/argoproj-pkg-fork
 	github.com/golang/protobuf => github.com/golang/protobuf v1.5.4
 	golang.org/x/tools => golang.org/x/tools v0.35.0
 
