@@ -556,9 +556,6 @@ func (server *ArgoCDServer) Init(ctx context.Context) {
 }
 
 // Run runs the API Server
-// We use k8s.io/code-generator/cmd/go-to-protobuf to generate the .proto files from the API types.
-// k8s.io/ go-to-protobuf uses protoc-gen-gogo, which comes from gogo/protobuf (a fork of
-// golang/protobuf).
 func (server *ArgoCDServer) Run(ctx context.Context, listeners *Listeners) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1171,11 +1168,9 @@ func (server *ArgoCDServer) newHTTPServer(ctx context.Context, port int, grpcWeb
 	}
 
 	// HTTP 1.1+JSON Server
-	// grpc-ecosystem/grpc-gateway is used to proxy HTTP requests to the corresponding gRPC call
-	// NOTE: if a marshaller option is not supplied, grpc-gateway will default to the jsonpb from
-	// golang/protobuf. Which does not support types such as time.Time. gogo/protobuf does support
-	// time.Time, but does not support custom UnmarshalJSON() and MarshalJSON() methods. Therefore
-	// we use our own Marshaler
+	// grpc-ecosystem/grpc-gateway is used to proxy HTTP requests to the corresponding gRPC call.
+	// A custom JSONMarshaler is supplied so that we have control over JSON marshaling behavior
+	// (e.g. supporting types such as time.Time with custom MarshalJSON/UnmarshalJSON methods).
 	gwMuxOpts := runtime.WithMarshalerOption(runtime.MIMEWildcard, new(grpc_util.JSONMarshaler))
 	gwCookieOpts := runtime.WithForwardResponseOption(server.translateGrpcCookieHeader)
 	gwmux := runtime.NewServeMux(gwMuxOpts, gwCookieOpts)

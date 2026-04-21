@@ -57,7 +57,6 @@ else
 fi
 
 # go-to-protobuf expects dependency proto files to be in $GOPATH/src. Copy them there.
-rm -rf "${GOPATH}/src/github.com/gogo/protobuf" && mkdir -p "${GOPATH}/src/github.com/gogo" && cp -r "${PROJECT_ROOT}/vendor/github.com/gogo/protobuf" "${GOPATH}/src/github.com/gogo"
 rm -rf "${GOPATH}/src/k8s.io/apimachinery" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apimachinery" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/api" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/api" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/apiextensions-apiserver" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apiextensions-apiserver" "${GOPATH}/src/k8s.io"
@@ -75,26 +74,16 @@ go-to-protobuf \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
     --output-dir="${GOPATH}/src/"
-
-# go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
+# go mod vendor after go-to-protobuf modifies vendored code
 go mod vendor
 
-# Either protoc-gen-go, protoc-gen-gofast, or protoc-gen-gogofast can be used to build
-# server/*/<service>.pb.go from .proto files. golang/protobuf and gogo/protobuf can be used
-# interchangeably. The difference in the options are:
-# 1. protoc-gen-go - official golang/protobuf
-#GOPROTOBINARY=go
-# 2. protoc-gen-gofast - fork of golang golang/protobuf. Faster code generation
-#GOPROTOBINARY=gofast
-# 3. protoc-gen-gogofast - faster code generation and gogo extensions and flexibility in controlling
-# the generated go code (e.g. customizing field names, nullable fields)
-GOPROTOBINARY=gogofast
-
-# Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
+# Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go) using grpc-gateway v2 toolchain.
+# protoc-gen-go + protoc-gen-go-grpc replace the old protoc-gen-gogofast.
+# protoc-gen-grpc-gateway (v2) replaces the old protoc-gen-grpc-gateway (v1).
+# protoc-gen-openapiv2 replaces the old protoc-gen-swagger.
 MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway | awk '{print $NF}' | head -1)
-GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway@${grpc_gateway_version}/third_party/googleapis
-GOGO_PROTOBUF_PATH=${PROJECT_ROOT}/vendor/github.com/gogo/protobuf
+grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
+GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway/v2@${grpc_gateway_version}/third_party/googleapis
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
 for i in ${PROTO_FILES}; do
     protoc \
@@ -103,15 +92,15 @@ for i in ${PROTO_FILES}; do
         -I./vendor \
         -I"$GOPATH"/src \
         -I"${GOOGLE_PROTO_API_PATH}" \
-        -I"${GOGO_PROTOBUF_PATH}" \
-        --${GOPROTOBINARY}_out=plugins=grpc:"$GOPATH"/src \
-        --grpc-gateway_out=logtostderr=true:"$GOPATH"/src \
-        --swagger_out=logtostderr=true:. \
+        --go_out=paths=source_relative:"$GOPATH"/src \
+        --go-grpc_out=paths=source_relative:"$GOPATH"/src \
+        --grpc-gateway_out=paths=source_relative,logtostderr=true:"$GOPATH"/src \
+        --openapiv2_out=logtostderr=true:. \
         "$i"
 done
 
 # This file is generated but should not be checked in.
-rm util/askpass/askpass.swagger.json
+rm util/askpass/askpass.openapiv2.json
 
 [ -L "${GOPATH_PROJECT_ROOT}" ] && rm -rf "${GOPATH_PROJECT_ROOT}"
 [ -L ./v3 ] && rm -rf v3
@@ -137,7 +126,7 @@ EOF
 
     rm -f "${SWAGGER_OUT}"
 
-    find "${SWAGGER_ROOT}" -name '*.swagger.json' -exec swagger mixin --ignore-conflicts "${PRIMARY_SWAGGER}" '{}' \+ >"${COMBINED_SWAGGER}"
+    find "${SWAGGER_ROOT}" -name '*.openapiv2.json' -exec swagger mixin --ignore-conflicts "${PRIMARY_SWAGGER}" '{}' \+ >"${COMBINED_SWAGGER}"
     jq -r 'del(.definitions[].properties[]? | select(."$ref"!=null and .description!=null).description) | del(.definitions[].properties[]? | select(."$ref"!=null and .title!=null).title) |
       # The "array" and "map" fields have custom unmarshaling. Modify the swagger to reflect this.
       .definitions.v1alpha1ApplicationSourcePluginParameter.properties.array = {"description":"Array is the value of an array type parameter.","type":"array","items":{"type":"string"}} |
@@ -157,7 +146,7 @@ EOF
 # clean up generated swagger files (should come after collect_swagger)
 clean_swagger() {
     SWAGGER_ROOT="$1"
-    find "${SWAGGER_ROOT}" -name '*.swagger.json' -delete
+    find "${SWAGGER_ROOT}" -name '*.openapiv2.json' -delete
 }
 
 collect_swagger server

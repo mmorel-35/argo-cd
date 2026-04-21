@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"sigs.k8s.io/yaml"
 
 	"github.com/argoproj/argo-cd/v3/reposerver/apiclient"
@@ -96,8 +96,8 @@ func (s *Server) Get(ctx context.Context, _ *settingspkg.SettingsQuery) (*settin
 	}
 
 	set := settingspkg.Settings{
-		URL:                argoCDSettings.URL,
-		AdditionalURLs:     argoCDSettings.AdditionalURLs,
+		Url:                argoCDSettings.URL,
+		AdditionalUrls:     argoCDSettings.AdditionalURLs,
 		AppLabelKey:        appInstanceLabelKey,
 		StatusBadgeEnabled: argoCDSettings.StatusBadgeEnabled,
 		StatusBadgeRootUrl: argoCDSettings.StatusBadgeRootUrl,
@@ -144,16 +144,16 @@ func (s *Server) Get(ctx context.Context, _ *settingspkg.SettingsQuery) (*settin
 		}
 	}
 	if oidcConfig := argoCDSettings.OIDCConfig(); oidcConfig != nil {
-		set.OIDCConfig = &settingspkg.OIDCConfig{
+		set.OidcConfig = &settingspkg.OIDCConfig{
 			Name:                     oidcConfig.Name,
 			Issuer:                   oidcConfig.Issuer,
-			ClientID:                 oidcConfig.ClientID,
-			CLIClientID:              oidcConfig.CLIClientID,
+			ClientId:                 oidcConfig.ClientID,
+			CliClientId:              oidcConfig.CLIClientID,
 			Scopes:                   oidcConfig.RequestedScopes,
 			EnablePKCEAuthentication: oidcConfig.EnablePKCEAuthentication,
 		}
 		if len(argoCDSettings.OIDCConfig().RequestedIDTokenClaims) > 0 {
-			set.OIDCConfig.IDTokenClaims = argoCDSettings.OIDCConfig().RequestedIDTokenClaims
+			set.OidcConfig.IdTokenClaims = argoCDSettings.OIDCConfig().RequestedIDTokenClaims
 		}
 	}
 	return &set, nil
@@ -175,7 +175,7 @@ func (s *Server) plugins(ctx context.Context) ([]*settingspkg.Plugin, error) {
 	}
 	defer utilio.Close(closer)
 
-	pluginList, err := client.ListPlugins(ctx, &empty.Empty{})
+	pluginList, err := client.ListPlugins(ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to list sidecar plugins from reposerver: %w", err)
 	}

@@ -31,7 +31,7 @@ import (
 	"github.com/argoproj/pkg/v2/sync"
 	jsonpatch "github.com/evanphx/json-patch"
 	gogit "github.com/go-git/go-git/v5"
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"github.com/google/go-jsonnet"
 	"github.com/google/uuid"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/retry"
@@ -280,7 +280,7 @@ func (s *Service) ListApps(ctx context.Context, q *apiclient.ListAppsRequest) (*
 }
 
 // ListPlugins lists the contents of a GitHub repo
-func (s *Service) ListPlugins(_ context.Context, _ *empty.Empty) (*apiclient.PluginList, error) {
+func (s *Service) ListPlugins(_ context.Context, _ *emptypb.Empty) (*apiclient.PluginList, error) {
 	pluginSockFilePath := common.GetPluginSockFilePath()
 
 	sockFiles, err := os.ReadDir(pluginSockFilePath)
