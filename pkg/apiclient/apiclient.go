@@ -322,15 +322,15 @@ func (c *client) OIDCConfig(ctx context.Context, set *settingspkg.Settings) (*oa
 	var clientID string
 	var issuerURL string
 	var scopes []string
-	// NOTE: OidcConfig, CliClientId, ClientId, Url are protoc-gen-go camelCase field names.
-	// These replace the previous gogo/protobuf customnames (OIDCConfig, CLIClientID, ClientID, URL)
-	// after `make protogen` is run to regenerate settings.pb.go.
+	// NOTE: OidcConfig is a protoc-gen-go camelCase field name (replacing the previous gogo/protobuf
+	// customname OIDCConfig). CliClientID and ClientID preserve the ID acronym since the proto field
+	// names end in uppercase "ID" (cliClientID, clientID).
 	switch {
 	case set.OidcConfig != nil && set.OidcConfig.Issuer != "":
-		if set.OidcConfig.CliClientId != "" {
-			clientID = set.OidcConfig.CliClientId
+		if set.OidcConfig.CliClientID != "" {
+			clientID = set.OidcConfig.CliClientID
 		} else {
-			clientID = set.OidcConfig.ClientId
+			clientID = set.OidcConfig.ClientID
 		}
 		issuerURL = set.OidcConfig.Issuer
 		scopes = oidcutil.GetScopesOrDefault(set.OidcConfig.Scopes)

@@ -15,6 +15,7 @@ import (
 )
 
 type Server struct {
+	version.UnimplementedVersionServiceServer
 	kustomizeVersion string
 	helmVersion      string
 	jsonnetVersion   string

@@ -16,7 +16,11 @@ PROJECT_ROOT=$(
 )
 PATH="${PROJECT_ROOT}/dist:${PATH}"
 GOPATH=$(go env GOPATH)
-GOPATH_PROJECT_ROOT="${GOPATH}/src/github.com/argoproj/argo-cd"
+# The module path is github.com/argoproj/argo-cd/v3. With paths=import, protoc-gen-go writes files
+# under GOPATH/src/<go_package>. We create a symlink for the full module path (including /v3 suffix)
+# so that output paths such as GOPATH/src/github.com/argoproj/argo-cd/v3/pkg/apiclient/... resolve
+# into the correct locations inside the project tree.
+GOPATH_PROJECT_ROOT="${GOPATH}/src/github.com/argoproj/argo-cd/v3"
 
 # output tool versions
 go version
@@ -82,8 +86,6 @@ go mod vendor
 # protoc-gen-grpc-gateway (v2) replaces the old protoc-gen-grpc-gateway (v1).
 # protoc-gen-openapiv2 replaces the old protoc-gen-swagger.
 MOD_ROOT=${GOPATH}/pkg/mod
-grpc_gateway_version=$(go list -m github.com/grpc-ecosystem/grpc-gateway/v2 | awk '{print $NF}' | head -1)
-GOOGLE_PROTO_API_PATH=${MOD_ROOT}/github.com/grpc-ecosystem/grpc-gateway/v2@${grpc_gateway_version}/third_party/googleapis
 PROTO_FILES=$(find "$PROJECT_ROOT" \( -name "*.proto" -and -path '*/server/*' -or -path '*/reposerver/*' -and -name "*.proto" -or -path '*/cmpserver/*' -and -name "*.proto" -or -path '*/commitserver/*' -and -name "*.proto" -or -path '*/util/askpass/*' -and -name "*.proto" \) | sort)
 for i in ${PROTO_FILES}; do
     protoc \
@@ -91,16 +93,15 @@ for i in ${PROTO_FILES}; do
         -I"${protoc_include}" \
         -I./vendor \
         -I"$GOPATH"/src \
-        -I"${GOOGLE_PROTO_API_PATH}" \
-        --go_out=paths=source_relative:"$GOPATH"/src \
-        --go-grpc_out=paths=source_relative:"$GOPATH"/src \
-        --grpc-gateway_out=paths=source_relative,logtostderr=true:"$GOPATH"/src \
+        --go_out=paths=import:"$GOPATH"/src \
+        --go-grpc_out=paths=import:"$GOPATH"/src \
+        --grpc-gateway_out=paths=import,logtostderr=true:"$GOPATH"/src \
         --openapiv2_out=logtostderr=true:. \
         "$i"
 done
 
 # This file is generated but should not be checked in.
-rm util/askpass/askpass.openapiv2.json
+rm -f util/askpass/askpass.openapiv2.json
 
 [ -L "${GOPATH_PROJECT_ROOT}" ] && rm -rf "${GOPATH_PROJECT_ROOT}"
 [ -L ./v3 ] && rm -rf v3
@@ -147,6 +148,8 @@ EOF
 clean_swagger() {
     SWAGGER_ROOT="$1"
     find "${SWAGGER_ROOT}" -name '*.openapiv2.json' -delete
+    # Also remove legacy *.swagger.json files produced by the old protoc-gen-swagger toolchain.
+    find "${SWAGGER_ROOT}" -name '*.swagger.json' -delete
 }
 
 collect_swagger server
