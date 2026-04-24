@@ -394,13 +394,19 @@ mod-download: test-tools-image
 mod-download-local:
 	go mod download && go mod tidy # go mod download changes go.sum https://github.com/golang/go/issues/42970
 
+.PHONY: apply-vendor-patches
+apply-vendor-patches:
+	hack/apply-vendor-patches.sh
+
 .PHONY: mod-vendor
 mod-vendor: test-tools-image
 	$(call run-in-test-client,go mod vendor)
+	$(MAKE) apply-vendor-patches
 
 .PHONY: mod-vendor-local
 mod-vendor-local: mod-download-local
 	go mod vendor
+	$(MAKE) apply-vendor-patches
 
 # Run linter on the code
 .PHONY: lint

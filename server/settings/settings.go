@@ -19,6 +19,7 @@ import (
 
 // Server provides a Settings service
 type Server struct {
+	settingspkg.UnimplementedSettingsServiceServer
 	mgr                       *settings.SettingsManager
 	repoClient                apiclient.Clientset
 	authenticator             Authenticator

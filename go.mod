@@ -320,7 +320,7 @@ replace (
 	// Use the grpc-gateway v2 compatible fork of argoproj/pkg/v2 until the changes are merged
 	// and published upstream. Fork: https://github.com/mmorel-35/argoproj.pkg/tree/grpc-ecosystem/grpc-gateway
 	// TODO: replace with a published version once the fork is merged upstream.
-	github.com/argoproj/pkg/v2 => /tmp/argoproj-pkg-fork
+	github.com/argoproj/pkg/v2 => ./third-party/argoproj-pkg
 	github.com/golang/protobuf => github.com/golang/protobuf v1.5.4
 	golang.org/x/tools => golang.org/x/tools v0.35.0
 
