@@ -25,7 +25,11 @@ find "$PATCHES_DIR" -type f -name "*.go" | while read -r patch_file; do
     echo "  WARNING: vendor package directory not found, skipping: $dest_dir"
     continue
   fi
-  cp "$patch_file" "$dest"
+  # Strip the "//go:build ignore" and "// +build ignore" lines that are present in the
+  # hack/vendor-patches/ source files (needed to prevent Go from trying to compile the
+  # template files as part of the argo-cd module, where the package context is wrong).
+  # The resulting vendor/ file must NOT have those lines so it is compiled normally.
+  sed '/^\/\/go:build ignore$/d; /^\/\/ +build ignore$/d' "$patch_file" > "$dest"
   echo "  patched: vendor/$relative"
 done
 

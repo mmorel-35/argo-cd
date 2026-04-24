@@ -65,7 +65,10 @@ rm -rf "${GOPATH}/src/k8s.io/apimachinery" && mkdir -p "${GOPATH}/src/k8s.io" &&
 rm -rf "${GOPATH}/src/k8s.io/api" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/api" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/apiextensions-apiserver" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apiextensions-apiserver" "${GOPATH}/src/k8s.io"
 
+# Use --only-idl so that go-to-protobuf only generates the .proto IDL files without invoking
+# protoc-gen-gogo. The .pb.go file is then generated in the next step using protoc-gen-go.
 go-to-protobuf \
+    --only-idl \
     --go-header-file="${PROJECT_ROOT}"/hack/custom-boilerplate.go.txt \
     --packages="$(
         IFS=,
@@ -78,7 +81,19 @@ go-to-protobuf \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
     --output-dir="${GOPATH}/src/"
-# go mod vendor after go-to-protobuf modifies vendored code
+
+# Generate pkg/apis/application/v1alpha1/generated.pb.go from the IDL using protoc-gen-go.
+# This replaces the legacy protoc-gen-gogo step that was previously embedded inside go-to-protobuf.
+# The resulting file uses the standard google.golang.org/protobuf runtime (no gogo/protobuf).
+protoc \
+    -I"${PROJECT_ROOT}" \
+    -I"${protoc_include}" \
+    -I./vendor \
+    -I"$GOPATH"/src \
+    --go_out=paths=import:"$GOPATH"/src \
+    "${GOPATH}/src/github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1/generated.proto"
+
+# go mod vendor after modifying generated code
 go mod vendor
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go) using grpc-gateway v2 toolchain.
