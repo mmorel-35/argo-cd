@@ -9,8 +9,10 @@ import (
 
 // k8sEventListWrapper wraps *corev1.EventList to satisfy google.golang.org/protobuf/proto.Message
 // for grpc-gateway v2. k8s v0.35+ moved ProtoMessage() behind a build tag, so EventList no longer
-// implements the new proto.Message interface. ProtoReflect() is never called at runtime because
-// all HTTP responses are marshaled via encoding/json by our custom Marshaler.
+// implements the new proto.Message interface. ProtoReflect() is never called at runtime: the
+// grpc-gateway ForwardResponseMessage path calls marshaler.Marshal(response), and our JSONMarshaler
+// (util/grpc/json.go) delegates to encoding/json.Marshal which uses Go reflection, not protobuf
+// descriptors — so no protobuf-specific method is ever invoked on the wrapped value.
 type k8sEventListWrapper struct {
 	*corev1.EventList
 }
