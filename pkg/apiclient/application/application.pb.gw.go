@@ -96,7 +96,7 @@ func request_ApplicationService_ListResourceEvents_0(ctx context.Context, marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.ListResourceEvents(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return &k8sEventListWrapper{msg}, metadata, err
+	return msg, metadata, err
 }
 
 func local_request_ApplicationService_ListResourceEvents_0(ctx context.Context, marshaler runtime.Marshaler, server ApplicationServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
