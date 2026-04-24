@@ -120,7 +120,7 @@ func local_request_ApplicationService_ListResourceEvents_0(ctx context.Context, 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.ListResourceEvents(ctx, &protoReq)
-	return &k8sEventListWrapper{msg}, metadata, err
+	return msg, metadata, err
 }
 
 var filter_ApplicationService_Watch_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
