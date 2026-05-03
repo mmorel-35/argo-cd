@@ -108,6 +108,19 @@ for i in ${PROTO_FILES}; do
         "$i"
 done
 
+# Re-apply the eventListMessage wrapper that the vanilla grpc-gateway v2 generator
+# strips out. *corev1.EventList no longer satisfies proto.Message in k8s >= 0.34,
+# so the generated return statements must wrap the value in a package-local adapter.
+# The adapter types are defined in event_list_compat.go in each package.
+for gw_file in \
+    "${PROJECT_ROOT}/pkg/apiclient/application/application.pb.gw.go" \
+    "${PROJECT_ROOT}/pkg/apiclient/applicationset/applicationset.pb.gw.go" \
+    "${PROJECT_ROOT}/pkg/apiclient/project/project.pb.gw.go"; do
+    # On every line that calls List*Events (the assignment line), advance to the
+    # next line (the return) and replace the bare `msg` with the wrapped form.
+    sed -i '/List[A-Za-z]*Events/{n; s/\treturn msg, metadata, err/\treturn \&eventListMessage{msg}, metadata, err/}' "${gw_file}"
+done
+
 # This file is generated but should not be checked in.
 rm -f util/askpass/askpass.openapiv2.json
 
