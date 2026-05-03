@@ -19,11 +19,9 @@ import (
 	_ "k8s.io/code-generator/cmd/deepcopy-gen"
 	_ "k8s.io/code-generator/cmd/defaulter-gen"
 	_ "k8s.io/code-generator/cmd/go-to-protobuf"
+	_ "github.com/gogo/protobuf/protoc-gen-gogo"
 	_ "k8s.io/code-generator/cmd/informer-gen"
 	_ "k8s.io/code-generator/cmd/lister-gen"
-
-	// protoc-gen-gogo is used alongside go-to-protobuf to generate .pb.go from gogo-annotated .proto files
-	_ "github.com/gogo/protobuf/protoc-gen-gogo"
 
 	// openapi-gen is vendored because upstream does not have tagged releases
 	_ "k8s.io/kube-openapi/cmd/openapi-gen"
