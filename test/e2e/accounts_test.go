@@ -131,8 +131,8 @@ func TestLoginBadCredentials(t *testing.T) {
 		Username: "admin", Password: "bad-password",
 	}}
 
-	for _, r := range requests {
-		_, err := sessionClient.Create(t.Context(), &r)
+	for i := range requests {
+		_, err := sessionClient.Create(t.Context(), &requests[i])
 		require.Error(t, err)
 		errStatus, ok := status.FromError(err)
 		if !assert.True(t, ok) {

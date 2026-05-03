@@ -210,11 +210,11 @@ p, role:test, clusters, *, allowed-project/*, allow`)
 	enf.SetDefaultRole("role:test")
 	server := NewServer(db, enf, newServerInMemoryCache(), &kubetest.MockKubectlCmd{})
 
-	for _, c := range testCases {
-		cc := c
-		t.Run(cc.name, func(t *testing.T) {
+	for i := range testCases {
+		tc := &testCases[i]
+		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			out, err := server.Update(t.Context(), &cc.request)
+			out, err := server.Update(t.Context(), &tc.request)
 			require.Nil(t, out)
 			assert.ErrorIs(t, err, common.PermissionDeniedAPIError)
 		})
