@@ -63,8 +63,26 @@ else
     protoc_include=${PROJECT_ROOT}/dist/protoc-include
 fi
 
+# Get gogo/protobuf path from module cache for proto imports.
+# Although gogo/protobuf is no longer used for Go code generation, its .proto IDL files are still
+# imported by k8s-generated .proto files (e.g. k8s.io/apimachinery), so protoc needs them.
+GOGO_PROTOBUF_VERSION=$(go list -m -f '{{.Version}}' github.com/gogo/protobuf)
+GOGO_PROTOBUF_PATH="${GOPATH}/pkg/mod/github.com/gogo/protobuf@${GOGO_PROTOBUF_VERSION}"
+
+# Ensure gogo/protobuf is present in the module cache so its .proto files are accessible.
+if [ ! -d "${GOGO_PROTOBUF_PATH}" ]; then
+    GO111MODULE=on go mod download github.com/gogo/protobuf
+fi
+
+# Create proper import structure for gogo/protobuf so protoc can find it.
+# The .proto files import "github.com/gogo/protobuf/gogoproto/gogo.proto"
+# so we need to make that path resolvable as a -I include directory.
+PROTO_IMPORTS_DIR="${PROJECT_ROOT}/dist/proto-imports"
+rm -rf "${PROTO_IMPORTS_DIR}"
+mkdir -p "${PROTO_IMPORTS_DIR}/github.com/gogo"
+ln -sf "${GOGO_PROTOBUF_PATH}" "${PROTO_IMPORTS_DIR}/github.com/gogo/protobuf"
+
 # go-to-protobuf expects dependency proto files to be in $GOPATH/src. Copy them there.
-# Note: gogo/protobuf is no longer needed after migration to google.golang.org/protobuf
 rm -rf "${GOPATH}/src/k8s.io/apimachinery" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apimachinery" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/api" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/api" "${GOPATH}/src/k8s.io"
 rm -rf "${GOPATH}/src/k8s.io/apiextensions-apiserver" && mkdir -p "${GOPATH}/src/k8s.io" && cp -r "${PROJECT_ROOT}/vendor/k8s.io/apiextensions-apiserver" "${GOPATH}/src/k8s.io"
@@ -81,24 +99,12 @@ go-to-protobuf \
     )" \
     --proto-import="${PROJECT_ROOT}"/vendor \
     --proto-import="${protoc_include}" \
+    --proto-import="${PROTO_IMPORTS_DIR}" \
     --output-dir="${GOPATH}/src/" \
     --only-idl
 
 # go-to-protobuf modifies vendored code. Re-vendor code so it's available for subsequent steps.
 go mod vendor
-
-# Get gogo/protobuf path from module cache for proto imports
-# gogo/protobuf is kept as a dependency for the .proto IDL files only
-GOGO_PROTOBUF_VERSION=$(go list -m -f '{{.Version}}' github.com/gogo/protobuf)
-GOGO_PROTOBUF_PATH="${GOPATH}/pkg/mod/github.com/gogo/protobuf@${GOGO_PROTOBUF_VERSION}"
-
-# Create proper import structure for gogo/protobuf so protoc can find it
-# The .proto files import "github.com/gogo/protobuf/gogoproto/gogo.proto"
-# So we need to make that path resolvable
-PROTO_IMPORTS_DIR="${PROJECT_ROOT}/dist/proto-imports"
-rm -rf "${PROTO_IMPORTS_DIR}"
-mkdir -p "${PROTO_IMPORTS_DIR}/github.com/gogo"
-ln -sf "${GOGO_PROTOBUF_PATH}" "${PROTO_IMPORTS_DIR}/github.com/gogo/protobuf"
 
 # Generate server/<service>/(<service>.pb.go|<service>.pb.gw.go)
 # Using protoc with LOCAL plugins for compatibility with existing import structure
