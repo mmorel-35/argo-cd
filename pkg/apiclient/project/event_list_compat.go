@@ -1,9 +1,9 @@
 package project
 
 import (
-protoutil "github.com/argoproj/argo-cd/v3/util/proto"
-"google.golang.org/protobuf/reflect/protoreflect"
-corev1 "k8s.io/api/core/v1"
+	protoutil "github.com/argoproj/argo-cd/v3/util/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // eventListMessage wraps *corev1.EventList so it satisfies the proto.Message interface
@@ -14,9 +14,9 @@ corev1 "k8s.io/api/core/v1"
 // serialised via encoding/json (our custom JSONMarshaler), so the binary codec
 // methods are only used on the gRPC path.
 type eventListMessage struct {
-*corev1.EventList
+	*corev1.EventList
 }
 
 func (e *eventListMessage) ProtoReflect() protoreflect.Message {
-return protoutil.LegacyMessage(e, e.EventList)
+	return protoutil.LegacyMessage(e, e.EventList)
 }

@@ -8,8 +8,8 @@
 package v1alpha1
 
 import (
-protoutil "github.com/argoproj/argo-cd/v3/util/proto"
-"google.golang.org/protobuf/reflect/protoreflect"
+	protoutil "github.com/argoproj/argo-cd/v3/util/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // legacyReflect returns a protoreflect.Message for any v1alpha1 type that
@@ -18,8 +18,8 @@ protoutil "github.com/argoproj/argo-cd/v3/util/proto"
 //
 // It is called from every ProtoReflect() stub in proto_reflect_compat.go.
 func legacyReflect(self interface {
-protoreflect.ProtoMessage
-protoutil.Serializable
+	protoreflect.ProtoMessage
+	protoutil.Serializable
 }) protoreflect.Message {
-return protoutil.LegacyMessage(self, self)
+	return protoutil.LegacyMessage(self, self)
 }
