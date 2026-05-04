@@ -131,4 +131,3 @@ func (lm *legacyMessage) ProtoMethods() *protoiface.Methods {
 		},
 	}
 }
-
