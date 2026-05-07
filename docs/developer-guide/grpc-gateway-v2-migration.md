@@ -3,7 +3,7 @@
 This guide defines the progressive migration strategy to move Argo CD from grpc-gateway v1/gogo-oriented patterns to grpc-gateway v2 with small, reviewable pull requests.
 
 > [!NOTE]
-> Default migration mode is **non-breaking** for external APIs unless maintainers explicitly approve a breaking change.
+> By default, migrations must maintain backward compatibility for external APIs unless maintainers explicitly approve a breaking change.
 
 > [!WARNING]
 > Do not combine Kubernetes dependency upgrades with grpc-gateway migration phases.
