@@ -1,4 +1,4 @@
-# grpc-gateway v2 migration playbook
+# gRPC-Gateway v2 Migration Playbook
 
 This guide defines the progressive migration strategy to move Argo CD from grpc-gateway v1/gogo-oriented patterns to grpc-gateway v2 with small, reviewable pull requests.
 
