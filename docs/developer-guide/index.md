@@ -88,6 +88,7 @@ As is the case with the development process, this document is under constant cha
 - [Perform the PR template checklist](submit-your-pr.md#pr-template-checklist)
 - [Understand the CI automated builds & tests](submit-your-pr.md#automated-builds-tests)
 - [Understand & make sure your PR meets the CI code test coverage requirements](submit-your-pr.md#code-test-coverage)
+- [Follow the grpc-gateway v2 migration playbook](grpc-gateway-v2-migration.md)
 
 Need help? Start with the [Contributors FAQ](faq.md)
 
